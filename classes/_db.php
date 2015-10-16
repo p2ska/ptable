@@ -1,12 +1,5 @@
 <?php
 
-define("DB_HOST",		"localhost");
-define("DB_NAME",		"test");
-define("DB_USER",		base64_decode("YW5kcmVz"));
-define("DB_PASS",		base64_decode("bWluYQ=="));
-define("DB_CHARSET",	"utf8");
-define("DB_COLLATION",	"utf8_estonian_ci");
-
 // andmebaasi klass
 
 class P_DATABASE {
