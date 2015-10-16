@@ -26,7 +26,7 @@ define("P_LIMIT",	" limit ");
 class PTABLE {
 	// kõik parameetrid (nb! need default'id kirjutatakse üle tabeli kirjeldusfaili ja ka ptable.js poolt tulevate väärtustega üle)
 
-	var $db, $l, $mode, $target, $template, $url, $data, $translations, $nav, $navigation, $auto_update,
+	var $db, $l, $mode, $target, $template, $url, $data, $translations, $nav, $navigation, $refresh,
 	$database, $host, $username, $password, $charset, $collation, $query, $query_count, $values,
 	$title, $style, $table, $fields, $joins, $where, $order, $way, $search, $pages, $records,
 	$autosearch =	false,		// automaatne otsing
@@ -88,7 +88,7 @@ class PTABLE {
 		// esmasel initsialiseerimisel vaadatakse, kas autoupdate sisse lülitada (tabelikirjelduse poolt nõutud)
 
 		if ($this->mode == "init")
-			$this->auto_update = $this->autoupdate;
+			$this->autoupdate = $this->refresh;
 
 		// mis baasist tabel andmeid tahab võtta? tuleb uus ühendus luua?
 
@@ -266,7 +266,7 @@ class PTABLE {
 		$this->content .= "data-order=\"". $this->order. "\" ";
 		$this->content .= "data-way=\"". $this->way. "\" ";
 		$this->content .= "data-navigation=\"". ($this->navigation ? "true" : "false"). "\" ";
-		$this->content .= "data-autoupdate=\"". ($this->auto_update ? $this->auto_update : "0"). "\" ";
+		$this->content .= "data-autoupdate=\"". ($this->autoupdate ? $this->autoupdate : "0"). "\" ";
 		$this->content .= "data-autosearch=\"". ($this->autosearch ? "true" : "false"). "\">";
 		$this->content .= "<tbody>";
 

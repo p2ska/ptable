@@ -12,7 +12,7 @@ $.fn.ptable = function(options) {
 			page: 1,
 			search: "",
 			search_from: 3,
-			auto_update: 0
+			autoupdate: 0
 		}, options);
 
 		// tabeli kuvamine
@@ -183,7 +183,7 @@ $.fn.ptable = function(options) {
 				$(prefix + settings[ptable].target + "_container").html(content);
 			
 			settings[ptable].page = $(prefix + settings[ptable].target).data("page");
-			settings[ptable].auto_update = $(prefix + settings[ptable].target).data("autoupdate");
+			settings[ptable].autoupdate = $(prefix + settings[ptable].target).data("autoupdate");
 			settings[ptable].last_update = timestamp;
 			settings[ptable].mode = "update";
 			
@@ -254,15 +254,17 @@ $.fn.ptable = function(options) {
 			$(prefix + tbl + "_autoupdate_off").hide();
 			$(prefix + tbl + "_autoupdate_on").show();
 			$(prefix +tbl + "_autoupdate_select").prop("disabled", false);
+
+			settings[tbl].autoupdate = upd;
 			$(prefix + tbl).data("autoupdate", upd);
-			settings[tbl].auto_update = upd;
 		}
 		else {
 			$(prefix + tbl + "_autoupdate_on").hide();
 			$(prefix + tbl + "_autoupdate_off").show();
 			$(prefix + tbl + "_autoupdate_select").prop("disabled", "disabled");
+
+			settings[tbl].autoupdate = 0;
 			$(prefix + tbl).data("autoupdate", 0);
-			settings[tbl].auto_update = 0;
 		}
 
 		autoupdate_check();
@@ -274,7 +276,7 @@ $.fn.ptable = function(options) {
 		var tbl = $(this).data("table");
 		var upd = parseInt($(this).val())
 		
-		settings[tbl].auto_update = upd;
+		settings[tbl].autoupdate = upd;
 		$(prefix + tbl).data("autoupdate", upd);
 	});
 };

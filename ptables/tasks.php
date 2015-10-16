@@ -2,7 +2,7 @@
 
 $this->table		= "task";
 $this->title		= "tasks";
-$this->autoupdate	= 5;
+$this->refresh		= 5;
 $this->fields		= [
 		[ "field"	=> "id",		"title" => "Task" ],
 		[ "field"	=> "parent_id",	"title" => "Request" ],
