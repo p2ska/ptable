@@ -5,23 +5,6 @@
 $this->title		= $this->data["user"];	// tabeli pealkiri												[<title>]
 $this->title_icon	= "odnoklassniki";		// tabeli pealkirjast vasakul olev ikoon						[<font-awesome ikooni nimetus>]
 $this->table		= "request";			// põhitabeli nimi baasis										[<table>]
-//$this->style		= "ptable";				// mis stiili kasutatakse tabli kujunduses						[<class>]
-
-/* tabeliväljade loetelu ja omadused (kõik peale "field" väärtuse on valikulised) */
-
-// "field"			- väljanimetus tabelis (TODO: kohustuslikkusekontoll; kas selline väli tabelist leiti)	[<field>]
-// "joined"			- tähendab, et antud väli on juurdeliidetud tabelist saadud (vajab 'joins'-kirjelduses vastavat välja ja seost - 'alias')
-// "title"			- tabeli päises kuvatav väljakirjeldus (mõistlik panna tõlkestring)						[<title>] :<field>
-// "class"			- välja stiil, override																	[<class_name>]
-// "align"			- välja sisu paiknemine																	["left", "center", "right", "justify"] :"left"
-// "nowrap"			- välja ei wrapita																		[true, false] :false
-// "searchable"		- kui tehakse üldine otsing, siis lisatakse see väli otsingusse							[true, false] :false
-// "search_left"	- otsingu puhul otsitakse ka vasakule (like "%<otsingusõna>")							[true, false] :false
-// "search_right"	- otsingu puhul otsitakse ka vasakule (like "<otsingusõna>%"							[true, false] :false
-// "sortable"		- antud välja puhul on lubatud kasutaja poolne järjekorra muutmine (üles/alla) 			[true, false] :false
-// "extend"			- määra väljale teisendusfunktsioon (ptable_ext all kirjeldatud)						[<method> || [ <method>, <method>.. ] ]
-// "field_search"	- TODO: lisada otsingukast klikitud veerule, täppisotsing veeru piires					[true, false] :false
-// "hidden"			- TODO: võimalus väljaga opereerida (otsingusse, trigeritele), aga ei kuvata tabelis	[true, false] :false
 
 $this->fields	= [
 	[ "field"	=> "id",		"title" => $l->txt_request, "class" => "ohoo" ],
@@ -30,14 +13,6 @@ $this->fields	= [
 	[ "field"	=> "regdate",	"title" => $l->txt_regdate, "align" => "center", "sortable" => false, "extend" => "convert_date", "nowrap" => true ]
 	//[ "field"	=> "hybrid",	"title" => $l->txt_joined, "align" => "center", "field_search" => false, "joined" => true ]
 ];
-
-/* liidetavate tabelite kirjeldused (TODO: hmm, kui mitu liidetavat tabelit, mis siis saab..) */
-
-// "table"			- tabeli nimi
-// "method"			- mis tüüpi join
-// "on"				- mis tingimustel
-// "field"			- millist välja on vaja
-// "alias"			- alias liidetavale väljale
 
 //$this->joins		= [
 //		[ "table"	=> "task", "method" => "left join", "on" => "parent_id = request.id" ], 
@@ -48,20 +23,10 @@ $this->fields	= [
 
 /* puhas sql-päring (selleasemel, et kasutada päringu moodustamiseks "fields" kirjelduses olevaid ja "joins" & "where" muutujaid) */
 
-//$this->query_count= "select id from request";
-//$this->query		= "select * from request";
+$this->query_count= "select id from request";
+$this->query		= "select * from request";
 
 //$this->values		= [];		// prepared pärinule omistatavad väärtused
-
-/* triggerid */
-
-// "ROW"			- trigger määratakse kogu valitud reale																	["ROW", "<field>"]
-// "<field>"		- trigger lisatakse konkreetsele väljale reas
-// "title"			- triggeri kirjeldus, mida kuvatakse rea/välja kohal ([]-vaheline asendatakse vastava välja väärtusega) ["title"]
-// "data"			- siin üksikelement või massiiv, milliseid väärtusi panna kaasa triggerile								[<data> || [<data>, <data>..] ]
-//					  (kõik, mis on []-vahel asendatakse selle välja väärtusega (kui leitakse))
-// "link"			- kui vähemalt üks 'data'-väli pole kirjeldatud, siis minnakse kirjeldatud lingile (asendatakse [])		[<link>]
-// "external"		- kas sisemine või välimine link																		[true, false] :false
 
 $this->triggers		= [
 		"ROW"		=> [ "title" => "kena [reguester]", "data" => [ "id" => "[id]", "url" => "http://www.ttu.ee" ] ],

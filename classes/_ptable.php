@@ -26,7 +26,7 @@ define("P_LIMIT",	" limit ");
 class PTABLE {
 	// kõik parameetrid (nb! need default'id kirjutatakse üle tabeli kirjeldusfaili ja ka ptable.js poolt tulevate väärtustega üle)
 	
-	var $db, $l, $mode, $target, $template, $url, $data, $translations, $nav, $navigation, 
+	var $db, $l, $mode, $target, $template, $url, $data, $translations, $nav, $navigation, $auto_update,
 		$database, $host, $username, $password, $charset, $collation, $query, $query_count, $values,
 		$title, $style, $table, $fields, $joins, $where, $order, $way, $search, $pages, $records, 
 		$autosearch =	false,		// automaatne otsing
@@ -85,6 +85,11 @@ class PTABLE {
 		foreach ($init as $key => $val)
 			$this->{ $key } = $this->safe($val);
 
+		// esmasel initsialiseerimisel vaadatakse, kas autoupdate sisse lülitada (tabelikirjelduse poolt nõutud)
+
+		if ($this->mode == "init")
+			$this->auto_update = $this->autoupdate;
+
 		// mis baasist tabel andmeid tahab võtta? tuleb uus ühendus luua?
 
 		if ($this->host && $this->database && $this->username && $this->password)
@@ -119,12 +124,7 @@ class PTABLE {
 
 		if (file_exists($this->template)) {
 			require_once($this->template);
-			
-			// kas autoupdate sisse lülitada?
-			
-			//if (!$this->auto_update && $this->autoupdate)
-				//$this->auto_update = $this->autoupdate;
-			
+
 			// kas navigeerimine lubada?
 			
 			if ($this->nav_header || $this->nav_footer)
@@ -266,10 +266,10 @@ class PTABLE {
 		$this->content .= "data-order=\"". $this->order. "\" ";
 		$this->content .= "data-way=\"". $this->way. "\" ";
 		$this->content .= "data-navigation=\"". ($this->navigation ? "true" : "false"). "\" ";
-		$this->content .= "data-autoupdate=\"". ($this->autoupdate ? $this->autoupdate : "0"). "\" ";
+		$this->content .= "data-autoupdate=\"". ($this->auto_update ? $this->auto_update : "0"). "\" ";
 		$this->content .= "data-autosearch=\"". ($this->autosearch ? "true" : "false"). "\">";
 		$this->content .= "<tbody>";
-		
+
 		// kui on ülemine navigeerimine lubatud
 		
 		if ($this->nav_header)

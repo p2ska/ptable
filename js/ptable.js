@@ -171,7 +171,7 @@ $.fn.ptable = function(options) {
 		
 		// kui tabel pole hetkel nähtav, siis ei uuenda ka
 		
-		if ($("#" + settings[ptable].target).is(":hidden"))
+		if (settings[ptable].mode == "update" && $("#" + settings[ptable].target).is(":hidden"))
 			return false;
 		
 		// uuenda tabelit
@@ -249,32 +249,30 @@ $.fn.ptable = function(options) {
 		var tbl = $(this).data("table");
 		
 		if ($(this).hasClass("off")) {
+			var upd = parseInt($(prefix + tbl + "_autoupdate_select").val())
+
 			$(prefix + tbl + "_autoupdate_off").hide();
 			$(prefix + tbl + "_autoupdate_on").show();
 			$(prefix +tbl + "_autoupdate_select").prop("disabled", false);
-
-			var upd = parseInt($(prefix + tbl + "_autoupdate_select").val());
-			
-			settings[tbl].auto_update = upd;
 			$(prefix + tbl).data("autoupdate", upd);
-
-			//console.log(settings[tbl].auto_update + ":" + $(prefix +tbl).data("autoupdate"));
+			settings[tbl].auto_update = upd;
 		}
 		else {
 			$(prefix + tbl + "_autoupdate_on").hide();
 			$(prefix + tbl + "_autoupdate_off").show();
 			$(prefix + tbl + "_autoupdate_select").prop("disabled", "disabled");
-			
-			settings[tbl].auto_update = 0;
 			$(prefix + tbl).data("autoupdate", 0);
+			settings[tbl].auto_update = 0;
 		}
+
+		autoupdate_check();
 	});
 	
 	// kui muudetakse autoupdate aega
 
 	$(".ptable").on("change", ".autoupdate_select", function() {
 		var tbl = $(this).data("table");
-		var upd = parseInt($(this).val());
+		var upd = parseInt($(this).val())
 		
 		settings[tbl].auto_update = upd;
 		$(prefix + tbl).data("autoupdate", upd);

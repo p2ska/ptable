@@ -65,15 +65,21 @@ $this->triggers		= [
 	"id"		=> [ "title" => "", "link" => "", "external" => true ]
 ];
 
-// TODO: per person/tabel meelde jätta vajalikud väljad nendest
-
 $this->where		= "";				// where tingimused vabas vormis													["where"]
 $this->values		= [];				// tingimustele vastavad väärtused													[ [<val>, <val>..] ]
-$this->sort			= "";				// esmaselt on tabel sorditud selle välja järgi										[<field>]
-$this->updown		= "";				// mis suunas järjestatakse tulemused												["asc", "desc"] :asc
+
+/* puhas sql-päring (selleasemel, et kasutada päringu moodustamiseks "fields" kirjelduses olevaid ja "joins" & "where" muutujaid) */
+
+//$this->query_count= "select id from request";
+//$this->query		= "select * from request";
+
+// TODO: per person/tabel meelde jätta vajalikud väljad nendest
+
+$this->order		= "";				// esmaselt on tabel sorditud selle välja järgi										[<field>]
+$this->way			= "";				// mis suunas järjestatakse tulemused												["asc", "desc"] :asc
 $this->order_icon	= "chevron";		// mis tüüpi ikoone kasutatakse otsingutulemuste järjestamiseks						["chevron", "sort", "angle-double"] :"chevron"
 $this->page_sizes	= [ 10 => "10 ". $l->records, 25 => "25 ". $l->records, 50 => "50 ". $l->records, "*" => $l->all_records ]; // valitavad lehepikkused
-$this->pagesize		= 10;				// esmane lehepikkus (TODO: milline on varasemalt valitud)							[10..50, "*"] :10
+$this->page_size	= 10;				// esmane lehepikkus (TODO: milline on varasemalt valitud)							[10..50, "*"] :10
 $this->nav_length	= 5;				// mitu navigatsiooninuppu on kuvatud esimese ja viimase lehe nuppude vahel			[5] :default (TODO: teised väärtused panna korralikult toimima)
 $this->nav_header	= false;			// kas header'i navigatsiooniriba on lubatud										[true, false] :false
 $this->nav_footer	= true;				// kas header'i navigatsiooniriba on lubatud										[true, false] :true
