@@ -1,10 +1,13 @@
-$.fn.ptable = function(options) {
+$.fn.ptable = function(targets) {
 	var prefix = "#ptable_", need_worker = false, updater = false, settings = Array();
 	
-	$(".ptable").each(function() {
+	if (targets == undefined)
+		targets = ".ptable";
+
+	$(targets).each(function() {
 		var ptable = $(this).prop("id");
 		
-		settings[ptable] = $.extend({
+		settings[ptable] = {
 			target: $(this).prop("id"),
 			data: $(this).data(),
 			mode: "init",
@@ -13,7 +16,7 @@ $.fn.ptable = function(options) {
 			search: "",
 			search_from: 3,
 			autoupdate: 0
-		}, options);
+		}
 
 		// tabeli kuvamine
 

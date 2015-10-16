@@ -1,6 +1,5 @@
 <?php
 
-$this->style		= "ptable";
 $this->host			= "localhost";
 $this->database		= "test";
 $this->username		= DB_USER;
@@ -22,7 +21,7 @@ $this->fields		= [
 ];
 //$this->where		= "";
 //$this->values		= [];
-$this->sort			= "perenimi";
+$this->order		= "perenimi";
 $this->page_sizes	= [ 10 => "10", 50 => "50", "*" => $l->txt_all_records ];
 $this->order_icon	= "angle-double";
 $this->sizeable		= true;

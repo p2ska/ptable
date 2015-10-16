@@ -19,13 +19,12 @@ $this->fields	= [
 //		[ "field"	=> "task.owner_id", "alias" => "hybrid" ]
 //];
 
-//$this->where		= "";		// where tingimused vabas vormis
-
 /* puhas sql-päring (selleasemel, et kasutada päringu moodustamiseks "fields" kirjelduses olevaid ja "joins" & "where" muutujaid) */
 
-$this->query_count= "select id from request";
-$this->query		= "select * from request";
+//$this->query_count= "select id from request";
+//$this->query		= "select * from request";
 
+//$this->where		= "";		// where tingimused vabas vormis
 //$this->values		= [];		// prepared pärinule omistatavad väärtused
 
 $this->triggers		= [

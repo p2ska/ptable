@@ -26,9 +26,10 @@ define("P_LIMIT",	" limit ");
 class PTABLE {
 	// kõik parameetrid (nb! need default'id kirjutatakse üle tabeli kirjeldusfaili ja ka ptable.js poolt tulevate väärtustega üle)
 
-	var $db, $l, $mode, $target, $template, $url, $data, $translations, $nav, $navigation, $refresh,
-	$database, $host, $username, $password, $charset, $collation, $query, $query_count, $values,
-	$title, $style, $table, $fields, $joins, $where, $order, $way, $search, $pages, $records,
+	var
+	$db, $l, $mode, $target, $template, $url, $data, $translations, $external_data, $external_pos,
+	$database, $host, $username, $password, $charset, $collation, $query, $query_count, $values, $nav, $navigation,
+	$title, $style, $table, $fields, $joins, $where, $order, $way, $search, $pages, $records, $refresh,
 	$autosearch =	false,		// automaatne otsing
 	$fullscreen	=	false,		// kas täisekraanivaade on lubatud
 	$header_sep	= 	false,		// tabeli ülemine eraldusäär
@@ -54,26 +55,24 @@ class PTABLE {
 
 	// initsialiseeri kõik js poolt määratud muutujad
 
-	function ptable($init, $db = false, $lang = false) {
+	function ptable($init, $source = false, $lang = false) {
 		if (!isset($init["target"]))
 			return false;
 
-		// id
+		// tabeli id
 
 		$this->target = $this->safe($init["target"], 20);
 
-		// kui pole väliseid tõlkeid juba, siis lae tabeli tõlkefailist
+		// kui pole väliseid tõlkeid juba, siis lae tabeli tõlkefailist;
+		// kui translations klassi ka pole, noh siis polegi tõlkeid
 
-		if (!$lang) {
-			if (class_exists("TRANSLATIONS")) { /* kui keelestringi pole kaasa antud ja translations klassi ka pole, noh siis polegi tõlkeid */
-				$this->translations = new TRANSLATIONS();
+		if (!$lang && class_exists("TRANSLATIONS")) {
+			$this->translations = new TRANSLATIONS();
 
-				$this->l = $this->translations->import("lang/ptable.lang");
-			}
+			$this->l = $this->translations->import("lang/ptable.lang");
 		}
-		else {
+		else
 			$this->l = $lang;
-		}
 
 		// kirjuta klassi default'id tabelikirjelduse omadega üle
 
@@ -90,18 +89,38 @@ class PTABLE {
 		if ($this->mode == "init")
 			$this->autoupdate = $this->refresh;
 
-		// mis baasist tabel andmeid tahab võtta? tuleb uus ühendus luua?
+		// kui tabel kirjelduses on näidatud uus ühendus
 
-		if ($this->host && $this->database && $this->username && $this->password)
+		if ($this->host && $this->database && $this->username && $this->password) {
 			$this->db = @new P_DATABASE($this->host, $this->database, $this->username, $this->password, $this->charset, $this->collation);
-		elseif (!$db && !$this->db)
-			$this->db = @new P_DATABASE();
+			$this->db->connect();
+		}
+		else { // kui on antud mysql resource link, siis tee uus klass ja topi link kohe külge
+			if (is_resource($source)) {
+				$this->db = @new P_DATABASE();
+				$this->db->connection = $source;
+			}
+			else { // kui üldse midagi ei antud sisendiks, siis loo uus klass (eeldab DB_HOST, DB_NAME, DB_USER, DB_PASS kirjeldatust)
+				if (!$source) {
+					$this->db = @new P_DATABASE();
+					$this->db->connect();
+				}
+				else { // kui sisendiks on andmemassiiv
+					if (is_array($source))
+						$this->external_data = $source;
+				}
+			}
+		}
+
+		// hangi ja töötle andmeid
+
+		if ($this->external_data)
+			$this->prepare_external();
 		else
-			$this->db = $db;
+			$this->fetch_data();
 
-		// hangi andmed ja moodusta tabel
+		// moodusta tabel
 
-		$this->fetch_data();
 		$this->display();
 
 		// kuva tabel
@@ -217,6 +236,82 @@ class PTABLE {
 		}
 	}
 
+	function prepare_external() {
+		// otsingutingumused
+
+		/*if ($this->search) {
+			foreach ($this->fields as $col) {
+				if (!isset($col["field"]) || !$col["field"])
+					continue;
+
+				if (isset($col["searchable"]) && $col["searchable"]) {
+					$left = $right = false;
+					$find = P_EXACT;
+
+					if (isset($col["search_left"]) && $col["search_left"]) {
+						$left = P_ANY;
+						$find = P_LIKE;
+					}
+
+					if (isset($col["search_right"]) && $col["search_right"]) {
+						$right = P_ANY;
+						$find = P_LIKE;
+					}
+
+					$search[] = $col["field"]. $find. P_QMARK;
+					$this->values[] = $left. trim($this->search). $right;
+				}
+			}
+
+			$search = implode(P_OR, $search);
+
+			if (!$this->where)
+				$search = P_WHERE. $search;
+		}*/
+
+		// mitu kirjet kokku on? arvuta lehekülgede arv
+
+		$this->records = count($this->external_data);
+
+		if ($this->page_size == P_ALL)
+			$this->pages = 1;
+		else {
+			$this->pages = intval(($this->records - 1) / intval($this->page_size)) + 1;
+			$this->external_data = array_slice($this->external_data, ($this->page - 1) * $this->page_size, $this->page_size);
+		}
+
+		if ($this->records) {
+			// massiivi sorteerimine
+
+			//asort($this->external_data);
+			//usort($this->external_data, "");
+			$this->external_data = $this->ext_sort();
+		}
+	}
+
+	// sorteerimine
+
+	function ext_sort() {
+		$result = array();
+
+		if (!$this->order)
+			$this->order = "id";
+
+		if (!$this->way)
+			$this->way = "asc";
+
+		for ($a = 0; $a < $this->records; $a++)
+		for ($b = 0; $b < $this->records; $b++) {
+			$obj1 = $this->external_data[$a];
+			$obj2 = $this->external_data[$b];
+
+			if ($obj1->{ $this->order } > $obj2->{ $this->order })
+				$result[$a] = $obj1;
+		}
+
+		return $result;
+	}
+
 	// kuva tabel
 
 	function display() {
@@ -258,7 +353,6 @@ class PTABLE {
 		}
 
 		$this->content .= "<table id=\"". P_PREFIX. $this->target. "\" ";
-		//$this->content .= ($this->style ? " class=\"". $this->style. "\"" : P_VOID). " ";
 		$this->content .= "data-records=". ($this->records ? $this->records : "0"). " ";
 		$this->content .= "data-page=". $this->page. " ";
 		$this->content .= "data-pages=". $this->pages. " ";
@@ -283,31 +377,13 @@ class PTABLE {
 		// tulemused
 
 		if ($this->records) {
-			while ($obj = $this->db->get_obj()) {
-				// käi väärtused üle ja töötle vastavalt vajadustele
-
-				foreach ($this->fields as $field)
-					if (isset($field["extend"]))
-						$obj->{ $field["field"] } = $this->extend($obj->{ $field["field"] }, $field["extend"]);
-
-				// kas kogu real on trigger küljes?
-
-				$row["field"] = "ROW";
-
-				$this->output($row, $obj);
-
-				// nüüd vaata, kas väljale on defineeritud trigger või mitte, ja väljasta väärtus
-
-				foreach ($this->fields as $field)
-					if (!(isset($field["hidden"]) && $field["hidden"]))
-						$this->output($field, $obj);
-
-				$this->content .= "</tr>";
-			}
+			if ($this->db)
+				$this->db_output();
+			else
+				$this->ext_output();
 		}
-		else {
+		else
 			$this->content .= "<tr><td colspan=100>". $this->l->txt_notfound. "</td></tr>";
-		}
 
 		// footer
 
@@ -332,7 +408,60 @@ class PTABLE {
 		}
 	}
 
-	// 
+	// väljasta väärtused baasist
+
+	function db_output() {
+		while ($obj = $this->db->get_obj()) {
+			// käi väärtused üle ja töötle vastavalt vajadustele
+
+			foreach ($this->fields as $field)
+				if (isset($field["extend"]))
+					$obj->{ $field["field"] } = $this->extend($obj->{ $field["field"] }, $field["extend"]);
+
+			// kas kogu real on trigger küljes?
+
+			$row["field"] = "ROW";
+
+			$this->output($row, $obj);
+
+			// nüüd vaata, kas väljale on defineeritud trigger või mitte, ja väljasta väärtus
+
+			foreach ($this->fields as $field)
+				if (!(isset($field["hidden"]) && $field["hidden"]))
+					$this->output($field, $obj);
+
+			$this->content .= "</tr>";
+		}
+	}
+
+	// väljasta väärtused massiivist
+
+	function ext_output() {
+		if (!count($this->external_data))
+			return false;
+
+		foreach ($this->external_data as $obj) {
+			// käi väärtused üle ja töötle vastavalt vajadustele
+
+			foreach ($this->fields as $field)
+				if (isset($field["extend"]))
+					$obj->{ $field["field"] } = $this->extend($obj->{ $field["field"] }, $field["extend"]);
+
+			// kas kogu real on trigger küljes?
+
+			$row["field"] = "ROW";
+
+			$this->output($row, $obj);
+
+			// nüüd vaata, kas väljale on defineeritud trigger või mitte, ja väljasta väärtus
+
+			foreach ($this->fields as $field)
+				if (!(isset($field["hidden"]) && $field["hidden"]))
+					$this->output($field, $obj);
+
+			$this->content .= "</tr>";
+		}
+	}
 
 	// muutujate töötlemine
 

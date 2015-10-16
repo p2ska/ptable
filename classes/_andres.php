@@ -1,5 +1,9 @@
 <?php
 
+require_once("c:/xampp/security/ptable/_connector.php");
+
+require_once("_db.php");
+require_once("_translations.php");
 require_once("_ptable.php");
 
 /* põhiklassi extension, võimaldamaks päringust saadud väärtusi edasi töödelda */

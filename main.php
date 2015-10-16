@@ -30,9 +30,11 @@ $c_lang[$lang] = " current";
 	<span class="lang<?= $c_lang["en"] ?>" data-lang="en">EN</span>
 </div>
 <br/>
+<!--
 <div id="requests" class="ptable" style="width: 70%" data-user="andres"></div><hr/>
 <div id="tasks" class="ptable"></div><hr/>
-<div id="navi" class="ptable"></div>
+-->
+<div id="external" class="ptable"></div>
 <script>
 	$().ptable();
 </script>

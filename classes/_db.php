@@ -11,7 +11,7 @@ class P_DATABASE {
 		$query,
 		$connection;
 
-	function p_database($host = DB_HOST, $db = DB_NAME, $user = DB_USER, $pass = DB_PASS, $charset = DB_CHARSET, $collation = DB_COLLATION) {
+	function connect($host = DB_HOST, $db = DB_NAME, $user = DB_USER, $pass = DB_PASS, $charset = DB_CHARSET, $collation = DB_COLLATION) {
 		if (!$this->connection = @mysql_connect($host, $user, $pass, true))
 			die("Connection to database server has failed.<br/>". @mysql_error($this->connection));
 
