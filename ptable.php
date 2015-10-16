@@ -20,7 +20,7 @@ function dump($this, $die = false) {
 	print_r($this);
 	echo "</pre>";
 	
-	if ($die)
+	if ($die) // comm
 		die();
 }
 
