@@ -6,6 +6,7 @@ session_start();
 if (!isset($_GET["ptable"]))
 	return false;
 
+require_once("c:/xampp/security/ptable/_connector.php");
 require_once("classes/_db.php");
 require_once("classes/_translations.php");
 require_once("classes/_andres.php");
