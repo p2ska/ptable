@@ -1,7 +1,7 @@
 $.fn.ptable = function(targets) {
-	var prefix = "#ptable_", need_worker = false, updater = false, settings = Array();
+	var prefix = "#ptable_", need_worker = false, updater = false, settings = new Array();
 	
-	if (targets == undefined)
+	if (targets === undefined)
 		targets = ".ptable";
 
 	$(targets).each(function() {
@@ -9,6 +9,7 @@ $.fn.ptable = function(targets) {
 		
 		settings[ptable] = {
 			target: $(this).prop("id"),
+			class: $(this).prop("class"),
 			data: $(this).data(),
 			mode: "init",
 			url: "ptable.php",
@@ -100,14 +101,14 @@ $.fn.ptable = function(targets) {
 		// automaatne otsing (kui lubatud)
 
 		$("#" + settings[ptable].target).on("keyup", prefix + settings[ptable].target + "_search", function(e) {
-			if (e.keyCode < 46 && e.keyCode != 32 && e.keyCode != 8) // kui ei ole reaalsed tähemärgid ja ei ole del, backspace, tühik
+			if (e.keyCode < 46 && e.keyCode !== 32 && e.keyCode !== 8) // kui ei ole reaalsed tähemärgid ja ei ole del, backspace, tühik
 				return false;
 
 			if ($(prefix + settings[ptable].target).data("autosearch")) {
 				settings[ptable].search = $(prefix + settings[ptable].target + "_search").val();
 
 				if (settings[ptable].search.length < settings[ptable].search_from) {
-					if (e.keyCode == 8 || e.keyCode == 46) // kui vajutatakse backspace või del
+					if (e.keyCode === 8 || e.keyCode === 46) // kui vajutatakse backspace või del
 						settings[ptable].search = "";
 					else
 						return false;
@@ -283,3 +284,61 @@ $.fn.ptable = function(targets) {
 		$(prefix + tbl).data("autoupdate", upd);
 	});
 };
+
+/*
+(function($) {
+	$.widget("ih.resizableColumns", {
+		_create: function() {
+			this._initResizable();
+		},
+		_initResizable: function() {
+
+			var colElement, colWidth, originalSize;
+			var table = this.element;
+
+			this.element.find("th").resizable({
+				// use existing DIV rather than creating new nodes
+				handles: {
+					"e": " .resizeHelper"
+				},
+
+				// default min width in case there is no label
+				minWidth: 10,
+
+				// set min-width to label size
+				create: function(event, ui) {
+					var minWidth = $(this).find(".label").width();
+					if (minWidth) {
+						minWidth += $(this).find(".ui-resizable-e").width();
+
+						$(this).resizable("option", "minWidth", minWidth);
+					}
+				},
+
+				// set correct COL element and original size
+				start: function(event, ui) {
+					var colIndex = ui.helper.index() + 1;
+					colElement = table.find("colgroup > col:nth-child(" + colIndex + ")");
+					colWidth = parseInt(colElement.get(0).style.width, 10); // faster than width
+					originalSize = ui.size.width;
+				},
+
+				// set COL width
+				resize: function(event, ui) {
+					var resizeDelta = ui.size.width - originalSize;
+
+					var newColWidth = colWidth + resizeDelta;
+					colElement.width(newColWidth);
+
+					// height must be set in order to prevent IE9 to set wrong height
+					$(this).css("height", "auto");
+				}
+			});
+		}
+
+	});
+
+	// init resizable
+	$(".resizable").resizableColumns();
+})(jQuery);
+*/

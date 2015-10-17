@@ -9,7 +9,7 @@ $this->table		= "request";			// põhitabeli nimi baasis										[<table>]
 $this->fields	= [
 	[ "field"	=> "id",		"title" => $l->txt_request, "class" => "ohoo" ],
 	[ "field"	=> "requester",	"title" => $l->txt_requester, "align" => "right", "searchable" => true ],
-	[ "field"	=> "subject",	"title" => $l->txt_subject, "align" => "left", "field_search" => false, "extend" => "break_long", "searchable" => true, "search_left" => false, "search_right" => true ],
+	[ "field"	=> "subject",	"title" => $l->txt_subject, "align" => "left", "field_search" => false, "extend" => "break_long", "searchable" => true, "search_left" => false, "search_right" => false ],
 	[ "field"	=> "regdate",	"title" => $l->txt_regdate, "align" => "center", "sortable" => false, "extend" => "convert_date", "nowrap" => true ]
 	//[ "field"	=> "hybrid",	"title" => $l->txt_joined, "align" => "center", "field_search" => false, "joined" => true ]
 ];

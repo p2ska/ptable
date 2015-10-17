@@ -8,7 +8,7 @@ define("P_DOTS",	"/\.+/");
 
 define("P_ALL",		"*");
 define("P_ANY",		"%");
-define("P_QMARK",	"?");
+define("P_Q",		"?");
 define("P_LN",		"\n");
 define("P_SL",		"/");
 define("P_DOT",		".");
@@ -27,9 +27,9 @@ class PTABLE {
 	// kõik parameetrid (nb! need default'id kirjutatakse üle tabeli kirjeldusfaili ja ka ptable.js poolt tulevate väärtustega üle)
 
 	var
-	$db, $l, $mode, $target, $template, $url, $data, $translations, $external_data, $external_pos,
+	$db, $l, $mode, $target, $template, $url, $class, $data, $translations, $external_data, $external_pos,
 	$database, $host, $username, $password, $charset, $collation, $query, $query_count, $values, $nav, $navigation,
-	$title, $style, $table, $fields, $joins, $where, $order, $way, $search, $pages, $records, $refresh,
+	$title, $style, $table, $fields, $joins, $where, $order, $search, $pages, $records, $refresh,
 	$autosearch =	false,		// automaatne otsing
 	$fullscreen	=	false,		// kas täisekraanivaade on lubatud
 	$header_sep	= 	false,		// tabeli ülemine eraldusäär
@@ -48,6 +48,7 @@ class PTABLE {
 	$page = 		1,			// mitmendat lehekülge kuvatakse
 	$page_size = 	10,			// mitu kirjet ühel lehel kuvatakse
 	$order_icon = 	"chevron",	// milliseid ikoone kasutatakse sorteerimisjärjekorra kuvamiseks ()
+	$way = 			"asc",		// järjestamise suund
 	$nav_prev = 	"{{angle-double-left}}",	// 'eelmine'-nupp
 	$nav_next = 	"{{angle-double-right}}",	// 'järgmine'-nupp
 	$autoupdates = 	[ 5 => "5 sek", 10 => "10 sek", 30 => "30 sek", 60 => "1 min", 300 => "5 min", 600 => "10 min" ],	// "automaatsed uuendused"-valikukasti väärtused
@@ -89,7 +90,16 @@ class PTABLE {
 		if ($this->mode == "init")
 			$this->autoupdate = $this->refresh;
 
-		// kui tabel kirjelduses on näidatud uus ühendus
+		// kontrolli, kas sorteerimiseks vajalik on paigas
+
+		if (!$this->order) {
+			// kui sorteerimine pole paigas, siis pane selleks esimene deklareeritud väli
+
+			if (isset($this->fields[0]["field"]))
+				$this->order = $this->fields[0]["field"];
+		}
+
+		// kui tabeli kirjelduses on märgitud uus ühendus
 
 		if ($this->host && $this->database && $this->username && $this->password) {
 			$this->db = @new P_DATABASE($this->host, $this->database, $this->username, $this->password, $this->charset, $this->collation);
@@ -168,25 +178,21 @@ class PTABLE {
 		// otsingutingumused
 
 		if ($this->search) {
-			foreach ($this->fields as $col) {
-				if (!isset($col["field"]) || !$col["field"])
-					continue;
-
+			foreach ($this->fields as $col) { // TODO: by default otsitaks kõigist veergudest, tee nimekiri otsiväljadest
 				if (isset($col["searchable"]) && $col["searchable"]) {
-					$left = $right = false;
-					$find = P_EXACT;
+					$left = $right = P_ANY;
+					$find = P_LIKE;
 
-					if (isset($col["search_left"]) && $col["search_left"]) {
-						$left = P_ANY;
-						$find = P_LIKE;
-					}
+					if (isset($col["search_left"]) && !$col["search_left"])
+						$left = false;
 
-					if (isset($col["search_right"]) && $col["search_right"]) {
-						$right = P_ANY;
-						$find = P_LIKE;
-					}
+					if (isset($col["search_right"]) && !$col["search_right"])
+						$right = false;
 
-					$search[] = $col["field"]. $find. P_QMARK;
+					if (!$left && !$right)
+						$find = P_EXACT;
+
+					$search[] = $col["field"]. $find. P_Q;
 					$this->values[] = $left. trim($this->search). $right;
 				}
 			}
@@ -239,35 +245,69 @@ class PTABLE {
 	function prepare_external() {
 		// otsingutingumused
 
-		/*if ($this->search) {
+		if ($this->search) {
+			$search_field = array();
+
+			// millistest väljadest otsida
+
 			foreach ($this->fields as $col) {
-				if (!isset($col["field"]) || !$col["field"])
+				if (isset($col["searchable"]) && !$col["searchable"]) // kui ei soovita selle välja puhul otsida
 					continue;
 
-				if (isset($col["searchable"]) && $col["searchable"]) {
-					$left = $right = false;
-					$find = P_EXACT;
+				$left = $right = true; // by default tehakse täisteksti otsing
 
-					if (isset($col["search_left"]) && $col["search_left"]) {
-						$left = P_ANY;
-						$find = P_LIKE;
+				if (isset($col["search_left"]) && !$col["search_left"]) // kui ei soovita otsida vasakult
+					$left = false;
+
+				if (isset($col["search_right"]) && !$col["search_right"]) // kui ei soovita otsida paremalt
+					$right = false;
+
+				// lisa väli otsitavate hulka
+
+				$search_field[] = array("field" => $col["field"], "left" => $left, "right" => $right);
+			}
+
+			// kui on välju mille järgi otsida
+
+			if (count($search_field)) {
+				$records = count($this->external_data);
+
+				for ($a = 0; $a < $records; $a++) {
+					$found = false;
+					$record = $this->external_data[$a];
+					// kas otsitavas väljas sisaldub otsisõna?
+
+					foreach ($search_field as $field) {
+						if (!isset($record->{ $field["field"] }) && !$record->{ $field["field"] })
+							continue;
+
+						$field_value = $record->{ $field["field"] };
+
+						if (!$field["left"] && !$field["right"] && $field_value == $this->search) { // täpne otsing
+							$found = true;
+							break; // kui juba ühest väljast leiti otsitav, siis pole mõtet edasi kontrollida
+						}
+						/* TODO: vasakule/paremale otsingud
+						elseif ($field["left"] && !$field["right"]) {
+						}
+						elseif (!$field["left"] && $field["right"]) {
+						}
+						*/
+						elseif (substr_count($field_value, $this->search)) { // täisotsing
+							$found = true;
+							break;
+						}
 					}
 
-					if (isset($col["search_right"]) && $col["search_right"]) {
-						$right = P_ANY;
-						$find = P_LIKE;
-					}
+					// kui ei leitud antud rea puhul otsitavat, siis viska tulemustest välja
 
-					$search[] = $col["field"]. $find. P_QMARK;
-					$this->values[] = $left. trim($this->search). $right;
+					if (!$found)
+						unset($this->external_data[$a]);
 				}
 			}
 
-			$search = implode(P_OR, $search);
-
-			if (!$this->where)
-				$search = P_WHERE. $search;
-		}*/
+			reset($this->external_data);
+		}
 
 		// mitu kirjet kokku on? arvuta lehekülgede arv
 
@@ -275,41 +315,33 @@ class PTABLE {
 
 		if ($this->page_size == P_ALL)
 			$this->pages = 1;
-		else {
+		else { // kui on rohkem kui üks lehekülg (potensiaalselt), siis lõika massiivist õige tükk
 			$this->pages = intval(($this->records - 1) / intval($this->page_size)) + 1;
 			$this->external_data = array_slice($this->external_data, ($this->page - 1) * $this->page_size, $this->page_size);
 		}
 
-		if ($this->records) {
-			// massiivi sorteerimine
+		// kui midagi alles jäi, siis sorteeri kuidas vaja
 
-			//asort($this->external_data);
-			//usort($this->external_data, "");
-			$this->external_data = $this->ext_sort();
-		}
+		if ($this->records)
+			usort($this->external_data, array($this, "sort_em"));
 	}
 
-	// sorteerimine
+	// massiivi sorteerimine vastavalt väljale ja suunale
 
-	function ext_sort() {
-		$result = array();
+	function sort_em($a, $b) {
+		if (!isset($a->{ $this->order }) || !isset($b->{ $this->order }))
+			return 0;
 
-		if (!$this->order)
-			$this->order = "id";
+		$a = $a->{ $this->order };
+		$b = $b->{ $this->order };
 
-		if (!$this->way)
-			$this->way = "asc";
+		if ($a == $b)
+			return 0;
 
-		for ($a = 0; $a < $this->records; $a++)
-		for ($b = 0; $b < $this->records; $b++) {
-			$obj1 = $this->external_data[$a];
-			$obj2 = $this->external_data[$b];
-
-			if ($obj1->{ $this->order } > $obj2->{ $this->order })
-				$result[$a] = $obj1;
-		}
-
-		return $result;
+		if (!$this->way || $this->way == "asc")
+			return ($a < $b) ? -1 : 1;
+		else
+			return ($b < $a) ? -1 : 1;
 	}
 
 	// kuva tabel
@@ -352,7 +384,13 @@ class PTABLE {
 			$this->content .= "<div id=\"". P_PREFIX. $this->target. "_container\">";
 		}
 
-		$this->content .= "<table id=\"". P_PREFIX. $this->target. "\" ";
+		$this->content .= "<table id=\"". P_PREFIX. $this->target. "\" class=\"resizable\"";
+
+		// kui on ilma ülemise ääreta tabel, siis muuda tabeli hover'i käitumist (äär kuvatakse hover'i puhul ümber tabeli sisuosa)
+
+		//if (substr_count($this->class, "no_border"))
+			//$this->content .= "class=\"table_hover\" ";
+
 		$this->content .= "data-records=". ($this->records ? $this->records : "0"). " ";
 		$this->content .= "data-page=". $this->page. " ";
 		$this->content .= "data-pages=". $this->pages. " ";
@@ -362,7 +400,7 @@ class PTABLE {
 		$this->content .= "data-navigation=\"". ($this->navigation ? "true" : "false"). "\" ";
 		$this->content .= "data-autoupdate=\"". ($this->autoupdate ? $this->autoupdate : "0"). "\" ";
 		$this->content .= "data-autosearch=\"". ($this->autosearch ? "true" : "false"). "\">";
-		$this->content .= "<tbody>";
+		$this->content .= "<thead>";
 
 		// kui on ülemine navigeerimine lubatud
 
@@ -373,6 +411,8 @@ class PTABLE {
 
 		if ($this->fields_descr)
 			$this->fields_descr();
+
+		$this->content .= "</thead><tbody>";
 
 		// tulemused
 
@@ -477,13 +517,27 @@ class PTABLE {
 	}
 
 	function output($field, $data) {
+		$link = $title = $class = $style = $colspan = P_VOID;
+		$styles = array();
+
 		if (isset($this->triggers[$field["field"]])) {
-			$link = $title = P_VOID;
 			$class = "trigger";
 			$trigger = $this->triggers[$field["field"]];
 
+			if (isset($field["colspan"]) && $field["colspan"])
+				$colspan = " colspan=". $field["colspan"];
+
 			if (isset($field["class"]) && $field["class"])
 				$class .= " ". $field["class"];
+
+			if (isset($field["align"]) && $field["align"])
+				$styles[] = "text-align: ". $field["align"];
+
+			if (isset($field["nowrap"]) && $field["nowrap"])
+				$styles[] = "white-space: ". ($field["nowrap"] ? "nowrap" : "none");
+
+			if (count($styles))
+				$style = " style=\"". implode("; ", $styles). "\"";
 
 			if (isset($trigger["title"]))
 				$title = $this->replace_markup($trigger["title"], $data);
@@ -502,7 +556,7 @@ class PTABLE {
 
 			$link = str_replace("\"", "", $link);
 
-			$this->content .= " class=\"". $class. "\"";			
+			$this->content .= $colspan. " class=\"". $class. "\"". $style;
 
 			// 'data' overrideb lingi
 
@@ -538,9 +592,6 @@ class PTABLE {
 				$this->content .= "<tr>";
 			else {
 				if (isset($data->{ $field["field"] })) {
-					$colspan = $class = $style = P_VOID;
-					$styles = array();
-
 					$this->content .= "<td";
 
 					if (isset($field["colspan"]) && $field["colspan"])
@@ -604,9 +655,12 @@ class PTABLE {
 				if (!isset($field["title"]))
 					$field["title"] = $field["field"];
 
-				$this->content .= "<th class=\"order". $active. "\" ";
-				$this->content .= "data-field=\"". $field["field"]. "\">". $field["title"];
-				$this->content .= "<i class=\"sort_icon". $active. " fa fa-". $this->order_icon. "-". ($this->order == $field["field"] ? $order : "down"). "\"></i>";
+				$this->content .= "<th class=\"order". $active. " ui-resizable\" ";
+				$this->content .= "data-field=\"". $field["field"]. "\">";
+
+				$this->content .= "<span class=\"label resizeHelper ui-resizable-handle ui-resizable-e\">";
+				$this->content .= $field["title"]. "<i class=\"sort_icon". $active. " fa fa-". $this->order_icon. "-". ($this->order == $field["field"] ? $order : "down"). "\"></i>";
+				$this->content .= "</span>";
 
 				if (isset($field["field_search"]) && $field["field_search"]) {
 					$this->content .= "<span class=\"field_search\">";

@@ -8,9 +8,10 @@ if (!isset($_GET["ptable"]))
 
 require_once("classes/_andres.php");
 
+/*
 $example_data = array(
 	"32ddwe;andres;midagi;1",
-	"c2dewd;peeter;eeeh;2",
+	"c2dewd;peeter on huvitav tegelane;eeeh;2",
 	"jkh43c;kalev;ohoo;3",
 	"yr3fvv;zyrinx;kool;4");
 
@@ -26,8 +27,9 @@ foreach ($example_data as $ex) {
 
 	$data[] = $el;
 }
+*/
 
-$pt = new ANDRESE_PTABLE($_GET["ptable"], $data);
+$pt = new ANDRESE_PTABLE($_GET["ptable"]);
 
 // we are done here
 

@@ -28,6 +28,23 @@ hr {
 	color: #55aaff;
 }
 
+.no_border {
+	border: 1px solid #fff !important;
+}
+
+/*
+.resizeHelper, .ui-resizable-e {
+	cursor: e-resize;
+	width: 10px;
+	height: 100%;
+	top: 0;
+	right: -8px;
+	position: absolute;
+	z-index: 100;
+	font-size: 100%;
+}
+*/
+
 .ptable {
 	border: 1px solid #e7eaec;
 	border-bottom: 0px;
@@ -40,7 +57,7 @@ hr {
 	user-select: none;
 }
 
-.ptable:hover {
+.ptable:not(.no_border):hover {
 	opacity: 1;
 	box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
 	border: 1px solid rgba(0, 0, 0, 0.2);
@@ -76,32 +93,45 @@ hr {
 	-webkit-transition: opacity .25s ease-in-out;
 }
 
+.ptable .table_hover {
+	border-left: 1px solid #e7eaec;
+	border-right: 1px solid #e7eaec;
+	border-top: 1px solid #fff;
+	border-bottom: 1px solid #fff;
+}
+
+.ptable .table_hover:hover {
+	opacity: 1;
+	box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+	border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
 .ptable th {
 	padding: 10px;
 	white-space: nowrap;
 	background-color: #fff;
 	border: 1px solid #e7eaec;
-	border-left: 1px solid #f9f9f9;
+	border-left: 1px solid #fff;
 	border-right: 1px solid #f9f9f9;
 	border-bottom: 1px solid #fff;
-	/*
-	border-top: 1px solid #e7eaec;
-	border-bottom: 1px solid #fff;
-	*/
 	-webkit-transition: all 0.30s ease-in-out;
 	-moz-transition: all 0.30s ease-in-out;
 	-ms-transition: all 0.30s ease-in-out;
 	-o-transition: all 0.30s ease-in-out;
 	outline: none;
+	position: relative;
+	overflow: hidden;
 }
 
 .ptable tr {
 	line-height: 25px;
 }
 
+/*
 .ptable tr:first-child > td:has(.nav_row) {
 	border-bottom: 1px solid #f00 !important;
 }
+*/
 
 .ptable tr:nth-child(odd) {
 	background-color: #f9f9f9;
@@ -113,16 +143,16 @@ hr {
 
 .ptable tr:nth-child(even) > td {
 	border-top: 1px solid #e7eaec;
-	border-bottom: 1px solid #e7eaec;
-}
-
-.ptable tr:nth-child(odd) > td {
-	border-top: 1px solid #fff;
 	border-bottom: 1px solid #fff;
 }
 
+.ptable tr:nth-child(odd) > td {
+	border-top: 1px solid #e7eaec;
+	border-bottom: 1px solid #f9f9f9;
+}
+
 .ptable tr:last-child > td {
-	/*border: 0px;*/
+	border-bottom: 1px solid #e7eaec;
 }
 
 .ptable tr:hover:not(.no_hover) > td {
@@ -139,6 +169,7 @@ hr {
 .ptable td {
 	vertical-align: top;
 	padding: 5px;
+	overflow: hidden;
 }
 
 .ptable .nav_row {

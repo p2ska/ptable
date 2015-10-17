@@ -6,10 +6,12 @@ $this->triggers		= [
 ];
 
 $this->fields		= [
-	[ "field"	=> "id",		"title" => "ID", "searchable" => true ],
-	[ "field"	=> "nimi",		"title" => "Nimi", "searchable" => true ],
-	[ "field"	=> "lisatud",	"title" => "Lisatud", "searchable" => true ],
-	[ "field"	=> "olek",		"title" => "Olek" ]
+	[ "field"	=> "id",		"title" => "ID", "searchable" => false, "sortable" => false ],
+	[ "field"	=> "nimi",		"title" => "Nimi", "align" => "right", "nowrap" => true, "searchable" => true, "search_left" => true, "search_right" => true ],
+	[ "field"	=> "lisatud",	"title" => "Lisatud", "searchable" => false ],
+	[ "field"	=> "olek",		"title" => "Olek", "searchable" => false ]
 ];
+
+$this->autosearch = true;
 
 ?>
