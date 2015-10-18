@@ -32,19 +32,6 @@ hr {
 	border: 1px solid #fff !important;
 }
 
-/*
-.resizeHelper, .ui-resizable-e {
-	cursor: e-resize;
-	width: 10px;
-	height: 100%;
-	top: 0;
-	right: -8px;
-	position: absolute;
-	z-index: 100;
-	font-size: 100%;
-}
-*/
-
 .ptable {
 	border: 1px solid #e7eaec;
 	border-bottom: 0px;
@@ -88,6 +75,7 @@ hr {
 	width: 100%;
 	padding: 0px;
 	border-spacing: 0px;
+	/*border-collapse: collapse;*/
 	transition: opacity .25s ease-in-out;
 	-moz-transition: opacity .25s ease-in-out;
 	-webkit-transition: opacity .25s ease-in-out;
@@ -106,18 +94,27 @@ hr {
 	border: 1px solid rgba(0, 0, 0, 0.2);
 }
 
-.ptable th {
+.ptable .resize {
+	width: 1px !important;
+	max-width: 1px !important;
+	border: 0px;
+	padding: 0px;
+	margin: 0px;
+	cursor: col-resize;
+}
+
+.ptable th:not(.resize) {
 	padding: 10px;
-	white-space: nowrap;
+	/*white-space: nowrap;*/
 	background-color: #fff;
 	border: 1px solid #e7eaec;
 	border-left: 1px solid #fff;
 	border-right: 1px solid #f9f9f9;
 	border-bottom: 1px solid #fff;
-	-webkit-transition: all 0.30s ease-in-out;
+	/*-webkit-transition: all 0.30s ease-in-out;
 	-moz-transition: all 0.30s ease-in-out;
 	-ms-transition: all 0.30s ease-in-out;
-	-o-transition: all 0.30s ease-in-out;
+	-o-transition: all 0.30s ease-in-out;*/
 	outline: none;
 	position: relative;
 	overflow: hidden;
@@ -158,10 +155,12 @@ hr {
 .ptable tr:hover:not(.no_hover) > td {
 	border-top: 1px solid #999;
 	border-bottom: 1px solid #999;
+	/*
 	-webkit-transition: all 0.30s ease-in-out;
 	-moz-transition: all 0.30s ease-in-out;
 	-ms-transition: all 0.30s ease-in-out;
 	-o-transition: all 0.30s ease-in-out;
+	*/
 	outline: none;
 	box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
 }
@@ -170,6 +169,7 @@ hr {
 	vertical-align: top;
 	padding: 5px;
 	overflow: hidden;
+	/*text-overflow: ellipsis;*/
 }
 
 .ptable .nav_row {

@@ -27,9 +27,9 @@ class PTABLE {
 	// kõik parameetrid (nb! need default'id kirjutatakse üle tabeli kirjeldusfaili ja ka ptable.js poolt tulevate väärtustega üle)
 
 	var
-	$db, $l, $mode, $target, $template, $url, $class, $data, $translations, $external_data, $external_pos,
-	$database, $host, $username, $password, $charset, $collation, $query, $query_count, $values, $nav, $navigation,
-	$title, $style, $table, $fields, $joins, $where, $order, $search, $pages, $records, $refresh,
+	$db, $l, $mode, $target, $template, $url, $class, $data, $translations, $external_data, $external_pos, $order_by, $order_way,
+	$database, $host, $username, $password, $charset, $collation, $query, $query_count, $values, $nav, $navigation, $pagesize,
+	$title, $style, $table, $fields, $joins, $where, $order, $search, $pages, $records, $refresh, $col_width, $field_count,
 	$autosearch =	false,		// automaatne otsing
 	$fullscreen	=	false,		// kas täisekraanivaade on lubatud
 	$header_sep	= 	false,		// tabeli ülemine eraldusäär
@@ -80,10 +80,32 @@ class PTABLE {
 		if (!$this->init())
 			return false;
 
+		// mitu välja defineeritud on?
+
+		$this->field_count = count($this->fields);
+
 		// kirjuta default'id JS omadega üle (puhasta input)
 
 		foreach ($init as $key => $val)
 			$this->{ $key } = $this->safe($val);
+
+		// kas on veergude laiused olemas
+
+		if ($this->col_width)
+			$this->col_width = explode("-", $this->col_width);
+
+		// kui on kasutaja poolt määratud mingi muu ridade arv lehel
+
+		/*
+		if ($this->pagesize)
+			$this->page_size = $this->pagesize;
+
+		if ($this->order_by)
+			$this->order = $this->order_by;
+
+		if ($this->order_way)
+			$this->way = $this->order_way;
+		*/
 
 		// esmasel initsialiseerimisel vaadatakse, kas autoupdate sisse lülitada (tabelikirjelduse poolt nõutud)
 
@@ -384,12 +406,12 @@ class PTABLE {
 			$this->content .= "<div id=\"". P_PREFIX. $this->target. "_container\">";
 		}
 
-		$this->content .= "<table id=\"". P_PREFIX. $this->target. "\" class=\"resizable\"";
+		$this->content .= "<table id=\"". P_PREFIX. $this->target. "\" ";
 
 		// kui on ilma ülemise ääreta tabel, siis muuda tabeli hover'i käitumist (äär kuvatakse hover'i puhul ümber tabeli sisuosa)
 
-		//if (substr_count($this->class, "no_border"))
-			//$this->content .= "class=\"table_hover\" ";
+		if (substr_count($this->class, "no_border"))
+			$this->content .= "class=\"table_hover\" ";
 
 		$this->content .= "data-records=". ($this->records ? $this->records : "0"). " ";
 		$this->content .= "data-page=". $this->page. " ";
@@ -460,15 +482,19 @@ class PTABLE {
 
 			// kas kogu real on trigger küljes?
 
+			$count = 0;
 			$row["field"] = "ROW";
 
 			$this->output($row, $obj);
 
 			// nüüd vaata, kas väljale on defineeritud trigger või mitte, ja väljasta väärtus
 
-			foreach ($this->fields as $field)
+			foreach ($this->fields as $field) {
 				if (!(isset($field["hidden"]) && $field["hidden"]))
-					$this->output($field, $obj);
+					$this->output($field, $obj, $count);
+
+				$count++;
+			}
 
 			$this->content .= "</tr>";
 		}
@@ -489,15 +515,19 @@ class PTABLE {
 
 			// kas kogu real on trigger küljes?
 
+			$count = 0;
 			$row["field"] = "ROW";
 
 			$this->output($row, $obj);
 
 			// nüüd vaata, kas väljale on defineeritud trigger või mitte, ja väljasta väärtus
 
-			foreach ($this->fields as $field)
+			foreach ($this->fields as $field) {
 				if (!(isset($field["hidden"]) && $field["hidden"]))
-					$this->output($field, $obj);
+					$this->output($field, $obj, $count);
+
+				$count++;
+			}
 
 			$this->content .= "</tr>";
 		}
@@ -516,7 +546,7 @@ class PTABLE {
 		return $value;
 	}
 
-	function output($field, $data) {
+	function output($field, $data, $pos = 0) {
 		$link = $title = $class = $style = $colspan = P_VOID;
 		$styles = array();
 
@@ -552,7 +582,7 @@ class PTABLE {
 			if ($field["field"] == "ROW")
 				$this->content .= "<tr";
 			else
-				$this->content .= "<td";
+				$this->content .= "<td ";
 
 			$link = str_replace("\"", "", $link);
 
@@ -584,15 +614,19 @@ class PTABLE {
 
 			if ($field["field"] == "ROW")
 				$this->content .= ">";
-			else
+			else {
 				$this->content .= ">". $data->{ $field["field"] }. "</td>";
+
+				if ($pos < ($this->field_count - 1))
+					$this->content .= "<td class=\"resize\"></td>";
+			}
 		}
 		else {
 			if ($field["field"] == "ROW")
 				$this->content .= "<tr>";
 			else {
 				if (isset($data->{ $field["field"] })) {
-					$this->content .= "<td";
+					$this->content .= "<td ";
 
 					if (isset($field["colspan"]) && $field["colspan"])
 						$colspan = " colspan=". $field["colspan"];
@@ -621,6 +655,9 @@ class PTABLE {
 					}
 
 					$this->content .= $value. "</td>";
+
+					if ($pos < ($this->field_count - 1))
+						$this->content .= "<td class=\"resize\"></td>";
 				}
 				else {
 					$this->content .= "<td></td>";
@@ -632,45 +669,60 @@ class PTABLE {
 	// tabeli väljade kirjeldused
 
 	function fields_descr() {
+		$fields = count($this->fields);
+		$current_field = 0;
+
 		$this->content .= "<tr>";
 
 		foreach ($this->fields as $field) {
+			$current_field++;
+			$no_order = false;
+
 			if (!isset($field["field"]) || !$field["field"] || (isset($field["hidden"]) && $field["hidden"]))
 				continue;
 
-			if (isset($field["sortable"]) && !$field["sortable"]) {
-				$this->content .= "<th class=\"no_order". ($this->order == $field["field"] ? " active" : ""). "\">". $field["title"]. "</th>";
-			}
-			else {
-				if ($this->order == $field["field"])
-					$active = " active";
-				else
-					$active = P_VOID;
+			if ($this->order == $field["field"])
+				$active = " active";
+			else
+				$active = P_VOID;
 
-				if ($this->way == "asc")
-					$order = "up";
-				else
-					$order = "down";
+			if ($this->way == "asc")
+				$way = "up";
+			else
+				$way = "down";
 
-				if (!isset($field["title"]))
-					$field["title"] = $field["field"];
+			if (!isset($field["title"]))
+				$field["title"] = $field["field"];
 
-				$this->content .= "<th class=\"order". $active. " ui-resizable\" ";
-				$this->content .= "data-field=\"". $field["field"]. "\">";
+			if (isset($field["sortable"]) && !$field["sortable"])
+				$no_order = "no_";
 
-				$this->content .= "<span class=\"label resizeHelper ui-resizable-handle ui-resizable-e\">";
-				$this->content .= $field["title"]. "<i class=\"sort_icon". $active. " fa fa-". $this->order_icon. "-". ($this->order == $field["field"] ? $order : "down"). "\"></i>";
-				$this->content .= "</span>";
+			$this->content .= "<th class=\"". $no_order. "order". $active. " \" ";
 
-				if (isset($field["field_search"]) && $field["field_search"]) {
+			// kas veeru laius on paika pandud juba varem?
+
+			if (isset($this->col_width[$current_field - 1]))
+				$this->content .= " style=\"width: ". $this->col_width[$current_field - 1]. "px\"";
+
+			$this->content .= "data-field=\"". $field["field"]. "\">";
+			$this->content .= $field["title"];
+
+			if (!$no_order)
+				$this->content .= "<i class=\"sort_icon". $active. " fa fa-". $this->order_icon. "-". ($this->order == $field["field"] ? $way : "down"). "\"></i>";
+
+			$this->content .= "</th>";
+
+			/*
+			if (isset($field["field_search"]) && $field["field_search"]) {
 					$this->content .= "<span class=\"field_search\">";
 					$this->content .= "<input type=\"text\" id=\"". P_PREFIX. $this->target. "_". $field["field"]. "_searchbox\" class=\"field_search_input\"></span>";
 					$this->content .= "<span id=\"". P_PREFIX. $this->target. "_". $field["field"]. "_search\" class=\"search_btn field_search_btn small\" title=\"". $this->l->txt_field_search. "\">";
 					$this->content .= "<i class=\"fa fa-search\"></i></span>";
-				}
-
-				$this->content .= "</th>";
 			}
+			*/
+
+			if ($current_field < $fields)
+				$this->content .= "<th class=\"resize no_order\"><img src=\"/ptable/img/blank.gif\" width=1 height=1 border=0></th>";
 		}
 
 		$this->content .= "</tr>";
