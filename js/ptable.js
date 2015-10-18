@@ -17,9 +17,6 @@ $.fn.ptable = function(targets) {
 			data: $(this).data(),
 			mode: "init",
 			url: "ptable.php",
-			page: 1,
-			//col_width: "",
-			//search: "",
 			search_from: 3
 		}
 
