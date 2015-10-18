@@ -29,7 +29,7 @@ class PTABLE {
 	var
 	$db, $l, $mode, $target, $template, $url, $class, $data, $translations, $external_data, $external_pos, $order_by, $order_way,
 	$database, $host, $username, $password, $charset, $collation, $query, $query_count, $values, $nav, $navigation, $pagesize,
-	$title, $style, $table, $fields, $joins, $where, $order, $search, $pages, $records, $refresh, $col_width, $field_count,
+	$title, $style, $table, $fields, $joins, $where, $order, $search, $pages, $records, $refresh, $col_width, $field_count, $autoupdate,
 	$autosearch =	false,		// automaatne otsing
 	$fullscreen	=	false,		// kas täisekraanivaade on lubatud
 	$header_sep	= 	false,		// tabeli ülemine eraldusäär
@@ -44,7 +44,7 @@ class PTABLE {
 	$nav_header = 	false,		// kas kuvatakse ülemist navigatsiooniriba
 	$nav_footer = 	true,		// kas kuvatakse alumist navigatsiooniriba
 	$nav_length = 	5,			// navigeerimisnuppude arv
-	$autoupdate = 	0,			// kas tabelit uuendatakse automaatselt (aeg sekundites)
+	//$autoupdate = 	0,			// kas tabelit uuendatakse automaatselt (aeg sekundites)
 	$page = 		1,			// mitmendat lehekülge kuvatakse
 	$page_size = 	10,			// mitu kirjet ühel lehel kuvatakse
 	$order_icon = 	"chevron",	// milliseid ikoone kasutatakse sorteerimisjärjekorra kuvamiseks ()
@@ -94,22 +94,9 @@ class PTABLE {
 		if ($this->col_width)
 			$this->col_width = explode("-", $this->col_width);
 
-		// kui on kasutaja poolt määratud mingi muu ridade arv lehel
-
-		/*
-		if ($this->pagesize)
-			$this->page_size = $this->pagesize;
-
-		if ($this->order_by)
-			$this->order = $this->order_by;
-
-		if ($this->order_way)
-			$this->way = $this->order_way;
-		*/
-
 		// esmasel initsialiseerimisel vaadatakse, kas autoupdate sisse lülitada (tabelikirjelduse poolt nõutud)
 
-		if ($this->mode == "init")
+		if ($this->mode == "init" && !isset($this->autoupdate))
 			$this->autoupdate = $this->refresh;
 
 		// kontrolli, kas sorteerimiseks vajalik on paigas

@@ -37,7 +37,7 @@ $this->way			= "desc";			// mis suunas järjestatakse tulemused
 $this->order_icon	= "chevron";		// mis tüüpi ikoone kasutatakse otsingutulemuste järjestamiseks ["chevron", "sort", "angle-double"] :"chevron"
 $this->page_sizes	= [ 10 => "10 ". $l->txt_records, 25 => "25 ". $l->txt_records, 50 => "50 ". $l->txt_records, "*" => $l->txt_all_records ]; // valitavad lehepikkused
 $this->page_size	= 10;				// esmane lehepikkus (TODO: milline on varasemalt valitud)
-$this->refresh		= 0;				// mitme sekundi pärast uuendatakse antud tabelit automaatselt						[false, 1..600] :false
+$this->refresh		= 30;				// mitme sekundi pärast uuendatakse antud tabelit automaatselt						[false, 1..600] :false
 $this->nav_length	= 5;				// mitu navigatsiooninuppu on kuvatud esimese ja viimase lehe nuppude vahel			[5] :default (TODO: teised väärtused panna korralikult toimima)
 $this->nav_header	= false;			// kas header'i navigatsiooniriba on lubatud										[true, false] :false
 $this->nav_footer	= true;				// kas header'i navigatsiooniriba on lubatud										[true, false] :true

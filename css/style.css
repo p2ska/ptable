@@ -105,7 +105,7 @@ hr {
 
 .ptable th:not(.resize) {
 	padding: 10px;
-	/*white-space: nowrap;*/
+	white-space: nowrap;
 	background-color: #fff;
 	border: 1px solid #e7eaec;
 	border-left: 1px solid #fff;
@@ -123,12 +123,6 @@ hr {
 .ptable tr {
 	line-height: 25px;
 }
-
-/*
-.ptable tr:first-child > td:has(.nav_row) {
-	border-bottom: 1px solid #f00 !important;
-}
-*/
 
 .ptable tr:nth-child(odd) {
 	background-color: #f9f9f9;
@@ -368,6 +362,7 @@ hr {
 
 .ptable .border_top {
 	border-top: 1px solid #e7eaec !important;
+	border-bottom: 1px solid #f9f9f9 !important;
 }
 
 .ptable .border_btm {
