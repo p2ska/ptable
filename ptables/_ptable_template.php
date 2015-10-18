@@ -92,11 +92,11 @@ $this->autoupdate	= false;			// mitme sekundi pärast uuendatakse antud tabelit 
 $this->autosearch	= false;			// kas otsingukast käitub automaatsena (alates on kirjeldatud js: search_from = l)	[true, false] :false
 $this->searchable	= true;				// kas otsing ja otsingukast on rakendatud tabelile									[true, false] :true
 $this->prefs		= true;				// kas on lubatud kasutajal muuta tabeli seadeid									[true, false] :true
+$this->store_prefs	= true;				// salvestab tabeli põhiandmed (välja laiused salvestatakse siiski)					[true, false] :true
 $this->sizeable		= true;				// kas on lubatud muuta tabeli kirjete arvu ühel lehel								[true, false] :true
 $this->download		= true;				// TODO: võimalda tabeli sisu allalaadimine .csv, .pdf või excel'ina				[true, false] :true
 $this->smart_select	= true;				// TODO: võimaldab valida märkida tabeli ridasid ja veergusid sõltumatult			[true, false] :true
 $this->fullscreen	= true;				// TODO: ava tabel täisekraanis														[true, false] :true
-$this->fadein		= false;			// TODO: fade'i tabel alles siis sisse, kui on laetud								[true, false] :false
-$this->fadeout		= false;			// TODO: fade'i tabel välja, enne kui trigger viib kuhugi							[true, false] :false
+$this->fadein		= false;			// TODO: fade'i tabel alles siis sisse, kui on laetud								[0..n (ms)] :false
 
 ?>

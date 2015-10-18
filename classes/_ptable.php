@@ -27,31 +27,31 @@ class PTABLE {
 	// kõik parameetrid (nb! need default'id kirjutatakse üle tabeli kirjeldusfaili ja ka ptable.js poolt tulevate väärtustega üle)
 
 	var
-	$db, $l, $mode, $target, $template, $url, $class, $data, $translations, $external_data, $external_pos, $order_by, $order_way,
-	$database, $host, $username, $password, $charset, $collation, $query, $query_count, $values, $nav, $navigation, $pagesize,
-	$title, $style, $table, $fields, $joins, $where, $order, $search, $pages, $records, $refresh, $col_width, $field_count, $autoupdate,
-	$autosearch =	false,		// automaatne otsing
+	$db, $l, $mode, $target, $template, $url, $class, $data, $translations, $autoupdate, $store,
+	$database, $host, $username, $password, $charset, $collation, $query, $query_count, $values,
+	$nav, $navigation, $pagesize, $title, $style, $table, $fields, $joins, $where, $order, $way,
+	$external_data, $external_pos, $search, $pages, $records, $refresh, $col_width, $field_count,
+	$content =		false,		// kogu sisuosa
 	$fullscreen	=	false,		// kas täisekraanivaade on lubatud
+	$header = 		true,		// kas kuvatakse tabeli päist üldse
 	$header_sep	= 	false,		// tabeli ülemine eraldusäär
 	$footer_sep =	false,		// tabeli alumine eraldusäär
-	$content =		false,		// kogu sisuosa
-	$header = 		true,		// kas kuvatakse tabeli päist
-	$download = 	true,		// kas tabeli sisu allalaadimine on lubatud
-	$fields_descr = true,		// kas kuvatakse väljade kirjeldusi tabeli päises
-	$prefs = 		true,		// kas kuvatakse seadistusi
+	$download = 	true,		// tabeli sisu allalaadimise võimaldamine
+	$fields_descr = true,		// väljade kirjeldused tabeli päises
+	$prefs = 		true,		// seadistuste kuvamine
+	$store_prefs =	true,		// kas salvestatakse
 	$searchable = 	true,		// kas kuvatakse otsingukasti
+	$autosearch =	false,		// automaatne otsing
 	$sizeable = 	true,		// kas lastakse kasutajal muuta kirjete arvu ühel lehel
 	$nav_header = 	false,		// kas kuvatakse ülemist navigatsiooniriba
 	$nav_footer = 	true,		// kas kuvatakse alumist navigatsiooniriba
 	$nav_length = 	5,			// navigeerimisnuppude arv
-	//$autoupdate = 	0,			// kas tabelit uuendatakse automaatselt (aeg sekundites)
 	$page = 		1,			// mitmendat lehekülge kuvatakse
 	$page_size = 	10,			// mitu kirjet ühel lehel kuvatakse
-	$order_icon = 	"chevron",	// milliseid ikoone kasutatakse sorteerimisjärjekorra kuvamiseks ()
-	$way = 			"asc",		// järjestamise suund
+	$order_icon = 	"chevron",	// milliseid ikoone kasutatakse sorteerimisjärjekorra kuvamiseks (chevron, sort, angle-double)
 	$nav_prev = 	"{{angle-double-left}}",	// 'eelmine'-nupp
 	$nav_next = 	"{{angle-double-right}}",	// 'järgmine'-nupp
-	$autoupdates = 	[ 5 => "5 sek", 10 => "10 sek", 30 => "30 sek", 60 => "1 min", 300 => "5 min", 600 => "10 min" ],	// "automaatsed uuendused"-valikukasti väärtused
+	$autoupdates = 	[ 5 => "5s", 10 => "10s", 30 => "30s", 60 => "1m", 300 => "5m", 600 => "10m" ],	// "automaatsed uuendused"-valikukasti väärtused
 	$page_sizes = 	[ 10 => "10", 20 => "20", 50 => "50" ]; // "kirjete arv lehel"-valikukasti väärtused
 
 	// initsialiseeri kõik js poolt määratud muutujad
@@ -408,7 +408,8 @@ class PTABLE {
 		$this->content .= "data-way=\"". $this->way. "\" ";
 		$this->content .= "data-navigation=\"". ($this->navigation ? "true" : "false"). "\" ";
 		$this->content .= "data-autoupdate=\"". ($this->autoupdate ? $this->autoupdate : "0"). "\" ";
-		$this->content .= "data-autosearch=\"". ($this->autosearch ? "true" : "false"). "\">";
+		$this->content .= "data-autosearch=\"". ($this->autosearch ? "true" : "false"). "\" ";
+		$this->content .= "data-store=\"". ($this->store_prefs ? "true" : "false"). "\">";
 		$this->content .= "<thead>";
 
 		// kui on ülemine navigeerimine lubatud
@@ -716,8 +717,10 @@ class PTABLE {
 
 		// kui vaja eraldada tabeliosa väljakirjeldustest
 
-		if ($this->header_sep)
+		if ($this->header_sep) {
 			$this->content .= "<tr class=\"no_hover\"><td class=\"border_top\" colspan=100></td></tr>";
+			//$this->content .= "<tr><td colspan=100 style=\"height: 1px\"></td></tr>";
+		}
 	}
 
 	// otsingukast

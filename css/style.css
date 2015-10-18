@@ -107,8 +107,8 @@ hr {
 	padding: 10px;
 	white-space: nowrap;
 	background-color: #fff;
-	border: 1px solid #e7eaec;
-	border-left: 1px solid #fff;
+	border-top: 1px solid #e7eaec;
+	border-left: 1px solid #f9f9f9;
 	border-right: 1px solid #f9f9f9;
 	border-bottom: 1px solid #fff;
 	/*-webkit-transition: all 0.30s ease-in-out;
@@ -124,20 +124,20 @@ hr {
 	line-height: 25px;
 }
 
-.ptable tr:nth-child(odd) {
+.ptable tr:nth-child(even) {
 	background-color: #f9f9f9;
 }
 
-.ptable tr:nth-child(even) {
+.ptable tr:nth-child(off) {
 	background-color: #fff;
 }
 
-.ptable tr:nth-child(even) > td {
+.ptable tr:nth-child(odd) > td {
 	border-top: 1px solid #e7eaec;
 	border-bottom: 1px solid #fff;
 }
 
-.ptable tr:nth-child(odd) > td {
+.ptable tr:nth-child(even) > td {
 	border-top: 1px solid #e7eaec;
 	border-bottom: 1px solid #f9f9f9;
 }
@@ -164,12 +164,6 @@ hr {
 	padding: 5px;
 	overflow: hidden;
 	/*text-overflow: ellipsis;*/
-}
-
-.ptable .nav_row {
-	padding: 10px;
-	border-top: 1px solid #e7eaec !important;
-	background-color: #f9f9f9;
 }
 
 .ptable select, .ptable input[type="text"] {
@@ -344,6 +338,29 @@ hr {
 	border: 1px solid rgba(170, 170, 170, 1);
 }
 
+.ptable .nav_top, .ptable .nav_btm {
+	padding: 10px;
+	border-top: 1px solid #e7eaec !important;
+	border-bottom: 0px;
+	background-color: #f9f9f9;
+}
+
+.ptable .nav_btm {
+	border-bottom: 1px solid #f00;
+}
+
+.ptable .border_top {
+	background-color: #f9f9f9;
+	border-top: 1px solid #e7eaec !important;
+	border-bottom: 1px solid #f9f9f9 !important;
+}
+
+.ptable .border_btm {
+	background-color: #fff;
+	border-top: 1px solid #e7eaec !important;
+	border-bottom: 0px !important;
+}
+
 .ptable .selected {
 	color: #55aaff;
 	border: 1px solid #0099ff;
@@ -358,16 +375,6 @@ hr {
 	width: 16px;
 	height: 2px;
 	background-image: url(/ptable/img/sep.gif);
-}
-
-.ptable .border_top {
-	border-top: 1px solid #e7eaec !important;
-	border-bottom: 1px solid #f9f9f9 !important;
-}
-
-.ptable .border_btm {
-	border-top: 1px solid #e7eaec !important;
-	border-bottom: 0px !important;
 }
 
 .ptable .disabled, .ptable .denied {

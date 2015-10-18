@@ -25,7 +25,7 @@ $.fn.ptable = function(targets) {
 
 		// kas on juba olemas salvestatud seaded selle tabeli jaoks?
 
-		sniff_table(ptable);
+		sniff_prefs(ptable);
 
 		// tabeli kuvamine
 
@@ -36,7 +36,7 @@ $.fn.ptable = function(targets) {
 		$("#" + settings[ptable].target).on("click", ".pref_btn", function() {
 			$("#" + $(this).prop("id") + "box").toggle();
 
-			autoupdate_check();
+			//autoupdate_check();
 		});
 
 		// klaviatuuriga tabeli juhtimine
@@ -133,13 +133,14 @@ $.fn.ptable = function(targets) {
 
 		// et väljaotsingukastil endal klikkimine ei vallandaks sorteerimistriggerit
 
+		/*
 		$("#" + settings[ptable].target).on("click", ".field_search", function(e) {
 			e.stopImmediatePropagation();
 		});
 
 		// väljaotsingu kasti kuvamine
 
-		/*$("#" + settings[ptable].target).on("click", ".field_search_btn", function(e) {
+		$("#" + settings[ptable].target).on("click", ".field_search_btn", function(e) {
 			e.stopImmediatePropagation();
 
 			$("#
@@ -196,7 +197,7 @@ $.fn.ptable = function(targets) {
 
 		// salvesta kõik hetkeseaded
 
-		remember_table(ptable);
+		//store_prefs(ptable);
 		
 		// uuenda tabelit
 
@@ -206,33 +207,35 @@ $.fn.ptable = function(targets) {
 			else
 				$(prefix + settings[ptable].target + "_container").html(content);
 
-			settings[ptable].page = $(prefix + settings[ptable].target).data("page");
-			settings[ptable].page_size = $(prefix + settings[ptable].target).data("page_size");
-			settings[ptable].order = $(prefix + settings[ptable].target).data("order");
-			settings[ptable].way = $(prefix + settings[ptable].target).data("way");
-			settings[ptable].autoupdate = $(prefix + settings[ptable].target).data("autoupdate");
-			settings[ptable].last_update = timestamp;
-			settings[ptable].mode = "update";
+			settings[ptable].page = 		$(prefix + settings[ptable].target).data("page");
+			settings[ptable].page_size =	$(prefix + settings[ptable].target).data("page_size");
+			settings[ptable].order =		$(prefix + settings[ptable].target).data("order");
+			settings[ptable].way =			$(prefix + settings[ptable].target).data("way");
+			settings[ptable].autoupdate =	$(prefix + settings[ptable].target).data("autoupdate");
+			settings[ptable].store = 		$(prefix + settings[ptable].target).data("store");
+			settings[ptable].last_update =	timestamp;
+			settings[ptable].mode = 		"update";
 
 			autoupdate_check();
-			resize_col();
+			resize_columns();
+			store_prefs(ptable);
 		});
 	}
 	
 	/* hangi salvestatud info */
 
-	function sniff_table(ptable) {
+	function sniff_prefs(ptable) {
 		if (store.get(ptable + "_page") === undefined)
 			return false;
 
-		settings[ptable].autoupdate = store.get(ptable + "_autoupdate");
-		settings[ptable].col_width = store.get(ptable + "_col_width");
-		settings[ptable].page = store.get(ptable + "_page");
-		settings[ptable].page_size = store.get(ptable + "_page_size");
-		settings[ptable].order = store.get(ptable + "_order");
-		settings[ptable].way = store.get(ptable + "_way");
-		settings[ptable].search = store.get(ptable + "_search");
-
+		settings[ptable].autoupdate =	store.get(ptable + "_autoupdate");
+		settings[ptable].col_width =	store.get(ptable + "_col_width");
+		settings[ptable].page =			store.get(ptable + "_page");
+		settings[ptable].page_size =	store.get(ptable + "_page_size");
+		settings[ptable].order =		store.get(ptable + "_order");
+		settings[ptable].way =			store.get(ptable + "_way");
+		settings[ptable].search =		store.get(ptable + "_search");
+		/*
 		console.log("autoupdate: " + settings[ptable].autoupdate);
 		console.log("col_width: " + settings[ptable].col_width);
 		console.log("page: " + settings[ptable].page);
@@ -240,18 +243,22 @@ $.fn.ptable = function(targets) {
 		console.log("order: " + settings[ptable].order);
 		console.log("way: " + settings[ptable].way);
 		console.log("search: " + settings[ptable].search);
+		*/
 	}
 
 	/* salvesta tabeli seaded (vajalikud) */
 
-	function remember_table(ptable) {
-		store.set(ptable + "_autoupdate", settings[ptable].autoupdate);
-		store.set(ptable + "_col_width", settings[ptable].col_width);
-		store.set(ptable + "_page", settings[ptable].page);
-		store.set(ptable + "_page_size", settings[ptable].page_size);
-		store.set(ptable + "_order", settings[ptable].order);
-		store.set(ptable + "_way", settings[ptable].way);
-		store.set(ptable + "_search", settings[ptable].search);
+	function store_prefs(ptable) {
+		if (settings[ptable].store === false)
+			return false;
+
+		store.set(ptable + "_autoupdate",	settings[ptable].autoupdate);
+		store.set(ptable + "_col_width",	settings[ptable].col_width);
+		store.set(ptable + "_page",			settings[ptable].page);
+		store.set(ptable + "_page_size",	settings[ptable].page_size);
+		store.set(ptable + "_order",		settings[ptable].order);
+		store.set(ptable + "_way",			settings[ptable].way);
+		store.set(ptable + "_search",		settings[ptable].search);
 	}
 
 	/* hangi veergude laiused */
@@ -268,7 +275,7 @@ $.fn.ptable = function(targets) {
 
 	/* muuda veergude laiust */
 
-	function resize_col(ptable) {
+	function resize_columns(ptable) {
 		var resizing = false;
 		var el = undefined;
 		var el_x, el_width;
@@ -302,7 +309,8 @@ $.fn.ptable = function(targets) {
 		// kas mõnda tabelit on vaja automaatselt uuendada?
 
 		for (pt in settings)
-			if ($(prefix + settings[pt].target).data("autoupdate"))
+			//if ($(prefix + settings[pt].target).data("autoupdate"))
+			if (settings[pt].autoupdate)
 				need_worker = true;
 
 		// kas on vaja seada uuenduse intervall või hoopis panna worker seisma, kuna ükski tabel ei vaja enam seda?
@@ -330,13 +338,16 @@ $.fn.ptable = function(targets) {
 	function worker() {
 		var timestamp = Math.floor(Date.now() / 1000);
 
+		// $.ajax({ url: "update_sql.php" });
+
 		// uuenda vajalikku tabelit, kui vastav aeg on mööda läinud viimasest uuendusest
 
-		for (pt in settings)
+		for (pt in settings) {
 			if ($(prefix + settings[pt].target).data("autoupdate") && timestamp > (settings[pt].last_update + $(prefix + settings[pt].target).data("autoupdate"))) {
-				console.log(pt + ":" + $(prefix + settings[pt].target).data("autoupdate"));
+				//console.log(pt + ":" + $(prefix + settings[pt].target).data("autoupdate"));
 				update(pt);
 			}
+		}
 	}
 
 	// keeleuuendus (ainult demo jaoks)
@@ -354,14 +365,11 @@ $.fn.ptable = function(targets) {
 		var tbl = $(this).data("table");
 
 		if ($(this).hasClass("off")) {
-			var upd = parseInt($(prefix + tbl + "_autoupdate_select").val())
-
 			$(prefix + tbl + "_autoupdate_off").hide();
 			$(prefix + tbl + "_autoupdate_on").show();
 			$(prefix +tbl + "_autoupdate_select").prop("disabled", false);
 
-			settings[tbl].autoupdate = upd;
-			$(prefix + tbl).data("autoupdate", upd);
+			settings[tbl].autoupdate = parseInt($(prefix + tbl + "_autoupdate_select").val());
 		}
 		else {
 			$(prefix + tbl + "_autoupdate_on").hide();
@@ -369,21 +377,19 @@ $.fn.ptable = function(targets) {
 			$(prefix + tbl + "_autoupdate_select").prop("disabled", "disabled");
 
 			settings[tbl].autoupdate = 0;
-			$(prefix + tbl).data("autoupdate", 0);
 		}
 
 		autoupdate_check();
-		store.set(tbl + "_autoupdate", settings[tbl].autoupdate);
+		store_prefs(tbl);
 	});
 
 	// kui muudetakse autoupdate aega
 
 	$(".ptable").on("change", ".autoupdate_select", function() {
 		var tbl = $(this).data("table");
-		var upd = parseInt($(this).val())
 
-		settings[tbl].autoupdate = upd;
-		$(prefix + tbl).data("autoupdate", upd);
-		store.set(tbl + "_autoupdate", upd);
+		settings[tbl].autoupdate = parseInt($(this).val());
+
+		store_prefs(tbl);
 	});
 };

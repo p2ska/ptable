@@ -21,7 +21,8 @@ $this->fields		= [
 ];
 //$this->where		= "";
 //$this->values		= [];
-$this->order		= "perenimi";
+//$this->order		= "perenimi";
+$this->way = "desc";
 $this->page_sizes	= [ 10 => "10", 50 => "50", "*" => $l->txt_all_records ];
 $this->order_icon	= "angle-double";
 $this->sizeable		= true;
