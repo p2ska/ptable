@@ -1,8 +1,7 @@
 ptable
 ------
-A table handling class;
+A project to help handle data and tables, functionally. [jQuery/PHP]
 
-Please consult the code for further info.
+Andres Päsoke
 
-author: Andres Päsoke
-e-mail: andres.pasoke@ttu.ee
+p2ska@live.com

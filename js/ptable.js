@@ -295,7 +295,7 @@ $.fn.ptable = function(targets) {
 				store.set(resizing + "_col_width", col_widths(resizing));
 				$(el).removeClass("resizing");
 				last_resize = Date.now();
-				resizing = false;
+                resizing = false;
 			}
 		});
 	}
@@ -323,7 +323,7 @@ $.fn.ptable = function(targets) {
 	function trigger(data) {
 		var what = "";
 
-		$.each(data, function(i, field) {
+        $.each(data, function(i, field) {
 			what += " [" + field + "]";
 		});
 
