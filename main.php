@@ -26,7 +26,6 @@ $c_lang[$lang] = " current";
 <title>pTable</title>
 </head>
 <body>
-ahh
 <div id="lang">
 	<span class="lang<?= $c_lang["ee"] ?>" data-lang="ee">EE</span>
 	<span class="lang<?= $c_lang["en"] ?>" data-lang="en">EN</span>
