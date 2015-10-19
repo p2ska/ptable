@@ -5,7 +5,6 @@ txt_prev				=> Eelmine :: Previous ;;
 txt_next				=> Järgmine :: Next ;;
 txt_save				=> Salvesta :: Save ;;
 txt_close				=> Sulge :: Close ;;
-txt_cancel				=> Tühista :: Cancel ;;
 txt_found				=> Leitud kirjeid :: Matches found ;;
 txt_notfound			=> Ei leidnud midagi! :: Nothing found! ;;
 txt_search				=> Otsi :: Search ;;
