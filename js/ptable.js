@@ -335,7 +335,7 @@ $.fn.ptable = function(targets) {
 	function worker() {
 		var timestamp = Math.floor(Date.now() / 1000);
 
-		// $.ajax({ url: "update_sql.php" });
+		/*$.ajax({ url: "update_sql.php" });*/
 
 		// uuenda vajalikku tabelit, kui vastav aeg on mööda läinud viimasest uuendusest
 

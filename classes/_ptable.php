@@ -29,8 +29,8 @@ class PTABLE {
 	var
 	$db, $l, $mode, $target, $template, $url, $class, $data, $translations, $autoupdate, $store,
 	$database, $host, $username, $password, $charset, $collation, $query, $query_count, $values,
-	$nav, $navigation, $pagesize, $title, $style, $table, $fields, $joins, $where, $order, $way,
-	$external_data, $external_pos, $search, $pages, $records, $refresh, $col_width, $field_count,
+	$nav_pre, $nav_post, $navigation, $pagesize, $title, $style, $table, $fields, $joins, $where,
+	$order, $way, $external_data, $external_pos, $search, $pages, $records, $refresh, $col_width, $field_count,
 	$content =		false,		// kogu sisuosa
 	$fullscreen	=	false,		// kas täisekraanivaade on lubatud
 	$header = 		true,		// kas kuvatakse tabeli päist üldse
@@ -816,8 +816,8 @@ class PTABLE {
 		if ($type == "footer" && $this->footer_sep)
 			$this->content .= "<tr class=\"no_hover\"><td colspan=100 class=\"border_btm\"></td></tr>";
 
-		if ($this->nav) {
-			$this->content .= $this->nav;
+		if ($this->nav_pre && $this->nav_post) {
+			$this->content .= $this->nav_pre. "nav_btm". $this->nav_post;
 
 			return true;
 		}
@@ -831,10 +831,10 @@ class PTABLE {
 		if ($to > $this->records)
 			$to = $this->records;
 
-		$this->nav = "<tr class=\"no_hover\"><td colspan=100 class=\"nav_row\">";
-		$this->nav.= "<span class=\"count\">". $this->l->txt_found. ": ". $this->records;
-		$this->nav.= ($this->records && $this->page_size != P_ALL ? " (". $from. "-". $to. ")" : "");
-		$this->nav.= "</span>";
+		$this->nav_pre = "<tr class=\"no_hover\"><td colspan=100 class=\"";
+		$this->nav_post = "\"><span class=\"count\">". $this->l->txt_found. ": ". $this->records;
+		$this->nav_post.= ($this->records && $this->page_size != P_ALL ? " (". $from. "-". $to. ")" : "");
+		$this->nav_post.= "</span>";
 
 		// kui mõni tulemus ikka leiti, siis kuva navigatsiooninupud (tagurpidi, kuna meil on float: right)
 
@@ -880,7 +880,7 @@ class PTABLE {
 			$x2 = $x - 4;
 			$a = 2;
 
-			$this->nav.= "<span class=\"navigation\">";
+			$this->nav_post.= "<span class=\"navigation\">";
 
 			if ($this->page < 2)
 				$this->add_nav_btn(1, $this->awesome_eee($this->nav_prev), true);
@@ -895,7 +895,7 @@ class PTABLE {
 			/* TODO: hetkel toimib korralikult kui nav_length = 5 */
 
 			if ($this->page >= $this->nav_length && $this->pages > $x)
-				$this->nav.= "<span class=\"sep\"></span>";
+				$this->nav_post.= "<span class=\"sep\"></span>";
 
 			/* prindi vahepealsed nupud */
 
@@ -915,7 +915,7 @@ class PTABLE {
 			/* kas on vaja printida eraldaja */
 
 			if ($this->page < ($this->pages - $x2) && $this->pages > $x)
-				$this->nav.= "<span class=\"sep\"></span>";
+				$this->nav_post.= "<span class=\"sep\"></span>";
 
 			/* prindi viimase lehe nupp */
 
@@ -927,17 +927,17 @@ class PTABLE {
 			else
 				$this->add_nav_btn($this->page + 1, $this->awesome_eee($this->nav_next));
 
-			$this->nav.= "</span>";
+			$this->nav_post.= "</span>";
 		}
 
-		$this->nav.= "</td></tr>";
+		$this->nav_post.= "</td></tr>";
 
-		$this->content .= $this->nav;
+		$this->content .= $this->nav_pre. "nav_". ($type == "header" ? "top" : "btm"). $this->nav_post;
 	}
 
 	function add_nav_btn($page, $title, $denied = false) {
-		$this->nav.= "<span class=\"nav". ($denied ? " denied" : ""). ($this->page == $page && !$denied ? " selected" : ""). "\" ";
-		$this->nav.= "data-page=\"". $page. "\">". $title. "</span>";
+		$this->nav_post.= "<span class=\"nav". ($denied ? " denied" : ""). ($this->page == $page && !$denied ? " selected" : ""). "\" ";
+		$this->nav_post.= "data-page=\"". $page. "\">". $title. "</span>";
 	}
 
 	// otsi lingist väljade indikaatorid

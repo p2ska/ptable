@@ -340,13 +340,16 @@ hr {
 
 .ptable .nav_top, .ptable .nav_btm {
 	padding: 10px;
-	border-top: 1px solid #e7eaec !important;
-	border-bottom: 0px;
 	background-color: #f9f9f9;
 }
 
+.ptable .nav_top {
+	border-top: 1px solid #e7eaec !important;
+	border-bottom: 1px solid #f9f9f9 !important;
+}
+
 .ptable .nav_btm {
-	border-bottom: 1px solid #f00;
+	border-bottom: 1px solid #e7eaec !important;*/
 }
 
 .ptable .border_top {
