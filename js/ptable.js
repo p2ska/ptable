@@ -390,3 +390,5 @@ $.fn.ptable = function(targets) {
 		store_prefs(tbl);
 	});
 };
+
+$().ptable();

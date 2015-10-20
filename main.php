@@ -20,9 +20,6 @@ $c_lang[$lang] = " current";
 <meta charset="utf-8">
 <link rel="stylesheet" type="text/css" href="fonts/css/font-awesome.min.css" />
 <link rel="stylesheet" type="text/css" href="css/style.css" />
-<script type="text/javascript" src="/jquery.js"></script>
-<script type="text/javascript" src="js/store.min.js"></script>
-<script type="text/javascript" src="js/ptable.js"></script>
 <title>pTable</title>
 </head>
 <body>
@@ -35,8 +32,8 @@ $c_lang[$lang] = " current";
 <div id="tasks" class="ptable no_border"></div><hr/>
 <div id="navi" class="ptable"></div><hr/>
 <!--<div id="external" class="ptable no_border"></div>-->
-<script>
-	$().ptable();
-</script>
+<script type="text/javascript" src="/jquery.js"></script>
+<script type="text/javascript" src="js/store.min.js"></script>
+<script type="text/javascript" src="js/ptable.js"></script>
 </body>
 </html>
