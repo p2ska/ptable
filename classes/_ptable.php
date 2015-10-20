@@ -3,6 +3,7 @@
 // [ptable]; Andres Päsoke
 
 define("P_PTABLES",	"c:/xampp/htdocs/ptable/ptables");
+
 define("P_ALLOWED",	"/[^a-zA-Z0-9\s\._-]/");
 define("P_DOTS",	"/\.+/");
 
@@ -74,6 +75,11 @@ class PTABLE {
 		}
 		else
 			$this->l = $lang;
+
+		// data[] muutuja edastamiseks tabelikirjeldusele
+
+		if (isset($init["data"]) && $init["data"])
+			$this->data = $this->safe($init["data"]);
 
 		// kirjuta klassi default'id tabelikirjelduse omadega üle
 

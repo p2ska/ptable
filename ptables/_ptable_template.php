@@ -5,7 +5,6 @@
 $this->title		= $l->?;				// tabeli pealkiri												[<title>]: string
 $this->title_icon	= "odnoklassniki";		// tabeli pealkirjast vasakul olev ikoon						[<font-awesome ikooni klass>] :none
 $this->table		= "";					// põhitabeli nimi baasis										[<table>]: string
-$this->style		= "ptable";				// mis stiili kasutatakse tabli kujunduses						[<class>]: string
 
 /* andmebaasi override'd */
 

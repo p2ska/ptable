@@ -6,7 +6,9 @@ session_start();
 if (!isset($_GET["ptable"]))
 	return false;
 
-require_once("classes/_andres.php");
+require_once("c:/xampp/security/ptable/_connector.php");
+require_once("classes/_translations.php");
+require_once("classes/_ptable_ext.php");
 
 /*
 $example_data = array(
@@ -30,6 +32,8 @@ foreach ($example_data as $ex) {
 */
 
 $pt = new ANDRESE_PTABLE($_GET["ptable"]);
+
+echo $pt->content;
 
 // we are done here
 
