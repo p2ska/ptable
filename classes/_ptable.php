@@ -148,9 +148,8 @@ class PTABLE {
 
 		$this->display();
 
-		// kuva tabel
-
-		echo $this->content;
+		// tabeli kuvamiseks kasuta
+		// echo $this->content;
 	}
 
 	// init 
