@@ -230,6 +230,12 @@ class PTABLE {
 				$this->pages = 1;
 			else {
 				$this->pages = intval(($this->records - 1) / intval($this->page_size)) + 1;
+
+				// kui eelmisest otsingust on lehenumber jäänud suurem, siis vii kasutaja esimesele lehele
+
+				if ($this->page > $this->pages)
+					$this->page = 1;
+
 				$limit = P_LIMIT. (($this->page - 1) * $this->page_size). ", ". $this->page_size;
 			}
 		}
@@ -326,6 +332,12 @@ class PTABLE {
 			$this->pages = 1;
 		else { // kui on rohkem kui üks lehekülg (potensiaalselt), siis lõika massiivist õige tükk
 			$this->pages = intval(($this->records - 1) / intval($this->page_size)) + 1;
+
+			// kui eelmisest otsingust on lehenumber jäänud suurem, siis vii kasutaja esimesele lehele
+
+			if ($this->page > $this->pages)
+				$this->page = 1;
+
 			$this->external_data = array_slice($this->external_data, ($this->page - 1) * $this->page_size, $this->page_size);
 		}
 
