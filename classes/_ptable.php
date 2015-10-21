@@ -26,19 +26,18 @@ class PTABLE {
     // kõik parameetrid (nb! need default'id kirjutatakse üle tabeli kirjeldusfaili ja ka ptable.js poolt tulevate väärtustega üle)
 
     var
-    $db, $l, $mode, $target, $template, $url, $class, $data, $translations, $autoupdate, $store,
+    $content, $db, $l, $mode, $target, $template, $url, $class, $data, $translations, $autoupdate, $store,
     $database, $host, $username, $password, $charset, $collation, $query, $where, $values, $limit,
     $nav_pre, $nav_post, $navigation, $pagesize, $title, $style, $table, $fields, $joins, $order, $way,
-    $external_data, $external_pos, $search, $pages, $records, $refresh, $col_width, $field_count, $query,
-    $content =		false,		// kogu sisuosa
-    $fullscreen	=	false,		// kas täisekraanivaade on lubatud
+    $external_data, $external_pos, $search, $pages, $records, $refresh, $col_width, $field_count, $debug,
     $header = 		true,		// kas kuvatakse tabeli päist üldse
     $header_sep	= 	false,		// tabeli ülemine eraldusäär
     $footer_sep =	false,		// tabeli alumine eraldusäär
-    $download = 	true,		// tabeli sisu allalaadimise võimaldamine
     $fields_descr = true,		// väljade kirjeldused tabeli päises
     $prefs = 		true,		// seadistuste kuvamine
     $store_prefs =	true,		// kas salvestatakse
+    $fullscreen	=	false,		// kas täisekraanivaade on lubatud
+    $download = 	true,		// tabeli sisu allalaadimise võimaldamine
     $searchable = 	true,		// kas kuvatakse otsingukasti
     $autosearch =	false,		// automaatne otsing
     $sizeable = 	true,		// kas lastakse kasutajal muuta kirjete arvu ühel lehel

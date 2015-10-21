@@ -8,14 +8,14 @@ $this->way		= "desc";
 
 $this->fields = [
 	[ "table" => "task",   "field"	=> "id",         "title" => "id" ],
-	[ "table" => "task",   "field"	=> "prio",       "title" => "prio",		"translate" => "txt_prio_" ],
-	[ "table" => "request","field"	=> "requester",  "title" => "requester","searchable" => true, "alias" => "req" ],
-	[ "table" => "request","field"	=> "subject",    "title" => "subject",	"searchable" => true, "extend" => "break_long" ],
-	[ "table" => "task",   "field"	=> "status",     "title" => "status",	"translate" => "txt_task_status_" ],
-	[ "table" => "task",   "field"	=> "deadline",   "title" => "deadline",	"extend" => "convert_date" ],
-	[ "table" => "task",   "field"	=> "created",    "title" => "created",	"extend" => "convert_date" ],
-	[ "table" => "request","field"	=> "owner_id",   "title" => "owner",	"searchable" => true, "alias" => "owner" ],
-	[ "table" => "task",   "field"	=> "owner_id",   "title" => "solver",	"searchable" => true ]
+	[ "table" => "task",   "field"	=> "prio",       "title" => "prio",		"translate"		=> "txt_prio_" ],
+	[ "table" => "request","field"	=> "requester",  "title" => "requester","searchable"	=> true, "alias" => "req" ],
+	[ "table" => "request","field"	=> "subject",    "title" => "subject",	"searchable"	=> true, "extend" => "break_long" ],
+	[ "table" => "task",   "field"	=> "status",     "title" => "status",	"translate"		=> "txt_task_status_" ],
+	[ "table" => "task",   "field"	=> "deadline",   "title" => "deadline",	"extend"		=> "convert_date" ],
+	[ "table" => "task",   "field"	=> "created",    "title" => "created",	"extend"		=> "convert_date" ],
+	[ "table" => "request","field"	=> "owner_id",   "title" => "owner",	"searchable"	=> true, "alias" => "owner" ],
+	[ "table" => "task",   "field"	=> "owner_id",   "title" => "solver",	"searchable"	=> true ]
 ];
 
 $this->joins = [
