@@ -184,7 +184,9 @@ class PTABLE {
     // hangi tabeli andmed
 
     function fetch_data() {
-        $search = $limit = $field_list = $joined = false;
+        $search = $order = $joined = false;
+
+		// lisa tingimus 'where' kirjeldatule
 
         if ($this->where)
             $this->where = P_WHERE. $this->where;
@@ -192,32 +194,41 @@ class PTABLE {
         // otsingutingumused
 
         if ($this->search) {
-            foreach ($this->fields as $col) {
-                if (isset($col["searchable"]) && $col["searchable"]) {
+            foreach ($this->fields as $field) {
+                if (isset($field["searchable"]) && $field["searchable"]) {
                     $left = $right = P_ANY;
                     $find = P_LIKE;
 
-                    if (isset($col["search_left"]) && !$col["search_left"])
+                    if (isset($field["search_left"]) && !$field["search_left"])
                         $left = false;
 
-                    if (isset($col["search_right"]) && !$col["search_right"])
+                    if (isset($field["search_right"]) && !$field["search_right"])
                         $right = false;
 
                     if (!$left && !$right)
                         $find = P_EXACT;
 
-                    $search[] = $col["field"]. $find. P_Q;
+					// kui väljal on alias, siis otsi hoopis selle järgi
+
+					$search[] = $field["table"]. ".". $field["field"]. $find. P_Q;
+
                     $this->values[] = $left. trim($this->search). $right;
                 }
             }
 
+			// eralda otsingutingimus
+
             $search = "(". implode(P_OR, $search). ")";
+
+			// kui juba on mingid tingimused paika pandud
 
             if ($this->where)
                 $this->where .= " && ". $search;
             else
                 $this->where = P_WHERE. $search;
         }
+
+		// pane päring kokku
 
         $this->query = $this->build_query();
 
@@ -226,10 +237,9 @@ class PTABLE {
         if (!$this->pages) {
             $this->db->query($this->query, $this->values);
 
-            $this->records = $this->db->rows;
+			//$this->content .= "order:". $this->order. "<br/>pre: ". $this->query. "<br/>value: ". implode(", ", $this->values). "<br/><br/>";
 
-            $this->content .= "pre: ". $this->query;
-            $this->content .= "found: ". $this->records;
+			$this->records = $this->db->rows;
 
             if ($this->page_size == P_ALL)
                 $this->pages = 1;
@@ -248,11 +258,11 @@ class PTABLE {
         // põhipäring
 
         if ($this->records) {
-            // lisa sorteerimine ja limiit päringule
+            // lisa päringule sorteerimine ja limiit (õige lehekülg)
 
             $this->query .= ($this->order ? P_ORDER. $this->order. " ". $this->way : P_VOID). $this->limit;
 
-            $this->content .= "main: ". $this->query;
+            //$this->content .= "query: ". $this->query. "<br/>value: ". implode(", ", $this->values);
 
             // teosta päring
 
@@ -260,15 +270,21 @@ class PTABLE {
         }
     }
 
+	/* ehita päring tabelikirjeldusest */
+
     function build_query() {
         $join_tables = false;
         $fields = $joins = [];
+
+		// käi väljad läbi ja
 
         foreach ($this->fields as $field) {
             if (isset($field["alias"]) && $field["alias"])
                 $alias = " as ". $field["alias"];
             else
                 $alias = P_VOID;
+
+			// kui tabel on eraldi märgitud (liidetud tabel), siis kasuta seda; vastasel juhul arvesta, et tegu on põhitabeli väljaga (default)
 
             if ($field["table"])
                 $fields[] = $field["table"]. ".". $field["field"]. $alias;
@@ -635,7 +651,12 @@ class PTABLE {
 
                 $this->content .= $colspan. $class. $style. ">";
 
-                $value = $data->{ $field["field"] };
+				// juhuks, kui tabelite liitmisel on vaja kasutada alias'i (erinevates tabelites sama nimega väljad), siis loe väärtust aliase' väljalt
+
+				if (isset($field["alias"]) && $field["alias"])
+					$value = $data->{ $field["alias"] };
+				else
+                	$value = $data->{ $field["field"] };
 
                 // kas on vaja kuvada hoopis vastava indeksiga tõlget?
 
@@ -664,10 +685,7 @@ class PTABLE {
             $current_field++;
             $no_order = false;
 
-            if (!isset($field["field"]) || !$field["field"] || (isset($field["hidden"]) && $field["hidden"]))
-                continue;
-
-            if ($this->order == $field["field"])
+            if ($this->order == $field["table"]. ".". $field["field"])
                 $active = " active";
             else
                 $active = P_VOID;
@@ -690,11 +708,11 @@ class PTABLE {
             if (isset($this->col_width[$current_field - 1]))
                 $this->content .= " style=\"width: ". $this->col_width[$current_field - 1]. "px\"";
 
-            $this->content .= "data-field=\"". $field["field"]. "\">";
+            $this->content .= "data-field=\"". $field["table"]. ".". $field["field"]. "\">";
             $this->content .= $field["title"];
 
             if (!$no_order)
-                $this->content .= "<i class=\"sort_icon". $active. " fa fa-". $this->order_icon. "-". ($this->order == $field["field"] ? $way : "down"). "\"></i>";
+                $this->content .= "<i class=\"sort_icon". $active. " fa fa-". $this->order_icon. "-". ($this->order == $field["table"]. ".". $field["field"] ? $way : "down"). "\"></i>";
 
             $this->content .= "</th>";
 

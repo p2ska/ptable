@@ -4,7 +4,6 @@
 
 $this->title		= $l->?;				// tabeli pealkiri												[<title>]: string
 $this->title_icon	= "odnoklassniki";		// tabeli pealkirjast vasakul olev ikoon						[<font-awesome ikooni klass>] :none
-$this->table		= "";					// põhitabeli nimi baasis										[<table>]: string
 
 /* andmebaasi override'd */
 
@@ -15,6 +14,14 @@ $this->password		= "";
 $this->charset		= "utf8";
 $this->collation	= "utf8_estonian_ci";
 
+/* päringu koostamine */
+
+$this->table		= "";				// põhitabel														[<table>]: string
+$this->where		= "";				// where tingimused vabas vormis									["where"]: string
+$this->values		= [];				// tingimustele vastavad väärtused									[ [<val>, <val>..] ]
+$this->order		= "";				// esmaselt on tabel sorditud selle välja järgi						[<field>]: string
+$this->way			= "";				// mis suunas järjestatakse tulemused								["asc", "desc"] :"asc"
+
 /* tabeliväljade loetelu ja omadused (kõik peale "field" väärtuse on valikulised) */
 
 // "field"			- väljanimetus tabelis (TODO: kohustuslikkusekontoll; kas selline väli tabelist leiti)	[<field>]: string
@@ -22,31 +29,27 @@ $this->collation	= "utf8_estonian_ci";
 // "title"			- tabeli päises kuvatav väljakirjeldus (mõistlik panna tõlkestring)						[<title>] :string
 // "class"			- välja stiil, override																	[<class_name>] :string
 // "align"			- välja sisu paiknemine																	["left", "center", "right", "justify"] :"left"
-// "hidden"			- võimalus väljaga opereerida (otsing, triggerid), aga ei kuvata tabelis				[true, false] :false
 // "nowrap"			- välja ei wrapita																		[true, false] :false
 // "searchable"		- kui tehakse üldine otsing, siis lisatakse see väli otsingusse							[true, false] :false
 // "search_left"	- otsingu puhul otsitakse vasakule (like "%<otsingusõna>")								[true, false] :true
 // "search_right"	- otsingu puhul otsitakse paremale (like "<otsingusõna>%"								[true, false] :true
 // "sortable"		- antud välja puhul on lubatud kasutaja poolne järjekorra muutmine (üles/alla) 			[true, false] :true
 // "extend"			- määra väljale teisendusfunktsioon (ptable_ext all kirjeldatud)						[<method>, [ <method>, <method>.. ] ]: string
-// "translate"		- ei prindita väärtust vaid tõlge (tõlkestring + väärtus)								[false, <translation>] :false
+// "translate"		- prinditakse väärtus tõlke külge (tõlkestring + väärtus)								[false, <translation>] :false
 // "field_search"	- TODO: lisada otsingukast klikitud veerule, täppisotsing veeru piires					[true, false] :false
 
 $this->fields	= [
 	[ "field"	=> "",		"title" => $l->? ]
 ];
 
-/* liidetavate tabelite kirjeldused (TODO: hmm, kui mitu liidetavat tabelit, mis siis saab..) */
+/* liidetavate tabelite kirjeldused */
 
 // "table"			- tabeli nimi																			[
 // "method"			- mis tüüpi join
 // "on"				- mis tingimustel
-// "field"			- millist välja on vaja
-// "alias"			- alias liidetavale väljale
 
 $this->joins		= [
-	[ "table"	=> "", "method" => "left join", "on" => "" ], 
-	[ "field"	=> "", "alias" => "" ]
+	[ "table"	=> "", "method" => "left join", "on" => "" ],
 ];
 
 /* triggerid */
@@ -64,18 +67,13 @@ $this->triggers		= [
 	"id"		=> [ "title" => "", "link" => "", "external" => true ]
 ];
 
-$this->where		= "";				// where tingimused vabas vormis													["where"]: string
-$this->values		= [];				// tingimustele vastavad väärtused													[ [<val>, <val>..] ]
-
-/* puhas sql-päring (selleasemel, et kasutada päringu moodustamiseks "fields" kirjelduses olevaid ja "joins" & "where" muutujaid) */
+/* TODO: puhas sql-päring (selleasemel, et kasutada päringu moodustamiseks "fields" kirjelduses olevaid ja "joins" & "where" muutujaid) */
 
 //$this->query_count= "select id from request";
 //$this->query		= "select * from request";
 
 // TODO: per person/tabel meelde jätta vajalikud väljad nendest
 
-$this->order		= "";				// esmaselt on tabel sorditud selle välja järgi										[<field>]: string
-$this->way			= "";				// mis suunas järjestatakse tulemused												["asc", "desc"] :"asc"
 $this->order_icon	= "chevron";		// mis tüüpi ikoone kasutatakse otsingutulemuste järjestamiseks						["chevron", "sort", "angle-double"] :"chevron"
 $this->page_sizes	= [ 10 => "10 ". $l->records, 25 => "25 ". $l->records, 50 => "50 ". $l->records, "*" => $l->all_records ]; // valitavad lehepikkused
 $this->page_size	= 10;				// esmane lehepikkus (TODO: milline on varasemalt valitud)							[10..50, "*"] :10

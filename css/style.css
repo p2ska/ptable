@@ -2,6 +2,14 @@ html, body, th, td {
 	font-family: "open sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 	font-size: 13px;
 	color: #000;
+	/*
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	*/
 }
 
 a {
@@ -36,12 +44,6 @@ hr {
 	border: 1px solid #e7eaec;
 	border-bottom: 0px;
 	opacity: 0.8;
-	-webkit-touch-callout: none;
-	-webkit-user-select: none;
-	-khtml-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
 }
 
 .ptable:not(.no_border):hover {
