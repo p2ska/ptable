@@ -227,20 +227,11 @@ $.fn.ptable = function(targets) {
 
 		settings[ptable].autoupdate =	store.get(ptable + "_autoupdate");
 		settings[ptable].col_width =	store.get(ptable + "_col_width");
-		settings[ptable].page =			store.get(ptable + "_page");
+		//settings[ptable].page =			store.get(ptable + "_page");
 		settings[ptable].page_size =	store.get(ptable + "_page_size");
 		settings[ptable].order =		store.get(ptable + "_order");
 		settings[ptable].way =			store.get(ptable + "_way");
-		settings[ptable].search =		store.get(ptable + "_search");
-		/*
-		console.log("autoupdate: " + settings[ptable].autoupdate);
-		console.log("col_width: " + settings[ptable].col_width);
-		console.log("page: " + settings[ptable].page);
-		console.log("pagesize: " + settings[ptable].page_size);
-		console.log("order: " + settings[ptable].order);
-		console.log("way: " + settings[ptable].way);
-		console.log("search: " + settings[ptable].search);
-		*/
+		//settings[ptable].search =		store.get(ptable + "_search");
 	}
 
 	/* salvesta tabeli seaded (vajalikud) */
@@ -251,11 +242,11 @@ $.fn.ptable = function(targets) {
 
 		store.set(ptable + "_autoupdate",	settings[ptable].autoupdate);
 		store.set(ptable + "_col_width",	settings[ptable].col_width);
-		store.set(ptable + "_page",			settings[ptable].page);
+		//store.set(ptable + "_page",			settings[ptable].page);
 		store.set(ptable + "_page_size",	settings[ptable].page_size);
 		store.set(ptable + "_order",		settings[ptable].order);
 		store.set(ptable + "_way",			settings[ptable].way);
-		store.set(ptable + "_search",		settings[ptable].search);
+		//store.set(ptable + "_search",		settings[ptable].search);
 	}
 
 	/* hangi veergude laiused */
