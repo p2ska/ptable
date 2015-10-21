@@ -5,7 +5,7 @@ define("P_TABLES",	"c:/xampp/htdocs/ptable/ptables");
 require_once("_db.php");
 require_once("_ptable.php");
 
-/* põhiklassi extension, võimaldamaks päringust saadud väärtusi edasi töödelda */
+// põhiklassi extension, võimaldamaks päringust saadud väärtusi edasi töödelda
 
 class PTABLE_EXT extends PTABLE {
 	// muuda emailiaadressid ja veebilingid linkideks

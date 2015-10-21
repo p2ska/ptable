@@ -29,7 +29,7 @@ class PTABLE {
     $db, $l, $mode, $target, $template, $url, $class, $data, $translations, $autoupdate, $store,
     $database, $host, $username, $password, $charset, $collation, $query, $where, $values, $limit,
     $nav_pre, $nav_post, $navigation, $pagesize, $title, $style, $table, $fields, $joins, $order, $way,
-    $external_data, $external_pos, $search, $pages, $records, $refresh, $col_width, $field_count,
+    $external_data, $external_pos, $search, $pages, $records, $refresh, $col_width, $field_count, $query,
     $content =		false,		// kogu sisuosa
     $fullscreen	=	false,		// kas täisekraanivaade on lubatud
     $header = 		true,		// kas kuvatakse tabeli päist üldse
@@ -237,7 +237,10 @@ class PTABLE {
         if (!$this->pages) {
             $this->db->query($this->query, $this->values);
 
-			//$this->content .= "order:". $this->order. "<br/>pre: ". $this->query. "<br/>value: ". implode(", ", $this->values). "<br/><br/>";
+			// kas ei funka päris nii nagu mõtlesid?
+
+			if ($this->db->error && $this->debug)
+				$this->error();
 
 			$this->records = $this->db->rows;
 
@@ -262,15 +265,18 @@ class PTABLE {
 
             $this->query .= ($this->order ? P_ORDER. $this->order. " ". $this->way : P_VOID). $this->limit;
 
-            //$this->content .= "query: ". $this->query. "<br/>value: ". implode(", ", $this->values);
-
             // teosta päring
 
             $this->db->query($this->query, $this->values);
+
+			// kas ei funka päris nii nagu mõtlesid?
+
+			if ($this->db->error && $this->debug)
+				$this->error();
         }
     }
 
-	/* ehita päring tabelikirjeldusest */
+	// ehita päring tabelikirjeldusest
 
     function build_query() {
         $join_tables = false;
@@ -292,11 +298,15 @@ class PTABLE {
                 $fields[] = $this->table. ".". $field["field"]. $alias;
         }
 
-        foreach ($this->joins as $j_table => $join)
-            $joins[] = $join["method"]. " ". $j_table. " on ". $join["on"];
+		// kas on joine?
 
-        if (count($joins))
-            $join_tables = " ". implode(", ", $joins);
+		if ($this->joins) {
+        	foreach ($this->joins as $j_table => $join)
+            	$joins[] = $join["method"]. " ". $j_table. " on ". $join["on"];
+
+        	if (count($joins))
+            	$join_tables = " ". implode(", ", $joins);
+		}
 
         return P_SELECT. implode(", ", $fields). P_FROM. $this->table. $join_tables. $this->where;
     }
@@ -807,7 +817,7 @@ class PTABLE {
     // vormi checkbox ja tekstiväli
 
     function form_autoupdate_check($values, $current_val, $element) {
-        /* kas autoupdate on aktiivne */
+        // kas autoupdate on aktiivne
 
         $id = P_PREFIX. $this->target;
 
@@ -817,7 +827,7 @@ class PTABLE {
         $pr .= "<input type=\"hidden\" id=\"". $id. "_autoupdate_value\" class=\"". $id. "_value\" value=\"". $current_val. "\">";
         $pr .= "</div>";
 
-        /* autoupdate valikud */
+        // autoupdate valikud
 
         $pr .= "<div style=\"float: right\">";
         $pr .= $this->form_dropdown($this->autoupdates, $current_val, "autoupdate_select");
@@ -903,24 +913,23 @@ class PTABLE {
             else
                 $this->add_nav_btn($this->page - 1, $this->awesome_eee($this->nav_prev));
 
-            /* algusleht */
+            // algusleht
 
             $this->add_nav_btn(1, 1);
 
-            /* kas on vaja printida eraldaja */
-            /* TODO: hetkel toimib korralikult kui nav_length = 5 */
+            // kas on vaja printida eraldaja (TODO: hetkel toimib korralikult kui nav_length = 5)
 
             if ($this->page >= $this->nav_length && $this->pages > $x)
                 $this->nav_post.= "<span class=\"sep\"></span>";
 
-            /* prindi vahepealsed nupud */
+            // prindi vahepealsed nupud
 
             while ($a < $x && $a < $this->pages) {
-                if (($this->pages > $x && $this->page < $this->nav_length) || $this->pages <= $x)		/* kui leht on vasakul pool tsentrit */
+                if (($this->pages > $x && $this->page < $this->nav_length) || $this->pages <= $x)		// kui leht on vasakul pool tsentrit
                     $page = $a;
-                elseif ($this->page > ($this->pages - $this->nav_length + 2))							/* kui leht on paremalpool tsentrit */
+                elseif ($this->page > ($this->pages - $this->nav_length + 2))							// kui leht on paremalpool tsentrit
                     $page = $this->pages - $this->nav_length + $a - 2;
-                else																					/* kui leht on tsentris */
+                else																					// kui leht on tsentris
                     $page = $this->page + $a - $this->nav_length + 1;
 
                 $this->add_nav_btn($page, $page);
@@ -928,12 +937,12 @@ class PTABLE {
                 $a++;
             }
 
-            /* kas on vaja printida eraldaja */
+            // kas on vaja printida eraldaja
 
             if ($this->page < ($this->pages - $x2) && $this->pages > $x)
                 $this->nav_post.= "<span class=\"sep\"></span>";
 
-            /* prindi viimase lehe nupp */
+            // prindi viimase lehe nupp
 
             if ($this->pages > 1)
                 $this->add_nav_btn($this->pages, $this->pages);
@@ -998,6 +1007,14 @@ class PTABLE {
 
         return $output;
     }
+
+	// kuva baasi viga tabelisse
+
+	function error() {
+		$this->content .= "error: ". $this->db->error_msg. "<br/><br/>";
+		$this->content .= "query: ". $this->query. "<br/><br/>";
+		$this->content .= "value: ". implode(", ", $this->values);
+	}
 }
 
 ?>
