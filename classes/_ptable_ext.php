@@ -1,11 +1,13 @@
 <?php
 
+define("P_TABLES",	"c:/xampp/htdocs/ptable/ptables");
+
 require_once("_db.php");
 require_once("_ptable.php");
 
 /* põhiklassi extension, võimaldamaks päringust saadud väärtusi edasi töödelda */
 
-class ANDRESE_PTABLE extends PTABLE {
+class PTABLE_EXT extends PTABLE {
 	// muuda emailiaadressid ja veebilingid linkideks
 
 	function ext_autolink($string) {

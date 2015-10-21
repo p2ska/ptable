@@ -2,8 +2,6 @@
 
 // [ptable]; Andres Päsoke
 
-define("P_PTABLES",	"c:/xampp/htdocs/ptable/ptables");
-
 define("P_ALLOWED",	"/[^a-zA-Z0-9\s\._-]/");
 define("P_DOTS",	"/\.+/");
 
@@ -25,699 +23,682 @@ define("P_ORDER",	" order by ");
 define("P_LIMIT",	" limit ");
 
 class PTABLE {
-	// kõik parameetrid (nb! need default'id kirjutatakse üle tabeli kirjeldusfaili ja ka ptable.js poolt tulevate väärtustega üle)
-
-	var
-	$db, $l, $mode, $target, $template, $url, $class, $data, $translations, $autoupdate, $store,
-	$database, $host, $username, $password, $charset, $collation, $query, $query_count, $values,
-	$nav_pre, $nav_post, $navigation, $pagesize, $title, $style, $table, $fields, $joins, $where,
-	$order, $way, $external_data, $external_pos, $search, $pages, $records, $refresh, $col_width, $field_count,
-	$content =		false,		// kogu sisuosa
-	$fullscreen	=	false,		// kas täisekraanivaade on lubatud
-	$header = 		true,		// kas kuvatakse tabeli päist üldse
-	$header_sep	= 	false,		// tabeli ülemine eraldusäär
-	$footer_sep =	false,		// tabeli alumine eraldusäär
-	$download = 	true,		// tabeli sisu allalaadimise võimaldamine
-	$fields_descr = true,		// väljade kirjeldused tabeli päises
-	$prefs = 		true,		// seadistuste kuvamine
-	$store_prefs =	true,		// kas salvestatakse
-	$searchable = 	true,		// kas kuvatakse otsingukasti
-	$autosearch =	false,		// automaatne otsing
-	$sizeable = 	true,		// kas lastakse kasutajal muuta kirjete arvu ühel lehel
-	$nav_header = 	false,		// kas kuvatakse ülemist navigatsiooniriba
-	$nav_footer = 	true,		// kas kuvatakse alumist navigatsiooniriba
-	$nav_length = 	5,			// navigeerimisnuppude arv
-	$page = 		1,			// mitmendat lehekülge kuvatakse
-	$page_size = 	10,			// mitu kirjet ühel lehel kuvatakse
-	$order_icon = 	"chevron",	// milliseid ikoone kasutatakse sorteerimisjärjekorra kuvamiseks (chevron, sort, angle-double)
-	$nav_prev = 	"{{angle-double-left}}",	// 'eelmine'-nupp
-	$nav_next = 	"{{angle-double-right}}",	// 'järgmine'-nupp
-	$autoupdates = 	[ 5 => "5s", 10 => "10s", 30 => "30s", 60 => "1m", 300 => "5m", 600 => "10m" ],	// "automaatsed uuendused"-valikukasti väärtused
-	$page_sizes = 	[ 10 => "10", 20 => "20", 50 => "50" ]; // "kirjete arv lehel"-valikukasti väärtused
-
-	// initsialiseeri kõik js poolt määratud muutujad
-
-	function ptable($init, $source = false, $lang = false) {
-		if (!isset($init["target"]))
-			return false;
+    // kõik parameetrid (nb! need default'id kirjutatakse üle tabeli kirjeldusfaili ja ka ptable.js poolt tulevate väärtustega üle)
+
+    var
+    $db, $l, $mode, $target, $template, $url, $class, $data, $translations, $autoupdate, $store,
+    $database, $host, $username, $password, $charset, $collation, $query, $where, $values, $limit,
+    $nav_pre, $nav_post, $navigation, $pagesize, $title, $style, $table, $fields, $joins, $order, $way,
+    $external_data, $external_pos, $search, $pages, $records, $refresh, $col_width, $field_count,
+    $content =		false,		// kogu sisuosa
+    $fullscreen	=	false,		// kas täisekraanivaade on lubatud
+    $header = 		true,		// kas kuvatakse tabeli päist üldse
+    $header_sep	= 	false,		// tabeli ülemine eraldusäär
+    $footer_sep =	false,		// tabeli alumine eraldusäär
+    $download = 	true,		// tabeli sisu allalaadimise võimaldamine
+    $fields_descr = true,		// väljade kirjeldused tabeli päises
+    $prefs = 		true,		// seadistuste kuvamine
+    $store_prefs =	true,		// kas salvestatakse
+    $searchable = 	true,		// kas kuvatakse otsingukasti
+    $autosearch =	false,		// automaatne otsing
+    $sizeable = 	true,		// kas lastakse kasutajal muuta kirjete arvu ühel lehel
+    $nav_header = 	false,		// kas kuvatakse ülemist navigatsiooniriba
+    $nav_footer = 	true,		// kas kuvatakse alumist navigatsiooniriba
+    $nav_length = 	5,			// navigeerimisnuppude arv
+    $page = 		1,			// mitmendat lehekülge kuvatakse
+    $page_size = 	10,			// mitu kirjet ühel lehel kuvatakse
+    $order_icon = 	"chevron",	// milliseid ikoone kasutatakse sorteerimisjärjekorra kuvamiseks (chevron, sort, angle-double)
+    $nav_prev = 	"{{angle-double-left}}",	// 'eelmine'-nupp
+    $nav_next = 	"{{angle-double-right}}",	// 'järgmine'-nupp
+    $autoupdates = 	[ 5 => "5s", 10 => "10s", 30 => "30s", 60 => "1m", 300 => "5m", 600 => "10m" ],	// "automaatsed uuendused"-valikukasti väärtused
+    $page_sizes = 	[ 10 => "10", 20 => "20", 50 => "50" ]; // "kirjete arv lehel"-valikukasti väärtused
 
-		// tabeli id
+    // initsialiseeri kõik js poolt määratud muutujad
 
-		$this->target = $this->safe($init["target"], 20);
+    function ptable($init, $source = false, $lang = false) {
+        if (!isset($init["target"]))
+            return false;
 
-		// kui pole väliseid tõlkeid juba, siis lae tabeli tõlkefailist;
-		// kui translations klassi ka pole, noh siis polegi tõlkeid
+        // tabeli id
 
-		if (!$lang && class_exists("TRANSLATIONS")) {
-			$this->translations = new TRANSLATIONS();
+        $this->target = $this->safe($init["target"], 20);
 
-			$this->l = $this->translations->import("lang/ptable.lang");
-		}
-		else
-			$this->l = $lang;
+        // kui pole väliseid tõlkeid juba, siis lae tabeli tõlkefailist;
+        // kui translations klassi ka pole, noh siis polegi tõlkeid
 
-		// data[] muutuja edastamiseks tabelikirjeldusele
+        if (!$lang && class_exists("TRANSLATIONS")) {
+            $this->translations = new TRANSLATIONS();
 
-		if (isset($init["data"]) && $init["data"])
-			$this->data = $this->safe($init["data"]);
+            $this->l = $this->translations->import("lang/ptable.lang");
+        }
+        else
+            $this->l = $lang;
 
-		// kirjuta klassi default'id tabelikirjelduse omadega üle
+        // data[] muutuja edastamiseks tabelikirjeldusele
 
-		if (!$this->init())
-			return false;
+        if (isset($init["data"]) && $init["data"])
+            $this->data = $this->safe($init["data"]);
 
-		// mitu välja defineeritud on?
+        // kirjuta klassi default'id tabelikirjelduse omadega üle
 
-		$this->field_count = count($this->fields);
+        if (!$this->init())
+            return false;
 
-		// kirjuta default'id JS omadega üle (puhasta input)
+        // mitu välja defineeritud on?
 
-		foreach ($init as $key => $val)
-			$this->{ $key } = $this->safe($val);
+        $this->field_count = count($this->fields);
 
-		// kas on veergude laiused olemas
+        // kirjuta default'id JS omadega üle (puhasta input)
 
-		if ($this->col_width)
-			$this->col_width = explode("-", $this->col_width);
+        foreach ($init as $key => $val)
+            $this->{ $key } = $this->safe($val);
 
-		// esmasel initsialiseerimisel vaadatakse, kas autoupdate sisse lülitada (tabelikirjelduse poolt nõutud)
+        // kas on veergude laiused olemas
 
-		if ($this->mode == "init" && !isset($this->autoupdate))
-			$this->autoupdate = $this->refresh;
+        if ($this->col_width)
+            $this->col_width = explode("-", $this->col_width);
 
-		// kontrolli, kas sorteerimiseks vajalik on paigas
+        // esmasel initsialiseerimisel vaadatakse, kas autoupdate sisse lülitada (tabelikirjelduse poolt nõutud)
 
-		if (!$this->order) {
-			// kui sorteerimine pole paigas, siis pane selleks esimene deklareeritud väli
+        if ($this->mode == "init" && !isset($this->autoupdate))
+            $this->autoupdate = $this->refresh;
 
-			if (isset($this->fields[0]["field"]))
-				$this->order = $this->fields[0]["field"];
-		}
+        // kontrolli, kas sorteerimiseks vajalik on paigas
 
-		// kui tabeli kirjelduses on märgitud uus ühendus
+        if (!$this->order) {
+            // kui sorteerimine pole paigas, siis pane selleks esimene deklareeritud väli
 
-		if ($this->host && $this->database && $this->username && $this->password) {
-			$this->db = @new P_DATABASE($this->host, $this->database, $this->username, $this->password, $this->charset, $this->collation);
-			$this->db->connect();
-		}
-		else { // kui on antud mysql resource link, siis tee uus klass ja topi link kohe külge
-			if (is_resource($source)) {
-				$this->db = @new P_DATABASE();
-				$this->db->connection = $source;
-			}
-			else { // kui üldse midagi ei antud sisendiks, siis loo uus klass (eeldab DB_HOST, DB_NAME, DB_USER, DB_PASS kirjeldatust)
-				if (!$source) {
-					$this->db = @new P_DATABASE();
-					$this->db->connect();
-				}
-				else { // kui sisendiks on andmemassiiv
-					if (is_array($source))
-						$this->external_data = $source;
-				}
-			}
-		}
+            if (isset($this->fields[0]["field"]))
+                $this->order = $this->fields[0]["field"];
+        }
 
-		// hangi ja töötle andmeid
+        // kui tabeli kirjelduses on märgitud uus ühendus
 
-		if ($this->external_data)
-			$this->prepare_external();
-		else
-			$this->fetch_data();
+        if ($this->host && $this->database && $this->username && $this->password) {
+            $this->db = @new P_DATABASE();
+            $this->db->connect($this->host, $this->database, $this->username, $this->password, $this->charset, $this->collation);
+        }
+        elseif (is_resource($source)) { // kui on antud olemasolev mysql resource link, siis tee uus klass ja topi link kohe külge
+            $this->db = @new P_DATABASE();
+            $this->db->connection = $source;
+        }
+        elseif (is_array($source)) { // kui sisendiks on andmemassiiv
+            $this->external_data = $source;
+        }
+        elseif (!$source) { // kui üldse midagi ei antud sisendiks
+            $this->db = @new P_DATABASE();
 
-		// moodusta tabel
+            if (!defined("DB_HOST") || !defined("DB_NAME") || !defined("DB_USER") || !defined("DB_PASS"))
+                return false;
 
-		$this->display();
+            $this->db->connect(DB_HOST, DB_NAME, DB_USER, DB_PASS, DB_CHARSET, DB_COLLATION);
+        }
 
-		// tabeli kuvamiseks kasuta
-		// echo $this->content;
-	}
+        // hangi ja töötle andmeid
 
-	// init 
+        if ($this->external_data)
+            $this->prepare_external();
+        else
+            $this->fetch_data();
 
-	function init() {
-		// et tabelikirjelduse failid oleks veidi mugavam ja lühem keelestringe välja kutsuda
+        // moodusta tabel
 
-		$l = &$this->l;
+        $this->display();
 
-		// tabeli kirjelduse fail
+        // tabeli kuvamiseks kasuta
+        // echo $this->content;
+    }
 
-		$this->template = P_PTABLES. P_SL. $this->target. ".php";
+    // init
 
-		// lae tabeli info
+    function init() {
+        // et tabelikirjelduse failid oleks veidi mugavam ja lühem keelestringe välja kutsuda
 
-		if (file_exists($this->template)) {
-			require_once($this->template);
+        $l = &$this->l;
 
-			// kas navigeerimine lubada?
+        // tabeli kirjelduse fail
 
-			if ($this->nav_header || $this->nav_footer)
-				$this->navigation = true;
-			else
-				$this->navigation = false;
+        $this->template = P_TABLES. P_SL. $this->target. ".php";
 
-			return true;
-		}
-		else {
-			// väga halb, et tabeli kirjeldust ei leidnud!
+        // lae tabeli info
 
-			return false;
-		}
-	}
+        if (file_exists($this->template)) {
+            require_once($this->template);
 
-	// hangi tabeli andmed
+            // kas navigeerimine lubada?
 
-	function fetch_data() {
-		$search = $limit = $field_list = $joined = false;
+            if ($this->nav_header || $this->nav_footer)
+                $this->navigation = true;
+            else
+                $this->navigation = false;
 
-		// otsingutingumused
+            return true;
+        }
+        else {
+            // väga halb, et tabeli kirjeldust ei leidnud!
 
-		if ($this->search) {
-			foreach ($this->fields as $col) { // TODO: by default otsitaks kõigist veergudest, tee nimekiri otsiväljadest
-				if (isset($col["searchable"]) && $col["searchable"]) {
-					$left = $right = P_ANY;
-					$find = P_LIKE;
+            return false;
+        }
+    }
 
-					if (isset($col["search_left"]) && !$col["search_left"])
-						$left = false;
+    // hangi tabeli andmed
 
-					if (isset($col["search_right"]) && !$col["search_right"])
-						$right = false;
+    function fetch_data() {
+        $search = $limit = $field_list = $joined = false;
 
-					if (!$left && !$right)
-						$find = P_EXACT;
+        if ($this->where)
+            $this->where = P_WHERE. $this->where;
 
-					$search[] = $col["field"]. $find. P_Q;
-					$this->values[] = $left. trim($this->search). $right;
-				}
-			}
+        // otsingutingumused
 
-			$search = implode(P_OR, $search);
+        if ($this->search) {
+            foreach ($this->fields as $col) {
+                if (isset($col["searchable"]) && $col["searchable"]) {
+                    $left = $right = P_ANY;
+                    $find = P_LIKE;
 
-			if (!$this->where)
-				$search = P_WHERE. $search;
-		}
+                    if (isset($col["search_left"]) && !$col["search_left"])
+                        $left = false;
 
-		// mis väljad on defineeritud
+                    if (isset($col["search_right"]) && !$col["search_right"])
+                        $right = false;
 
-		$this->get_fields($field_list, $joined);
+                    if (!$left && !$right)
+                        $find = P_EXACT;
 
-		// mitu kirjet kokku on? arvuta lehekülgede arv (ainult esmasel initsialiseerimisel (TODO: aga kuidas on vahepeal täienenud tabeliga? kas tuleb uuesti arvutada))
+                    $search[] = $col["field"]. $find. P_Q;
+                    $this->values[] = $left. trim($this->search). $right;
+                }
+            }
 
-		if (!$this->pages) {
-			if (!$this->query_count) // kui ei ole juba tabelikirjelduses etteantud query_count'i päringut, siis koosta see
-				$this->query_count = P_SELECT. $field_list[0]. P_FROM. $this->table. $joined. ($this->where ? P_WHERE. $this->where : P_VOID). $search;
+            $search = "(". implode(P_OR, $search). ")";
 
-			$this->db->query($this->query_count, $this->values);
+            if ($this->where)
+                $this->where .= " && ". $search;
+            else
+                $this->where = P_WHERE. $search;
+        }
 
-			$this->records = $this->db->rows;
+        $this->query = $this->build_query();
 
-			if ($this->page_size == P_ALL)
-				$this->pages = 1;
-			else {
-				$this->pages = intval(($this->records - 1) / intval($this->page_size)) + 1;
+        // mitu kirjet kokku on? arvuta lehekülgede arv (ainult esmasel initsialiseerimisel (TODO: aga kuidas on vahepeal täienenud tabeliga? kas tuleb uuesti arvutada))
 
-				// kui eelmisest otsingust on lehenumber jäänud suurem, siis vii kasutaja esimesele lehele
+        if (!$this->pages) {
+            $this->db->query($this->query, $this->values);
 
-				if ($this->page > $this->pages)
-					$this->page = 1;
+            $this->records = $this->db->rows;
 
-				$limit = P_LIMIT. (($this->page - 1) * $this->page_size). ", ". $this->page_size;
-			}
-		}
+            $this->content .= "pre: ". $this->query;
+            $this->content .= "found: ". $this->records;
 
-		// koosta põhipäring
-		// TODO: põhipäringule lisada ka tüübiteisendused (convert_date jms)
+            if ($this->page_size == P_ALL)
+                $this->pages = 1;
+            else {
+                $this->pages = intval(($this->records - 1) / intval($this->page_size)) + 1;
 
-		if ($this->records) {
-			if ($this->query) // kui query on juba kirjeldatud, siis lisa ainult vajadusel otsing, sorteering ja limiit
-				$this->query .= $search. ($this->order ? P_ORDER. $this->order. " ". $this->way : P_VOID). $limit;
-			else
-				$this->query = P_SELECT. implode(", ", $field_list). P_FROM. $this->table. $joined. 
-				($this->where ? P_WHERE. $this->where : P_VOID). $search.
-				($this->order ? P_ORDER. $this->order. " ". $this->way : P_VOID). $limit;
+                // kui eelmisest otsingust on lehenumber jäänud suurem, siis vii kasutaja esimesele lehele
 
-			// teosta päring
+                if ($this->page > $this->pages)
+                    $this->page = 1;
 
-			$this->db->query($this->query, $this->values);
-		}
-	}
+                $this->limit = P_LIMIT. (($this->page - 1) * $this->page_size). ", ". $this->page_size;
+            }
+        }
 
-	function prepare_external() {
-		// otsingutingumused
+        // põhipäring
 
-		if ($this->search) {
-			$search_field = array();
+        if ($this->records) {
+            // lisa sorteerimine ja limiit päringule
 
-			// millistest väljadest otsida
+            $this->query .= ($this->order ? P_ORDER. $this->order. " ". $this->way : P_VOID). $this->limit;
 
-			foreach ($this->fields as $col) {
-				if (isset($col["searchable"]) && !$col["searchable"]) // kui ei soovita selle välja puhul otsida
-					continue;
+            $this->content .= "main: ". $this->query;
 
-				$left = $right = true; // by default tehakse täisteksti otsing
+            // teosta päring
 
-				if (isset($col["search_left"]) && !$col["search_left"]) // kui ei soovita otsida vasakult
-					$left = false;
+            $this->db->query($this->query, $this->values);
+        }
+    }
 
-				if (isset($col["search_right"]) && !$col["search_right"]) // kui ei soovita otsida paremalt
-					$right = false;
+    function build_query() {
+        $join_tables = false;
+        $fields = $joins = [];
 
-				// lisa väli otsitavate hulka
+        foreach ($this->fields as $field) {
+            if (isset($field["alias"]) && $field["alias"])
+                $alias = " as ". $field["alias"];
+            else
+                $alias = P_VOID;
 
-				$search_field[] = array("field" => $col["field"], "left" => $left, "right" => $right);
-			}
+            if ($field["table"])
+                $fields[] = $field["table"]. ".". $field["field"]. $alias;
+            else
+                $fields[] = $this->table. ".". $field["field"]. $alias;
+        }
 
-			// kui on välju mille järgi otsida
+        foreach ($this->joins as $j_table => $join)
+            $joins[] = $join["method"]. " ". $j_table. " on ". $join["on"];
 
-			if (count($search_field)) {
-				$records = count($this->external_data);
+        if (count($joins))
+            $join_tables = " ". implode(", ", $joins);
 
-				for ($a = 0; $a < $records; $a++) {
-					$found = false;
-					$record = $this->external_data[$a];
-					// kas otsitavas väljas sisaldub otsisõna?
+        return P_SELECT. implode(", ", $fields). P_FROM. $this->table. $join_tables. $this->where;
+    }
 
-					foreach ($search_field as $field) {
-						if (!isset($record->{ $field["field"] }) && !$record->{ $field["field"] })
-							continue;
+    function prepare_external() {
+        // otsingutingumused
 
-						$field_value = $record->{ $field["field"] };
+        if ($this->search) {
+            $search_field = array();
 
-						if (!$field["left"] && !$field["right"] && $field_value == $this->search) { // täpne otsing
-							$found = true;
-							break; // kui juba ühest väljast leiti otsitav, siis pole mõtet edasi kontrollida
-						}
-						/* TODO: vasakule/paremale otsingud
+            // millistest väljadest otsida
+
+            foreach ($this->fields as $col) {
+                if (isset($col["searchable"]) && !$col["searchable"]) // kui ei soovita selle välja puhul otsida
+                    continue;
+
+                $left = $right = true; // by default tehakse täisteksti otsing
+
+                if (isset($col["search_left"]) && !$col["search_left"]) // kui ei soovita otsida vasakult
+                    $left = false;
+
+                if (isset($col["search_right"]) && !$col["search_right"]) // kui ei soovita otsida paremalt
+                    $right = false;
+
+                // lisa väli otsitavate hulka
+
+                $search_field[] = array("field" => $col["field"], "left" => $left, "right" => $right);
+            }
+
+            // kui on välju mille järgi otsida
+
+            if (count($search_field)) {
+                $records = count($this->external_data);
+
+                for ($a = 0; $a < $records; $a++) {
+                    $found = false;
+                    $record = $this->external_data[$a];
+                    // kas otsitavas väljas sisaldub otsisõna?
+
+                    foreach ($search_field as $field) {
+                        if (!isset($record->{ $field["field"] }) && !$record->{ $field["field"] })
+                            continue;
+
+                        $field_value = $record->{ $field["field"] };
+
+                        if (!$field["left"] && !$field["right"] && $field_value == $this->search) { // täpne otsing
+                            $found = true;
+                            break; // kui juba ühest väljast leiti otsitav, siis pole mõtet edasi kontrollida
+                        }
+                        /* TODO: vasakule/paremale otsingud
 						elseif ($field["left"] && !$field["right"]) {
 						}
 						elseif (!$field["left"] && $field["right"]) {
 						}
 						*/
-						elseif (substr_count($field_value, $this->search)) { // täisotsing
-							$found = true;
-							break;
-						}
-					}
+                        elseif (substr_count($field_value, $this->search)) { // täisotsing
+                            $found = true;
+                            break;
+                        }
+                    }
 
-					// kui ei leitud antud rea puhul otsitavat, siis viska tulemustest välja
+                    // kui ei leitud antud rea puhul otsitavat, siis viska tulemustest välja
 
-					if (!$found)
-						unset($this->external_data[$a]);
-				}
-			}
+                    if (!$found)
+                        unset($this->external_data[$a]);
+                }
+            }
 
-			reset($this->external_data);
-		}
+            reset($this->external_data);
+        }
 
-		// mitu kirjet kokku on? arvuta lehekülgede arv
+        // mitu kirjet kokku on? arvuta lehekülgede arv
 
-		$this->records = count($this->external_data);
+        $this->records = count($this->external_data);
 
-		if ($this->page_size == P_ALL)
-			$this->pages = 1;
-		else { // kui on rohkem kui üks lehekülg (potensiaalselt), siis lõika massiivist õige tükk
-			$this->pages = intval(($this->records - 1) / intval($this->page_size)) + 1;
+        if ($this->page_size == P_ALL)
+            $this->pages = 1;
+        else { // kui on rohkem kui üks lehekülg (potensiaalselt), siis lõika massiivist õige tükk
+            $this->pages = intval(($this->records - 1) / intval($this->page_size)) + 1;
 
-			// kui eelmisest otsingust on lehenumber jäänud suurem, siis vii kasutaja esimesele lehele
+            // kui eelmisest otsingust on lehenumber jäänud suurem, siis vii kasutaja esimesele lehele
 
-			if ($this->page > $this->pages)
-				$this->page = 1;
+            if ($this->page > $this->pages)
+                $this->page = 1;
 
-			$this->external_data = array_slice($this->external_data, ($this->page - 1) * $this->page_size, $this->page_size);
-		}
+            $this->external_data = array_slice($this->external_data, ($this->page - 1) * $this->page_size, $this->page_size);
+        }
 
-		// kui midagi alles jäi, siis sorteeri kuidas vaja
+        // kui midagi alles jäi, siis sorteeri kuidas vaja
 
-		if ($this->records)
-			usort($this->external_data, array($this, "sort_em"));
-	}
+        if ($this->records)
+            usort($this->external_data, array($this, "sort_em"));
+    }
 
-	// massiivi sorteerimine vastavalt väljale ja suunale
+    // massiivi sorteerimine vastavalt väljale ja suunale
 
-	function sort_em($a, $b) {
-		if (!isset($a->{ $this->order }) || !isset($b->{ $this->order }))
-			return 0;
+    function sort_em($a, $b) {
+        if (!isset($a->{ $this->order }) || !isset($b->{ $this->order }))
+            return 0;
 
-		$a = $a->{ $this->order };
-		$b = $b->{ $this->order };
+        $a = $a->{ $this->order };
+        $b = $b->{ $this->order };
 
-		if ($a == $b)
-			return 0;
+        if ($a == $b)
+            return 0;
 
-		if (!$this->way || $this->way == "asc")
-			return ($a < $b) ? -1 : 1;
-		else
-			return ($b < $a) ? -1 : 1;
-	}
+        if (!$this->way || $this->way == "asc")
+            return ($a < $b) ? -1 : 1;
+        else
+            return ($b < $a) ? -1 : 1;
+    }
 
-	// kuva tabel
+    // kuva tabel
 
-	function display() {
-		if ($this->mode == "init") {
-			if ($this->header) {
-				$this->content .= "<div id=\"". P_PREFIX. $this->target. "_header\" class=\"header\">";
+    function display() {
+        if ($this->mode == "init") {
+            if ($this->header) {
+                $this->content .= "<div id=\"". P_PREFIX. $this->target. "_header\" class=\"header\">";
 
-				if ($this->title) {
-					$this->content .= "<div class=\"title\">";
+                if ($this->title) {
+                    $this->content .= "<div class=\"title\">";
 
-					if (isset($this->title_icon) && $this->title_icon)
-						$this->content .= "<i class=\"fa fa-". $this->title_icon. "\"></i> ";
+                    if (isset($this->title_icon) && $this->title_icon)
+                        $this->content .= "<i class=\"fa fa-". $this->title_icon. "\"></i> ";
 
-					$this->content .= "<u>". $this->title. "</u></div>";
-				}
+                    $this->content .= "<u>". $this->title. "</u></div>";
+                }
 
-				if ($this->prefs || $this->searchable) {
-					$this->content .= "<div class=\"pref_search\">";
+                if ($this->prefs || $this->searchable) {
+                    $this->content .= "<div class=\"pref_search\">";
 
-					if ($this->prefs) {
-						$this->prefbox();
+                    if ($this->prefs) {
+                        $this->prefbox();
 
-						$this->content .= "<span class=\"pref\">";
-						$this->content .= "<span id=\"". P_PREFIX. $this->target. "_pref\" class=\"pref_btn\" title=\"". $this->l->txt_pref_btn. "\"><i class=\"fa fa-cog\"></i></span>";
-						$this->content .= "</span>";
-					}
+                        $this->content .= "<span class=\"pref\">";
+                        $this->content .= "<span id=\"". P_PREFIX. $this->target. "_pref\" class=\"pref_btn\" title=\"". $this->l->txt_pref_btn. "\"><i class=\"fa fa-cog\"></i></span>";
+                        $this->content .= "</span>";
+                    }
 
-					if ($this->searchable)
-						$this->searchbox();
+                    if ($this->searchable)
+                        $this->searchbox();
 
-					$this->content .= "</div>";
-				}
+                    $this->content .= "</div>";
+                }
 
-				$this->content .= "</div>";
-				$this->content .= "<br clear=\"all\"/>";
-			}
+                $this->content .= "</div>";
+                $this->content .= "<br clear=\"all\"/>";
+            }
 
-			$this->content .= "<div id=\"". P_PREFIX. $this->target. "_container\">";
-		}
+            $this->content .= "<div id=\"". P_PREFIX. $this->target. "_container\">";
+        }
 
-		$this->content .= "<table id=\"". P_PREFIX. $this->target. "\" ";
+        $this->content .= "<table id=\"". P_PREFIX. $this->target. "\" ";
 
-		// kui on ilma ülemise ääreta tabel, siis muuda tabeli hover'i käitumist (äär kuvatakse hover'i puhul ümber tabeli sisuosa)
+        // kui on ilma ülemise ääreta tabel, siis muuda tabeli hover'i käitumist (äär kuvatakse hover'i puhul ümber tabeli sisuosa)
 
-		if (substr_count($this->class, "no_border"))
-			$this->content .= "class=\"table_hover\" ";
+        if (substr_count($this->class, "no_border"))
+            $this->content .= "class=\"table_hover\" ";
 
-		$this->content .= "data-records=". ($this->records ? $this->records : "0"). " ";
-		$this->content .= "data-page=". $this->page. " ";
-		$this->content .= "data-pages=". $this->pages. " ";
-		$this->content .= "data-page_size=". $this->page_size. " ";
-		$this->content .= "data-order=\"". $this->order. "\" ";
-		$this->content .= "data-way=\"". $this->way. "\" ";
-		$this->content .= "data-navigation=\"". ($this->navigation ? "true" : "false"). "\" ";
-		$this->content .= "data-autoupdate=\"". ($this->autoupdate ? $this->autoupdate : "0"). "\" ";
-		$this->content .= "data-autosearch=\"". ($this->autosearch ? "true" : "false"). "\" ";
-		$this->content .= "data-store=\"". ($this->store_prefs ? "true" : "false"). "\">";
-		$this->content .= "<thead>";
+        $this->content .= "data-records=". ($this->records ? $this->records : "0"). " ";
+        $this->content .= "data-page=". $this->page. " ";
+        $this->content .= "data-pages=". $this->pages. " ";
+        $this->content .= "data-page_size=". $this->page_size. " ";
+        $this->content .= "data-order=\"". $this->order. "\" ";
+        $this->content .= "data-way=\"". $this->way. "\" ";
+        $this->content .= "data-navigation=\"". ($this->navigation ? "true" : "false"). "\" ";
+        $this->content .= "data-autoupdate=\"". ($this->autoupdate ? $this->autoupdate : "0"). "\" ";
+        $this->content .= "data-autosearch=\"". ($this->autosearch ? "true" : "false"). "\" ";
+        $this->content .= "data-store=\"". ($this->store_prefs ? "true" : "false"). "\">";
+        $this->content .= "<thead>";
 
-		// kui on ülemine navigeerimine lubatud
+        // kui on ülemine navigeerimine lubatud
 
-		if ($this->nav_header)
-			$this->navigation("header");
+        if ($this->nav_header)
+            $this->navigation("header");
 
-		// väljade kirjeldused
+        // väljade kirjeldused
 
-		if ($this->fields_descr)
-			$this->fields_descr();
+        if ($this->fields_descr)
+            $this->fields_descr();
 
-		$this->content .= "</thead><tbody>";
+        $this->content .= "</thead><tbody>";
 
-		// tulemused
+        // tulemused
 
-		if ($this->records) {
-			if ($this->db)
-				$this->db_output();
-			else
-				$this->ext_output();
-		}
-		else
-			$this->content .= "<tr><td colspan=100>". $this->l->txt_notfound. "</td></tr>";
+        if ($this->records) {
+            if ($this->db) {
+                while ($obj = $this->db->get_obj())
+                    $this->print_row($obj);
+            }
+            else {
+                foreach ($this->external_data as $obj)
+                    $this->print_row($obj);
+            }
+        }
+        else
+            $this->content .= "<tr><td colspan=100>". $this->l->txt_notfound. "</td></tr>";
 
-		// footer
+        // footer
 
-		if ($this->nav_footer)
-			$this->navigation("footer");
+        if ($this->nav_footer)
+            $this->navigation("footer");
 
-		$this->content .= "</tbody>";
-		$this->content .= "</table>";
+        $this->content .= "</tbody>";
+        $this->content .= "</table>";
 
-		if ($this->mode == "init") {
-			$this->content .= "</div>";
+        if ($this->mode == "init") {
+            $this->content .= "</div>";
 
-			// kui on otsingukast olemas ja auto-otsing, siis säti fookus ja kursor ka viimaseks otsingukastis
+            // kui on otsingukast olemas ja auto-otsing, siis säti fookus ja kursor ka viimaseks otsingukastis
 
-			if ($this->search && $this->searchable && $this->autosearch) {
-				$this->content .= "<script>";
-				$this->content .= "var searchbox = $(\"#". P_PREFIX. $this->target. "_search\");";
-				$this->content .= "searchbox.focus();";
-				$this->content .= "searchbox[0].setSelectionRange(100, 100);";
-				$this->content .= "</script>";
-			}
-		}
-	}
+            if ($this->search && $this->searchable && $this->autosearch) {
+                $this->content .= "<script>";
+                $this->content .= "var searchbox = $(\"#". P_PREFIX. $this->target. "_search\");";
+                $this->content .= "searchbox.focus();";
+                $this->content .= "searchbox[0].setSelectionRange(100, 100);";
+                $this->content .= "</script>";
+            }
+        }
+    }
 
-	// väljasta väärtused baasist
+    // väljasta väärtused baasist
 
-	function db_output() {
-		while ($obj = $this->db->get_obj()) {
-			// käi väärtused üle ja töötle vastavalt vajadustele
+    function print_row($obj) {
+        // kas kogu real on trigger küljes?
 
-			foreach ($this->fields as $field)
-				if (isset($field["extend"]))
-					$obj->{ $field["field"] } = $this->extend($obj->{ $field["field"] }, $field["extend"]);
+        $row["field"] = "ROW";
+        $this->output($row, $obj);
 
-			// kas kogu real on trigger küljes?
+        // nüüd vaata, kas väljale on defineeritud trigger või mitte, ja väljasta väärtus
 
-			$count = 0;
-			$row["field"] = "ROW";
+        $count = 0;
 
-			$this->output($row, $obj);
+        foreach ($this->fields as $field) {
+		  if (isset($field["extend"]))
+			$obj->{ $field["field"] } = $this->extend($obj->{ $field["field"] }, $field["extend"]);
 
-			// nüüd vaata, kas väljale on defineeritud trigger või mitte, ja väljasta väärtus
+          $this->output($field, $obj, $count++);
+        }
 
-			foreach ($this->fields as $field) {
-				if (!(isset($field["hidden"]) && $field["hidden"]))
-					$this->output($field, $obj, $count);
+        $this->content .= "</tr>";
+    }
 
-				$count++;
-			}
+    // muutujate töötlemine
 
-			$this->content .= "</tr>";
-		}
-	}
+    function extend($value, $extensions) {
+        if (!is_array($extensions))
+            $extensions = [ $extensions ];
 
-	// väljasta väärtused massiivist
+        foreach ($extensions as $extension)
+            if (method_exists($this, "ext_". $extension))
+                $value = $this->{ "ext_". $extension }($value);
 
-	function ext_output() {
-		if (!count($this->external_data))
-			return false;
+        return $value;
+    }
 
-		foreach ($this->external_data as $obj) {
-			// käi väärtused üle ja töötle vastavalt vajadustele
+    function output($field, $data, $pos = 0) {
+        $link = $title = $class = $style = $colspan = P_VOID;
+        $styles = array();
 
-			foreach ($this->fields as $field)
-				if (isset($field["extend"]))
-					$obj->{ $field["field"] } = $this->extend($obj->{ $field["field"] }, $field["extend"]);
+        if (isset($this->triggers[$field["field"]])) {
+            $class = "trigger";
+            $trigger = $this->triggers[$field["field"]];
 
-			// kas kogu real on trigger küljes?
+            if (isset($field["colspan"]) && $field["colspan"])
+                $colspan = " colspan=". $field["colspan"];
 
-			$count = 0;
-			$row["field"] = "ROW";
+            if (isset($field["class"]) && $field["class"])
+                $class .= " ". $field["class"];
 
-			$this->output($row, $obj);
+            if (isset($field["align"]) && $field["align"])
+                $styles[] = "text-align: ". $field["align"];
 
-			// nüüd vaata, kas väljale on defineeritud trigger või mitte, ja väljasta väärtus
+            if (isset($field["nowrap"]) && $field["nowrap"])
+                $styles[] = "white-space: ". ($field["nowrap"] ? "nowrap" : "none");
 
-			foreach ($this->fields as $field) {
-				if (!(isset($field["hidden"]) && $field["hidden"]))
-					$this->output($field, $obj, $count);
+            if (count($styles))
+                $style = " style=\"". implode("; ", $styles). "\"";
 
-				$count++;
-			}
+            if (isset($trigger["title"]))
+                $title = $this->replace_markup($trigger["title"], $data);
 
-			$this->content .= "</tr>";
-		}
-	}
+            if (isset($trigger["link"])) {
+                $link = $this->replace_markup($trigger["link"], $data);
 
-	// muutujate töötlemine
+                if (!$title)
+                    $title = $link;
+            }
 
-	function extend($value, $extensions) {
-		if (!is_array($extensions))
-			$extensions = [ $extensions ];
+            if ($field["field"] == "ROW")
+                $this->content .= "<tr";
+            else
+                $this->content .= "<td ";
 
-		foreach ($extensions as $extension)
-			if (method_exists($this, "ext_". $extension))
-				$value = $this->{ "ext_". $extension }($value);
+            $link = str_replace("\"", "", $link);
 
-		return $value;
-	}
+            $this->content .= $colspan. " class=\"". $class. "\"". $style;
 
-	function output($field, $data, $pos = 0) {
-		$link = $title = $class = $style = $colspan = P_VOID;
-		$styles = array();
+            // 'data' overrideb lingi
 
-		if (isset($this->triggers[$field["field"]])) {
-			$class = "trigger";
-			$trigger = $this->triggers[$field["field"]];
+            if (isset($trigger["data"]) && $trigger["data"]) {
+                if (!is_array($trigger["data"]))
+                    $trigger["data"] = [ $trigger["data"] ];
 
-			if (isset($field["colspan"]) && $field["colspan"])
-				$colspan = " colspan=". $field["colspan"];
+                foreach ($trigger["data"] as $ext_field => $ext_data) {
+                    $ext_data = $this->replace_markup($ext_data, $data);
 
-			if (isset($field["class"]) && $field["class"])
-				$class .= " ". $field["class"];
+                    $this->content .= " data-". $ext_field. "=\"". $ext_data. "\"";
+                }
 
-			if (isset($field["align"]) && $field["align"])
-				$styles[] = "text-align: ". $field["align"];
+                if ($title)
+                    $this->content .= " title=\"". $title. "\"";
+            }
+            elseif ($link) {
+                $this->content .= " data-link=\"". $link. "\"";
 
-			if (isset($field["nowrap"]) && $field["nowrap"])
-				$styles[] = "white-space: ". ($field["nowrap"] ? "nowrap" : "none");
+                if (isset($trigger["external"]) && $trigger["external"])
+                    $this->content .= " data-ext=\"true\" title=\"-> ". $title. "\"";
+                else
+                    $this->content .= " title=\"". $title. "\"";
+            }
 
-			if (count($styles))
-				$style = " style=\"". implode("; ", $styles). "\"";
+            if ($field["field"] == "ROW")
+                $this->content .= ">";
+            else {
+                $this->content .= ">". $data->{ $field["field"] }. "</td>";
 
-			if (isset($trigger["title"]))
-				$title = $this->replace_markup($trigger["title"], $data);
+                if ($pos < ($this->field_count - 1))
+                    $this->content .= "<td class=\"resize\"></td>";
+            }
+        }
+        else {
+            if ($field["field"] == "ROW")
+                $this->content .= "<tr>";
+            else {
+                $this->content .= "<td ";
 
-			if (isset($trigger["link"])) {
-				$link = $this->replace_markup($trigger["link"], $data);
+                if (isset($field["colspan"]) && $field["colspan"])
+                    $colspan = " colspan=". $field["colspan"];
 
-				if (!$title)
-					$title = $link;
-			}
+                if (isset($field["class"]) && $field["class"])
+                    $class = " class=\"". $field["class"]. "\"";
 
-			if ($field["field"] == "ROW")
-				$this->content .= "<tr";
-			else
-				$this->content .= "<td ";
+                if (isset($field["align"]) && $field["align"])
+                    $styles[] = "text-align: ". $field["align"];
 
-			$link = str_replace("\"", "", $link);
+                if (isset($field["nowrap"]) && $field["nowrap"])
+                    $styles[] = "white-space: ". ($field["nowrap"] ? "nowrap" : "none");
 
-			$this->content .= $colspan. " class=\"". $class. "\"". $style;
+                if (count($styles))
+                    $style = " style=\"". implode("; ", $styles). "\"";
 
-			// 'data' overrideb lingi
+                $this->content .= $colspan. $class. $style. ">";
 
-			if (isset($trigger["data"]) && $trigger["data"]) {
-				if (!is_array($trigger["data"]))
-					$trigger["data"] = [ $trigger["data"] ];
+                $value = $data->{ $field["field"] };
 
-				foreach ($trigger["data"] as $ext_field => $ext_data) {
-					$ext_data = $this->replace_markup($ext_data, $data);
+                // kas on vaja kuvada hoopis vastava indeksiga tõlget?
 
-					$this->content .= " data-". $ext_field. "=\"". $ext_data. "\"";
-				}
+                if (isset($field["translate"]) && $field["translate"]) {
+                    if (isset($this->l->{ $field["translate"]. $value }))
+                        $value = $this->l->{ $field["translate"]. $value };
+                }
 
-				if ($title)
-					$this->content .= " title=\"". $title. "\"";
-			}
-			elseif ($link) {
-				$this->content .= " data-link=\"". $link. "\"";
+                $this->content .= $value. "</td>";
 
-				if (isset($trigger["external"]) && $trigger["external"])
-					$this->content .= " data-ext=\"true\" title=\"-> ". $title. "\"";
-				else
-					$this->content .= " title=\"". $title. "\"";
-			}
+                if ($pos < ($this->field_count - 1))
+                    $this->content .= "<td class=\"resize\"></td>";
+            }
+        }
+    }
 
-			if ($field["field"] == "ROW")
-				$this->content .= ">";
-			else {
-				$this->content .= ">". $data->{ $field["field"] }. "</td>";
+    // tabeli väljade kirjeldused
 
-				if ($pos < ($this->field_count - 1))
-					$this->content .= "<td class=\"resize\"></td>";
-			}
-		}
-		else {
-			if ($field["field"] == "ROW")
-				$this->content .= "<tr>";
-			else {
-				if (isset($data->{ $field["field"] })) {
-					$this->content .= "<td ";
+    function fields_descr() {
+        $fields = count($this->fields);
+        $current_field = 0;
 
-					if (isset($field["colspan"]) && $field["colspan"])
-						$colspan = " colspan=". $field["colspan"];
+        $this->content .= "<tr>";
 
-					if (isset($field["class"]) && $field["class"])
-						$class = " class=\"". $field["class"]. "\"";
+        foreach ($this->fields as $field) {
+            $current_field++;
+            $no_order = false;
 
-					if (isset($field["align"]) && $field["align"])
-						$styles[] = "text-align: ". $field["align"];
+            if (!isset($field["field"]) || !$field["field"] || (isset($field["hidden"]) && $field["hidden"]))
+                continue;
 
-					if (isset($field["nowrap"]) && $field["nowrap"])
-						$styles[] = "white-space: ". ($field["nowrap"] ? "nowrap" : "none");
+            if ($this->order == $field["field"])
+                $active = " active";
+            else
+                $active = P_VOID;
 
-					if (count($styles))
-						$style = " style=\"". implode("; ", $styles). "\"";
+            if ($this->way == "asc")
+                $way = "up";
+            else
+                $way = "down";
 
-					$this->content .= $colspan. $class. $style. ">";
+            if (!isset($field["title"]))
+                $field["title"] = $field["field"];
 
-					$value = $data->{ $field["field"] };
+            if (isset($field["sortable"]) && !$field["sortable"])
+                $no_order = "no_";
 
-					// kas on vaja kuvada hoopis vastava indeksiga tõlget?
+            $this->content .= "<th class=\"". $no_order. "order". $active. " \" ";
 
-					if (isset($field["translate"]) && $field["translate"]) {
-						if (isset($this->l->{ $field["translate"]. $value }))
-							$value = $this->l->{ $field["translate"]. $value };
-					}
+            // kas veeru laius on paika pandud juba varem?
 
-					$this->content .= $value. "</td>";
+            if (isset($this->col_width[$current_field - 1]))
+                $this->content .= " style=\"width: ". $this->col_width[$current_field - 1]. "px\"";
 
-					if ($pos < ($this->field_count - 1))
-						$this->content .= "<td class=\"resize\"></td>";
-				}
-				else {
-					$this->content .= "<td></td>";
-				}
-			}
-		}
-	}
+            $this->content .= "data-field=\"". $field["field"]. "\">";
+            $this->content .= $field["title"];
 
-	// tabeli väljade kirjeldused
+            if (!$no_order)
+                $this->content .= "<i class=\"sort_icon". $active. " fa fa-". $this->order_icon. "-". ($this->order == $field["field"] ? $way : "down"). "\"></i>";
 
-	function fields_descr() {
-		$fields = count($this->fields);
-		$current_field = 0;
+            $this->content .= "</th>";
 
-		$this->content .= "<tr>";
-
-		foreach ($this->fields as $field) {
-			$current_field++;
-			$no_order = false;
-
-			if (!isset($field["field"]) || !$field["field"] || (isset($field["hidden"]) && $field["hidden"]))
-				continue;
-
-			if ($this->order == $field["field"])
-				$active = " active";
-			else
-				$active = P_VOID;
-
-			if ($this->way == "asc")
-				$way = "up";
-			else
-				$way = "down";
-
-			if (!isset($field["title"]))
-				$field["title"] = $field["field"];
-
-			if (isset($field["sortable"]) && !$field["sortable"])
-				$no_order = "no_";
-
-			$this->content .= "<th class=\"". $no_order. "order". $active. " \" ";
-
-			// kas veeru laius on paika pandud juba varem?
-
-			if (isset($this->col_width[$current_field - 1]))
-				$this->content .= " style=\"width: ". $this->col_width[$current_field - 1]. "px\"";
-
-			$this->content .= "data-field=\"". $field["field"]. "\">";
-			$this->content .= $field["title"];
-
-			if (!$no_order)
-				$this->content .= "<i class=\"sort_icon". $active. " fa fa-". $this->order_icon. "-". ($this->order == $field["field"] ? $way : "down"). "\"></i>";
-
-			$this->content .= "</th>";
-
-			/*
+            /*
 			if (isset($field["field_search"]) && $field["field_search"]) {
 					$this->content .= "<span class=\"field_search\">";
 					$this->content .= "<input type=\"text\" id=\"". P_PREFIX. $this->target. "_". $field["field"]. "_searchbox\" class=\"field_search_input\"></span>";
@@ -726,136 +707,136 @@ class PTABLE {
 			}
 			*/
 
-			if ($current_field < $fields)
-				$this->content .= "<th class=\"resize no_order\"><img src=\"/ptable/img/blank.gif\" width=1 height=1 border=0></th>";
-		}
+            if ($current_field < $fields)
+                $this->content .= "<th class=\"resize no_order\"><img src=\"/ptable/img/blank.gif\" width=1 height=1 border=0></th>";
+        }
 
-		$this->content .= "</tr>";
+        $this->content .= "</tr>";
 
-		// kui vaja eraldada tabeliosa väljakirjeldustest
+        // kui vaja eraldada tabeliosa väljakirjeldustest
 
-		if ($this->header_sep) {
-			$this->content .= "<tr class=\"no_hover\"><td class=\"border_top\" colspan=100></td></tr>";
-			//$this->content .= "<tr><td colspan=100 style=\"height: 1px\"></td></tr>";
-		}
-	}
+        if ($this->header_sep) {
+            $this->content .= "<tr class=\"no_hover\"><td class=\"border_top\" colspan=100></td></tr>";
+            //$this->content .= "<tr><td colspan=100 style=\"height: 1px\"></td></tr>";
+        }
+    }
 
-	// otsingukast
+    // otsingukast
 
-	function searchbox() {
-		$this->content .= "<span class=\"search\">";
-		$this->content .= "<input type=\"text\" id=\"". P_PREFIX. $this->target. "_search\" class=\"search_field\" value=\"". $this->search. "\"> ";
-		$this->content .= "<span id=\"". P_PREFIX. $this->target. "_commit_search\" class=\"search_btn\" title=\"". $this->l->txt_search. "\"><i class=\"fa fa-search\"></i></span>";
-		$this->content .= "</span>";
-	}
+    function searchbox() {
+        $this->content .= "<span class=\"search\">";
+        $this->content .= "<input type=\"text\" id=\"". P_PREFIX. $this->target. "_search\" class=\"search_field\" value=\"". $this->search. "\"> ";
+        $this->content .= "<span id=\"". P_PREFIX. $this->target. "_commit_search\" class=\"search_btn\" title=\"". $this->l->txt_search. "\"><i class=\"fa fa-search\"></i></span>";
+        $this->content .= "</span>";
+    }
 
-	// valikukast
+    // valikukast
 
-	function prefbox() {
-		$this->content .= "<div id=\"". P_PREFIX. $this->target. "_prefbox\" class=\"prefbox\">";
-		$this->content .= $this->awesome_eee($this->l->txt_pref). "<br/><br/>";
-		$this->content .= $this->print_pref($this->l->txt_pagesize, $this->page_sizes, "dropdown", $this->page_size, "pagesize");
-		$this->content .= $this->print_pref($this->l->txt_autoupdate, $this->autoupdate, "autoupdate_check", $this->autoupdate, "autoupdate");
-		//$this->content .= "<br/><br/>";
-		//$this->content .= "<span class=\"big_btn\">". $this->l->txt_save. "</span>";
-		//$this->content .= "<span class=\"big_btn\">". $this->l->txt_close. "</span>";
-		$this->content .= "</div>";
-	}
+    function prefbox() {
+        $this->content .= "<div id=\"". P_PREFIX. $this->target. "_prefbox\" class=\"prefbox\">";
+        $this->content .= $this->awesome_eee($this->l->txt_pref). "<br/><br/>";
+        $this->content .= $this->print_pref($this->l->txt_pagesize, $this->page_sizes, "dropdown", $this->page_size, "pagesize");
+        $this->content .= $this->print_pref($this->l->txt_autoupdate, $this->autoupdate, "autoupdate_check", $this->autoupdate, "autoupdate");
+        //$this->content .= "<br/><br/>";
+        //$this->content .= "<span class=\"big_btn\">". $this->l->txt_save. "</span>";
+        //$this->content .= "<span class=\"big_btn\">". $this->l->txt_close. "</span>";
+        $this->content .= "</div>";
+    }
 
-	// valikukasti väljade printimine
+    // valikukasti väljade printimine
 
-	function print_pref($key, $val, $type = false, $c_val = false, $name = false) {
-		if (method_exists($this, "form_". $type))
-			$val = $this->{ "form_". $type }($val, $c_val, $name);
+    function print_pref($key, $val, $type = false, $c_val = false, $name = false) {
+        if (method_exists($this, "form_". $type))
+            $val = $this->{ "form_". $type }($val, $c_val, $name);
 
-		$pr = "<div class=\"pref_row\">";
-		$pr.= "<div class=\"pref_key\">". $key. ":</div>";
-		$pr.= "<div class=\"pref_val\">". $val. "</div>";
-		$pr.= "</div><br/>";
+        $pr = "<div class=\"pref_row\">";
+        $pr.= "<div class=\"pref_key\">". $key. ":</div>";
+        $pr.= "<div class=\"pref_val\">". $val. "</div>";
+        $pr.= "</div><br/>";
 
-		return $pr;
-	}
+        return $pr;
+    }
 
-	// keera tekstis {ikoon} font-awesome ikooniks
+    // keera tekstis {ikoon} font-awesome ikooniks
 
-	function awesome_eee($str) {
-		$str = str_replace("{{", "<i class=\"fa fa-", $str);
-		$str = str_replace("}}", "\"></i>", $str);
+    function awesome_eee($str) {
+        $str = str_replace("{{", "<i class=\"fa fa-", $str);
+        $str = str_replace("}}", "\"></i>", $str);
 
-		return $str;
-	}
+        return $str;
+    }
 
-	// vormi dropdown
+    // vormi dropdown
 
-	function form_dropdown($values, $current_val, $element) {
-		$pr = "<select id=\"". P_PREFIX. $this->target. "_". $element. "\" data-table=\"". $this->target. "\" class=\"". $element. "\"";
-		$pr.= ($current_val ? "" : " disabled"). ">";
+    function form_dropdown($values, $current_val, $element) {
+        $pr = "<select id=\"". P_PREFIX. $this->target. "_". $element. "\" data-table=\"". $this->target. "\" class=\"". $element. "\"";
+        $pr.= ($current_val ? "" : " disabled"). ">";
 
-		foreach ($values as $key => $val) {
-			$pr .= "<option value=\"". $key. "\"";
+        foreach ($values as $key => $val) {
+            $pr .= "<option value=\"". $key. "\"";
 
-			if ($current_val == $key)
-				$pr .= " selected";
+            if ($current_val == $key)
+                $pr .= " selected";
 
-			$pr .= ">". $val. "</option>";
-		}
+            $pr .= ">". $val. "</option>";
+        }
 
-		$pr .= "</select>";
+        $pr .= "</select>";
 
-		return $pr;
-	}
+        return $pr;
+    }
 
-	// vormi checkbox ja tekstiväli
+    // vormi checkbox ja tekstiväli
 
-	function form_autoupdate_check($values, $current_val, $element) {
-		/* kas autoupdate on aktiivne */
+    function form_autoupdate_check($values, $current_val, $element) {
+        /* kas autoupdate on aktiivne */
 
-		$id = P_PREFIX. $this->target;
+        $id = P_PREFIX. $this->target;
 
-		$pr  = "<div style=\"float: left\">";
-		$pr .= "<i id=\"". $id. "_autoupdate_off\" data-table=\"". $this->target. "\" class=\"autoupdate_check ". ($current_val ? "hide " : ""). "off fa fa-square-o\"></i>";
-		$pr .= "<i id=\"". $id. "_autoupdate_on\" data-table=\"". $this->target. "\" class=\"autoupdate_check ". ($current_val ? "" : "hide "). "fa fa-check-square-o\"></i>";
-		$pr .= "<input type=\"hidden\" id=\"". $id. "_autoupdate_value\" class=\"". $id. "_value\" value=\"". $current_val. "\">";
-		$pr .= "</div>";
+        $pr  = "<div style=\"float: left\">";
+        $pr .= "<i id=\"". $id. "_autoupdate_off\" data-table=\"". $this->target. "\" class=\"autoupdate_check ". ($current_val ? "hide " : ""). "off fa fa-square-o\"></i>";
+        $pr .= "<i id=\"". $id. "_autoupdate_on\" data-table=\"". $this->target. "\" class=\"autoupdate_check ". ($current_val ? "" : "hide "). "fa fa-check-square-o\"></i>";
+        $pr .= "<input type=\"hidden\" id=\"". $id. "_autoupdate_value\" class=\"". $id. "_value\" value=\"". $current_val. "\">";
+        $pr .= "</div>";
 
-		/* autoupdate valikud */
+        /* autoupdate valikud */
 
-		$pr .= "<div style=\"float: right\">";
-		$pr .= $this->form_dropdown($this->autoupdates, $current_val, "autoupdate_select");
-		$pr .= "</div>";
+        $pr .= "<div style=\"float: right\">";
+        $pr .= $this->form_dropdown($this->autoupdates, $current_val, "autoupdate_select");
+        $pr .= "</div>";
 
-		return $pr;
-	}
+        return $pr;
+    }
 
-	// navigatsioon
+    // navigatsioon
 
-	function navigation($type) {
-		if ($type == "footer" && $this->footer_sep)
-			$this->content .= "<tr class=\"no_hover\"><td colspan=100 class=\"border_btm\"></td></tr>";
+    function navigation($type) {
+        if ($type == "footer" && $this->footer_sep)
+            $this->content .= "<tr class=\"no_hover\"><td colspan=100 class=\"border_btm\"></td></tr>";
 
-		if ($this->nav_pre && $this->nav_post) {
-			$this->content .= $this->nav_pre. "nav_btm". $this->nav_post;
+        if ($this->nav_pre && $this->nav_post) {
+            $this->content .= $this->nav_pre. "nav_btm". $this->nav_post;
 
-			return true;
-		}
+            return true;
+        }
 
-		$nav_page = 0;
-		$from = ($this->page - 1) * $this->page_size + 1;
-		$to = $from + $this->page_size - 1;
+        $nav_page = 0;
+        $from = ($this->page - 1) * $this->page_size + 1;
+        $to = $from + $this->page_size - 1;
 
-		// et viimane marker poleks suurem kui kirjete arv
+        // et viimane marker poleks suurem kui kirjete arv
 
-		if ($to > $this->records)
-			$to = $this->records;
+        if ($to > $this->records)
+            $to = $this->records;
 
-		$this->nav_pre = "<tr class=\"no_hover\"><td colspan=100 class=\"";
-		$this->nav_post = "\"><span class=\"count\">". $this->l->txt_found. ": ". $this->records;
-		$this->nav_post.= ($this->records && $this->page_size != P_ALL ? " (". $from. "-". $to. ")" : "");
-		$this->nav_post.= "</span>";
+        $this->nav_pre = "<tr class=\"no_hover\"><td colspan=100 class=\"";
+        $this->nav_post = "\"><span class=\"count\">". $this->l->txt_found. ": ". $this->records;
+        $this->nav_post.= ($this->records && $this->page_size != P_ALL ? " (". $from. "-". $to. ")" : "");
+        $this->nav_post.= "</span>";
 
-		// kui mõni tulemus ikka leiti, siis kuva navigatsiooninupud (tagurpidi, kuna meil on float: right)
+        // kui mõni tulemus ikka leiti, siis kuva navigatsiooninupud (tagurpidi, kuna meil on float: right)
 
-		/* navigeerimisloogika
+        /* navigeerimisloogika
 
 			LEHT, P = x
 			LAIUS = 5
@@ -891,143 +872,114 @@ class PTABLE {
 			6) viimane nr prinditakse kui LEHTI > 1
 		*/
 
-		if ($this->records && $this->page_size != P_ALL) {
-			//$w = intval($this->nav_length / 2);
-			$x = $this->nav_length + 2;
-			$x2 = $x - 4;
-			$a = 2;
+        if ($this->records && $this->page_size != P_ALL) {
+            //$w = intval($this->nav_length / 2);
+            $x = $this->nav_length + 2;
+            $x2 = $x - 4;
+            $a = 2;
 
-			$this->nav_post.= "<span class=\"navigation\">";
+            $this->nav_post.= "<span class=\"navigation\">";
 
-			if ($this->page < 2)
-				$this->add_nav_btn(1, $this->awesome_eee($this->nav_prev), true);
-			else
-				$this->add_nav_btn($this->page - 1, $this->awesome_eee($this->nav_prev));
+            if ($this->page < 2)
+                $this->add_nav_btn(1, $this->awesome_eee($this->nav_prev), true);
+            else
+                $this->add_nav_btn($this->page - 1, $this->awesome_eee($this->nav_prev));
 
-			/* algusleht */
+            /* algusleht */
 
-			$this->add_nav_btn(1, 1);
+            $this->add_nav_btn(1, 1);
 
-			/* kas on vaja printida eraldaja */
-			/* TODO: hetkel toimib korralikult kui nav_length = 5 */
+            /* kas on vaja printida eraldaja */
+            /* TODO: hetkel toimib korralikult kui nav_length = 5 */
 
-			if ($this->page >= $this->nav_length && $this->pages > $x)
-				$this->nav_post.= "<span class=\"sep\"></span>";
+            if ($this->page >= $this->nav_length && $this->pages > $x)
+                $this->nav_post.= "<span class=\"sep\"></span>";
 
-			/* prindi vahepealsed nupud */
+            /* prindi vahepealsed nupud */
 
-			while ($a < $x && $a < $this->pages) {
-				if (($this->pages > $x && $this->page < $this->nav_length) || $this->pages <= $x)		/* kui leht on vasakul pool tsentrit */
-					$page = $a;
-				elseif ($this->page > ($this->pages - $this->nav_length + 2))							/* kui leht on paremalpool tsentrit */
-					$page = $this->pages - $this->nav_length + $a - 2;
-				else																					/* kui leht on tsentris */
-					$page = $this->page + $a - $this->nav_length + 1;
+            while ($a < $x && $a < $this->pages) {
+                if (($this->pages > $x && $this->page < $this->nav_length) || $this->pages <= $x)		/* kui leht on vasakul pool tsentrit */
+                    $page = $a;
+                elseif ($this->page > ($this->pages - $this->nav_length + 2))							/* kui leht on paremalpool tsentrit */
+                    $page = $this->pages - $this->nav_length + $a - 2;
+                else																					/* kui leht on tsentris */
+                    $page = $this->page + $a - $this->nav_length + 1;
 
-				$this->add_nav_btn($page, $page);
+                $this->add_nav_btn($page, $page);
 
-				$a++;
-			}
+                $a++;
+            }
 
-			/* kas on vaja printida eraldaja */
+            /* kas on vaja printida eraldaja */
 
-			if ($this->page < ($this->pages - $x2) && $this->pages > $x)
-				$this->nav_post.= "<span class=\"sep\"></span>";
+            if ($this->page < ($this->pages - $x2) && $this->pages > $x)
+                $this->nav_post.= "<span class=\"sep\"></span>";
 
-			/* prindi viimase lehe nupp */
+            /* prindi viimase lehe nupp */
 
-			if ($this->pages > 1)
-				$this->add_nav_btn($this->pages, $this->pages);
+            if ($this->pages > 1)
+                $this->add_nav_btn($this->pages, $this->pages);
 
-			if ($this->page >= $this->pages)
-				$this->add_nav_btn($this->pages, $this->awesome_eee($this->nav_next), true);
-			else
-				$this->add_nav_btn($this->page + 1, $this->awesome_eee($this->nav_next));
+            if ($this->page >= $this->pages)
+                $this->add_nav_btn($this->pages, $this->awesome_eee($this->nav_next), true);
+            else
+                $this->add_nav_btn($this->page + 1, $this->awesome_eee($this->nav_next));
 
-			$this->nav_post.= "</span>";
-		}
+            $this->nav_post.= "</span>";
+        }
 
-		$this->nav_post.= "</td></tr>";
+        $this->nav_post.= "</td></tr>";
 
-		$this->content .= $this->nav_pre. "nav_". ($type == "header" ? "top" : "btm"). $this->nav_post;
-	}
+        $this->content .= $this->nav_pre. "nav_". ($type == "header" ? "top" : "btm"). $this->nav_post;
+    }
 
-	function add_nav_btn($page, $title, $denied = false) {
-		$this->nav_post.= "<span class=\"nav". ($denied ? " denied" : ""). ($this->page == $page && !$denied ? " selected" : ""). "\" ";
-		$this->nav_post.= "data-page=\"". $page. "\">". $title. "</span>";
-	}
+    function add_nav_btn($page, $title, $denied = false) {
+        $this->nav_post.= "<span class=\"nav". ($denied ? " denied" : ""). ($this->page == $page && !$denied ? " selected" : ""). "\" ";
+        $this->nav_post.= "data-page=\"". $page. "\">". $title. "</span>";
+    }
 
-	// otsi lingist väljade indikaatorid
+    // otsi lingist väljade indikaatorid
 
-	function replace_markup($link, $data) {
-		$datalink = $fields = [];
+    function replace_markup($link, $data) {
+        $datalink = $fields = [];
 
-		foreach (explode("[", $link) as $field) {
-			$ex = explode("]", $field);
+        foreach (explode("[", $link) as $field) {
+            $ex = explode("]", $field);
 
-			if (!isset($ex[1]))
-				$fields[] = trim($ex[0]);
-			else {
-				if (isset($ex[0]) && $ex[0] && isset($data->{ $ex[0] }))
-					$fields[] = trim($data->{ $ex[0] });
+            if (!isset($ex[1]))
+                $fields[] = trim($ex[0]);
+            else {
+                if (isset($ex[0]) && $ex[0] && isset($data->{ $ex[0] }))
+                    $fields[] = trim($data->{ $ex[0] });
 
-				if (isset($ex[1]) && $ex[1])
-					$fields[] = trim($ex[1]);
-			}
-		}
+                if (isset($ex[1]) && $ex[1])
+                    $fields[] = trim($ex[1]);
+            }
+        }
 
-		return implode(P_VOID, $fields);
-	}
+        return implode(P_VOID, $fields);
+    }
 
-	// hangi väljade list
+    // tee JS tulev sisend turvaliseks
 
-	function get_fields(&$fields, &$joined) {
-		$fields = $joined_field = [];
-		$joined = P_VOID;
+    function safe($input, $length = false) {
+        if (!is_array($input)) {
+            $output = preg_replace(P_DOTS, P_DOT, preg_replace(P_ALLOWED, P_VOID, trim($input)));
 
-		// lisa põhitabeli väljad (liidetava tabeli omasid mitte)
+            if ($length)
+                $output = substr($output, 0, $length);
+        }
+        else {
+            foreach ($input as $key => $val) {
+                $output[$key] = preg_replace(P_DOTS, P_DOT, preg_replace(P_ALLOWED, P_VOID, trim($val)));
 
-		foreach ($this->fields as $field)
-			if (!(isset($field["joined"]) && $field["joined"])) {
-				if (isset($field["field"]) && $field["field"])
-					$fields[] = $this->table. ".". $field["field"];
-			}
-		else
-			$joined_field[$field["field"]] = true;
+                if ($length)
+                    $output[$key] = substr($output[$key], 0, $length);
+            }
+        }
 
-		// lisa liidetava tabeli väljad
-
-		if (isset($this->joins) && is_array($this->joins)) {
-			foreach ($this->joins as $join)
-				if (isset($join["table"]))
-					$joins[] = $join["method"]. " ". $join["table"]. " on ". $join["on"];
-			elseif (isset($joined_field[$join["alias"]]))
-				$fields[] = $join["field"]. " as ". $join["alias"];
-
-			$joined = " ". implode(" && ", $joins);
-		}
-	}
-
-	// tee JS tulev sisend turvaliseks
-
-	function safe($input, $length = false) {
-		if (!is_array($input)) {
-			$output = preg_replace(P_DOTS, P_DOT, preg_replace(P_ALLOWED, P_VOID, trim($input)));
-
-			if ($length)
-				$output = substr($output, 0, $length);
-		}
-		else {
-			foreach ($input as $key => $val) {
-				$output[$key] = preg_replace(P_DOTS, P_DOT, preg_replace(P_ALLOWED, P_VOID, trim($val)));
-
-				if ($length)
-					$output[$key] = substr($output[$key], 0, $length);
-			}
-		}
-
-		return $output;
-	}
+        return $output;
+    }
 }
 
 ?>

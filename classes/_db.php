@@ -3,35 +3,32 @@
 // andmebaasi klass
 
 class P_DATABASE {
-	var $error = 0,
-		$error_msg = "",
-		$rows = 0,
-		$insert_id = 0,
-		$result,
-		$query,
-		$connection;
+	var $connection, $host, $database, $charset, $collation, $query, $result, $error_msg, $error, $rows, $insert_id;
 
-	function connect($host = DB_HOST, $db = DB_NAME, $user = DB_USER, $pass = DB_PASS, $charset = DB_CHARSET, $collation = DB_COLLATION) {
-		if (!$this->connection = @mysql_connect($host, $user, $pass, true))
+	function connect($host = false, $database = false, $username = false, $password = false, $charset = false, $collation = false) {
+		if (!$this->connection = @mysql_connect($host, $username, $password, false))
 			die("Connection to database server has failed.<br/>". @mysql_error($this->connection));
 
-		if (!@mysql_select_db($db, $this->connection))
+		if (!@mysql_select_db($database, $this->connection))
 			die("Database not found.<br/>". @mysql_error($this->connection));
 
-		@mysql_query("set names '". $charset. "' collate '". $collation. "'");
+		if ($charset && $collation)
+			@mysql_query("set names '". $charset. "' collate '". $collation. "'");
 	}
 
-	function switch_db($db)	{
-		if (!@mysql_select_db($db, $this->connection))
+	function switch_db($database, $charset = false, $collation = false) {
+		if (!@mysql_select_db($database, $this->connection))
 			die("Database not found.<br>". @mysql_error($this->connection));
 
-		$this->query("set names '". $charset. "' collate '". $collation. "'");
+		if ($charset && $collation)
+			$this->query("set names '". $charset. "' collate '". $collation. "'");
 	}
 
 	function query($query, $values = false) {
 		$this->rows = $this->error = $param_count = 0;
 		$this->error_msg = "";
-		$param = array();
+
+        $param = [];
 		$using = false;
 		
 		if ($this->result)
@@ -67,7 +64,7 @@ class P_DATABASE {
 
 	function error() {
 		$this->error = @mysql_errno($this->connection);
-		$this->error_msg = @mysql_error($this->connection). " FAILED QUERY_STR=". $this->query;
+		$this->error_msg = @mysql_error($this->connection). " [". $this->query. "]";
 		
 		return false;
 	}
@@ -77,17 +74,13 @@ class P_DATABASE {
 	}
 
 	function get_all() {
-		$all = array();
+		$all = [];
 
 		while ($obj = @mysql_fetch_object($this->result))
 			if ($obj)
 				$all[] = $obj;
 
 		return $all;
-	}
-	
-	function write_log($subject) {
-		$this->query("insert into log (id, user, subject, date) values (?, ?, ?, ?)", array("", USER_IP, $subject, date(DB_DATEFORMAT)));
 	}
 
 	function free() {

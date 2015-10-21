@@ -31,7 +31,7 @@ foreach ($example_data as $ex) {
 }
 */
 
-$pt = new ANDRESE_PTABLE($_GET["ptable"]);
+$pt = new PTABLE_EXT($_GET["ptable"]);
 
 echo $pt->content;
 

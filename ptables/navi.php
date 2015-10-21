@@ -7,10 +7,7 @@ $this->password		= DB_PASS;
 $this->charset		= "utf8";
 $this->collation	= "utf8_estonian_ci";
 $this->table		= "personal_navi";
-$this->triggers		= [
-		"ROW"		=> [ "link"	=> "http://www.ttu.ee/#[eesnimi]" ],
-		"perenimi"	=> [ "link" => "http://[heh]www.ttu.ee/#[amet][perenimi][midagi]oo", "title" => "[amet][perenimi]", "external" => true ]
-];
+
 $this->fields		= [
 		[ "field"	=> "eesnimi",	"title" => "Eesnimi",	"searchable" => true ],
 		[ "field"	=> "perenimi",	"title" => "Perenimi",	"searchable" => true ],
@@ -19,6 +16,12 @@ $this->fields		= [
 		[ "field"	=> "aadress",	"title" => "Aadress" ],
 		[ "field"	=> "epost",		"title" => "E-post" ]
 ];
+
+$this->triggers		= [
+		"ROW"		=> [ "link"	=> "http://www.ttu.ee/#[eesnimi]" ],
+		"perenimi"	=> [ "link" => "http://[heh]www.ttu.ee/#[amet][perenimi][midagi]oo", "title" => "[amet][perenimi]", "external" => true ]
+];
+
 //$this->where		= "";
 //$this->values		= [];
 //$this->order		= "perenimi";
