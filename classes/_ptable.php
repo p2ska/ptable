@@ -570,11 +570,14 @@ class PTABLE {
             $class = "trigger";
             $trigger = $this->triggers[$field["field"]];
 
-            if (isset($field["colspan"]) && $field["colspan"])
-                $colspan = " colspan=". $field["colspan"];
+            if (isset($trigger["class"]) && $trigger["class"])
+                $class .= " ". $trigger["class"];
 
             if (isset($field["class"]) && $field["class"])
                 $class .= " ". $field["class"];
+
+            if (isset($field["colspan"]) && $field["colspan"])
+                $colspan = " colspan=". $field["colspan"];
 
             if (isset($field["align"]) && $field["align"])
                 $styles[] = "text-align: ". $field["align"];
