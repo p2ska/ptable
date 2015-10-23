@@ -12,6 +12,8 @@ define("P_LN",		"\n");
 define("P_SL",		"/");
 define("P_DOT",		".");
 define("P_VOID",	"");
+define("P_BR",      "<br/>");
+define("P_2BR",     "<br/><br/>");
 define("P_PREFIX",	"ptable_");
 define("P_EXACT",	" = ");
 define("P_LIKE",	" like ");
@@ -29,7 +31,8 @@ class PTABLE {
     $content, $db, $l, $mode, $target, $template, $url, $class, $data, $translations, $autoupdate, $store,
     $database, $host, $username, $password, $charset, $collation, $query, $where, $values, $limit,
     $nav_pre, $nav_post, $navigation, $pagesize, $title, $style, $table, $fields, $joins, $order, $way,
-    $external_data, $external_pos, $search, $pages, $records, $refresh, $col_width, $field_count, $debug,
+    $external_data, $external_pos, $search, $pages, $records, $refresh, $col_width, $field_count,
+    $debug =        true,       // debug reziim (per tabel väljaspool ptable' enda arendamist)
     $header = 		true,		// kas kuvatakse tabeli päist üldse
     $header_sep	= 	false,		// tabeli ülemine eraldusäär
     $footer_sep =	false,		// tabeli alumine eraldusäär
@@ -242,10 +245,13 @@ class PTABLE {
         if (!$this->pages) {
             $this->db->query($this->query, $this->values);
 
-			// kas ei funka päris nii nagu mõtlesid?
+            //if ($this->debug)
+                //$this->content .= "[ ". $this->query. " ]". P_BR. "< ". ($this->values ? implode(", ", $this->values) : P_VOID). " >". P_2BR;
 
-			if ($this->db->error && $this->debug)
-				$this->error();
+			// mingi sql päringu viga
+
+            if ($this->db->error && $this->debug)
+				$this->content .= $this->db->error_msg. P_2BR;
 
 			$this->records = $this->db->rows;
 
@@ -274,10 +280,13 @@ class PTABLE {
 
             $this->db->query($this->query, $this->values);
 
-			// kas ei funka päris nii nagu mõtlesid?
+            if ($this->debug)
+                $this->content .= "[ ". $this->query. " ]". P_BR. "< ". ($this->values ? implode(", ", $this->values) : ""). " >". P_2BR;
 
-			if ($this->db->error && $this->debug)
-				$this->error();
+            // mingi sql päringu viga
+
+            if ($this->db->error && $this->debug)
+				$this->content .= $this->db->error_msg. P_2BR;
         }
     }
 
@@ -1015,14 +1024,6 @@ class PTABLE {
 
         return $output;
     }
-
-	// kuva baasi viga tabelisse
-
-	function error() {
-		$this->content .= "error: ". $this->db->error_msg. "<br/><br/>";
-		$this->content .= "query: ". $this->query. "<br/><br/>";
-		$this->content .= "value: ". implode(", ", $this->values);
-	}
 }
 
 ?>
