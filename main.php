@@ -29,10 +29,9 @@ $c_lang[$lang] = " current";
 </div>
 <br/>
 <div id="joined" class="ptable no_border"></div><hr/>
-<!--
 <div id="requests" class="ptable no_border" data-user="andres"></div><hr/>
 <div id="tasks" class="ptable no_border"></div><hr/>
-<div id="navi" class="ptable"></div><hr/>-->
+<div id="navi" class="ptable"></div><hr/>
 <!--<div id="external" class="ptable no_border">skip</div>-->
 <script type="text/javascript" src="/jquery.js"></script>
 <script type="text/javascript" src="js/store.min.js"></script>

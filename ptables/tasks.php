@@ -1,8 +1,11 @@
 <?php
 
 $this->table		= "task";
-$this->title		= "tasks";
-$this->refresh		= 5;
+//$this->where		= "";
+//$this->values		= [];
+$this->order		= "created";
+$this->way			= "desc";
+
 $this->fields		= [
 		[ "field"	=> "id",		"title" => "Task" ],
 		[ "field"	=> "parent_id",	"title" => "Request" ],
@@ -16,10 +19,9 @@ $this->fields		= [
 		[ "field"	=> "prio",		"title" => "Prio", "translate" => "txt_prio_" ],
 		[ "field"	=> "result",	"title" => "Result" ],
 ];
-//$this->where		= "";
-//$this->values		= [];
-$this->order		= "created";
-$this->way			= "desc";
+
+$this->title		= "tasks";
+$this->refresh		= 5;
 $this->header		= false;
 $this->prefs		= false;
 $this->searchable	= false;

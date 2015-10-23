@@ -7,8 +7,8 @@ $this->order	= "task.created";
 $this->way		= "desc";
 
 $this->fields = [
-	[ "table" => "task",   "field"	=> "id",         "title" => "id" ],
-	[ "table" => "task",   "field"	=> "prio",       "title" => "prio",		"translate"		=> "txt_prio_" ],
+	[ "field"	=> "id",         "title" => "id" ],
+	[ "field"	=> "prio",       "title" => "prio",		"translate"		=> "txt_prio_" ],
 	[ "table" => "request","field"	=> "requester",  "title" => "requester","searchable"	=> true, "alias" => "req" ],
 	[ "table" => "request","field"	=> "subject",    "title" => "subject",	"searchable"	=> true, "extend" => "break_long" ],
 	[ "table" => "task",   "field"	=> "status",     "title" => "status",	"translate"		=> "txt_task_status_" ],

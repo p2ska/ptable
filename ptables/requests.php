@@ -2,9 +2,11 @@
 
 /* tabeli üldised omadused																					[variandid] :vaikeväärtus */
 
-$this->title		= $this->data["user"];	// tabeli pealkiri												[<title>]
-$this->title_icon	= "odnoklassniki";		// tabeli pealkirjast vasakul olev ikoon						[<font-awesome ikooni nimetus>]
 $this->table		= "request";			// põhitabeli nimi baasis										[<table>]
+//$this->where		= "";		// where tingimused vabas vormis
+//$this->values		= [];		// prepared pärinule omistatavad väärtused
+$this->order		= "request.subject";		// esmaselt on tabel sorditud selle välja järgi (TODO: per person/tabel meelde jätta) ["<field>"]
+$this->way			= "desc";			// mis suunas järjestatakse tulemused
 
 $this->fields	= [
 	[ "field"	=> "id",		"title" => $l->txt_request, "class" => "ohoo" ],
@@ -19,21 +21,13 @@ $this->fields	= [
 //		[ "field"	=> "task.owner_id", "alias" => "hybrid" ]
 //];
 
-/* puhas sql-päring (selleasemel, et kasutada päringu moodustamiseks "fields" kirjelduses olevaid ja "joins" & "where" muutujaid) */
-
-//$this->query_count= "select id from request";
-//$this->query		= "select * from request";
-
-//$this->where		= "";		// where tingimused vabas vormis
-//$this->values		= [];		// prepared pärinule omistatavad väärtused
-
 $this->triggers		= [
 		"ROW"		=> [ "title" => "kena [reguester]", "data" => [ "id" => "[id]", "url" => "http://www.ttu.ee" ] ],
 		"id"		=> [ "title" => "[requester][regdate]", "link" => "http://[heh]www.ttu.ee/#[amet][perenimi][midagi]", "external" => true ]
 ];
 
-$this->order		= "subject";		// esmaselt on tabel sorditud selle välja järgi (TODO: per person/tabel meelde jätta) ["<field>"]
-$this->way			= "desc";			// mis suunas järjestatakse tulemused
+$this->title		= $this->data["user"];	// tabeli pealkiri												[<title>]
+$this->title_icon	= "odnoklassniki";		// tabeli pealkirjast vasakul olev ikoon						[<font-awesome ikooni nimetus>]
 $this->order_icon	= "chevron";		// mis tüüpi ikoone kasutatakse otsingutulemuste järjestamiseks ["chevron", "sort", "angle-double"] :"chevron"
 $this->page_sizes	= [ 10 => "10 ". $l->txt_records, 25 => "25 ". $l->txt_records, 50 => "50 ". $l->txt_records, "*" => $l->txt_all_records ]; // valitavad lehepikkused
 $this->page_size	= 10;				// esmane lehepikkus (TODO: milline on varasemalt valitud)

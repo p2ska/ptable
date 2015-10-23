@@ -87,6 +87,12 @@ class PTABLE {
 
         $this->field_count = count($this->fields);
 
+        // kui kirjelduses pole tabelit paika pandud, siis võta defaultiks põhitabel
+
+        for ($a = 0; $a < $this->field_count; $a++)
+            if (!isset($this->fields[$a]["table"]))
+                $this->fields[$a]["table"] = $this->table;
+
         // kirjuta default'id JS omadega üle (puhasta input)
 
         foreach ($init as $key => $val)
@@ -144,7 +150,7 @@ class PTABLE {
 
         $this->display();
 
-        // tabeli kuvamiseks kasuta
+        // kuvamiseks kasuta
         // echo $this->content;
     }
 
@@ -281,7 +287,7 @@ class PTABLE {
         $join_tables = false;
         $fields = $joins = [];
 
-		// käi väljad läbi ja
+		// käi väljad läbi
 
         foreach ($this->fields as $field) {
             if (isset($field["alias"]) && $field["alias"])
@@ -291,7 +297,7 @@ class PTABLE {
 
 			// kui tabel on eraldi märgitud (liidetud tabel), siis kasuta seda; vastasel juhul arvesta, et tegu on põhitabeli väljaga (default)
 
-            if ($field["table"])
+            if (isset($field["table"]) && $field["table"])
                 $fields[] = $field["table"]. ".". $field["field"]. $alias;
             else
                 $fields[] = $this->table. ".". $field["field"]. $alias;
