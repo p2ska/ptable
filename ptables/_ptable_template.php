@@ -1,9 +1,12 @@
 <?php
 
-/* tabeli üldised omadused																					[variandid] :vaikeväärtus */
+/* päringu koostamine */
 
-$this->title		= $l->?;				// tabeli pealkiri												[<title>]: string
-$this->title_icon	= "odnoklassniki";		// tabeli pealkirjast vasakul olev ikoon						[<font-awesome ikooni klass>] :none
+$this->table		= "";				// põhitabel														[<table>]: string
+$this->where		= "";				// where tingimused vabas vormis									["where"]: string
+$this->values		= [];				// tingimustele vastavad väärtused									[ [<val>, <val>..] ]
+$this->order		= "";				// esmaselt on tabel sorditud selle välja järgi						[<field>]: string
+$this->way			= "";				// mis suunas järjestatakse tulemused								["asc", "desc"] :"asc"
 
 /* andmebaasi override'd */
 
@@ -14,18 +17,15 @@ $this->password		= "";
 $this->charset		= "utf8";
 $this->collation	= "utf8_estonian_ci";
 
-/* päringu koostamine */
+/* tabeli üldised omadused																					[variandid] :vaikeväärtus */
 
-$this->table		= "";				// põhitabel														[<table>]: string
-$this->where		= "";				// where tingimused vabas vormis									["where"]: string
-$this->values		= [];				// tingimustele vastavad väärtused									[ [<val>, <val>..] ]
-$this->order		= "";				// esmaselt on tabel sorditud selle välja järgi						[<field>]: string
-$this->way			= "";				// mis suunas järjestatakse tulemused								["asc", "desc"] :"asc"
+$this->title		= $l->?;				// tabeli pealkiri												[<title>]: string
+$this->title_icon	= "odnoklassniki";		// tabeli pealkirjast vasakul olev ikoon						[<font-awesome ikooni klass>] : none
 
 /* tabeliväljade loetelu ja omadused (kõik peale "field" väärtuse on valikulised) */
 
-// "field"			- väljanimetus tabelis (TODO: kohustuslikkusekontoll; kas selline väli tabelist leiti)	[<field>]: string
-// "joined"			- tähendab, et antud väli on juurdeliidetud tabelist saadud (vajab 'joins'-kirjelduses vastavat välja ja seost - 'alias'): none
+// "table"			- millise tabeli väli on. kui pole kirjeldatud, siis arvestatakse et on põhitabelis     [<table>]: none
+// "field"			- väljanimetus tabelis                                                                  [<field>]: string
 // "title"			- tabeli päises kuvatav väljakirjeldus (mõistlik panna tõlkestring)						[<title>] :string
 // "class"			- välja stiil, override																	[<class_name>] :string
 // "align"			- välja sisu paiknemine																	["left", "center", "right", "justify"] :"left"

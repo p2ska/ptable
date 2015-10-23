@@ -26,7 +26,13 @@ class PTABLE_EXT extends PTABLE {
 			return date("d.m.Y H:i:s", strtotime($value));
 	}
 
-	// lõhu kõige pikemad sõnad (kristo pärast :))
+    // võta sekundid maha
+
+	function ext_convert_time($value) {
+		return substr($value, 0, 5);
+	}
+
+    // lõhu kõige pikemad sõnad (kristo pärast :))
 
 	function ext_break_long($string, $len = 80) {
 		return preg_replace("/([^\s]{". $len. "})(?=[^\s])/", "$1<br/>", $string);
