@@ -10,6 +10,7 @@ require_once("c:/xampp/security/ptable/_connector.php");
 require_once("classes/_translations.php");
 require_once("classes/_ptable_ext.php");
 
+/*
 $example_data = array(
 	"32ddwe;andres;midagi;1",
 	"c2dewd;peeter on huvitav tegelane;eeeh;2",
@@ -28,8 +29,9 @@ foreach ($example_data as $ex) {
 
 	$data[] = $el;
 }
+*/
 
-$pt = new PTABLE_EXT($_GET["ptable"], $data);
+$pt = new PTABLE_EXT($_GET["ptable"]); //, $data);
 
 echo $pt->content;
 
