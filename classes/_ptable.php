@@ -42,6 +42,7 @@ class PTABLE {
     $fullscreen	=	false,		// kas täisekraanivaade on lubatud
     $download = 	true,		// tabeli sisu allalaadimise võimaldamine
     $searchable = 	true,		// kas kuvatakse otsingukasti
+    $resizable =    true,       // kas saab veergude laiust muuta
     $autosearch =	false,		// automaatne otsing
     $sizeable = 	true,		// kas lastakse kasutajal muuta kirjete arvu ühel lehel
     $nav_header = 	false,		// kas kuvatakse ülemist navigatsiooniriba
@@ -489,6 +490,7 @@ class PTABLE {
         $this->content .= "data-navigation=\"". ($this->navigation ? "true" : "false"). "\" ";
         $this->content .= "data-autoupdate=\"". ($this->autoupdate ? $this->autoupdate : "0"). "\" ";
         $this->content .= "data-autosearch=\"". ($this->autosearch ? "true" : "false"). "\" ";
+        $this->content .= "data-resizable=\"". ($this->resizable ? "true" : "false"). "\" ";
         $this->content .= "data-store=\"". ($this->store_prefs ? "true" : "false"). "\">";
         $this->content .= "<thead>";
 
@@ -651,7 +653,7 @@ class PTABLE {
             else {
                 $this->content .= ">". $data->{ $field["field"] }. "</td>";
 
-                if ($pos < ($this->field_count - 1))
+                if ($this->resizable && $pos < ($this->field_count - 1))
                     $this->content .= "<td class=\"resize\"></td>";
             }
         }
@@ -694,7 +696,7 @@ class PTABLE {
 
                 $this->content .= $value. "</td>";
 
-                if ($pos < ($this->field_count - 1))
+                if ($this->resizable && $pos < ($this->field_count - 1))
                     $this->content .= "<td class=\"resize\"></td>";
             }
         }
@@ -730,9 +732,9 @@ class PTABLE {
 
             $this->content .= "<th class=\"". $no_order. "order". $active. " \" ";
 
-            // kas veeru laius on paika pandud juba varem?
+            // kas veeru laiused on muudetavad ja on paika pandud juba JS poolt?
 
-            if (isset($this->col_width[$current_field - 1]))
+            if ($this->resizable && isset($this->col_width[$current_field - 1]))
                 $this->content .= " style=\"width: ". $this->col_width[$current_field - 1]. "px\"";
 
             $this->content .= "data-field=\"". $field["table"]. ".". $field["field"]. "\">";
@@ -752,7 +754,7 @@ class PTABLE {
 			}
 			*/
 
-            if ($current_field < $fields)
+            if ($this->resizable && $current_field < $fields)
                 $this->content .= "<th class=\"resize no_order\"><img src=\"/ptable/img/blank.gif\" width=1 height=1 border=0></th>";
         }
 
