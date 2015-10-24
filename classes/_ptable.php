@@ -32,7 +32,7 @@ class PTABLE {
     $database, $host, $username, $password, $charset, $collation, $query, $where, $values, $limit,
     $nav_pre, $nav_post, $navigation, $pagesize, $title, $style, $table, $fields, $joins, $order, $way,
     $external_data, $external_pos, $search, $pages, $records, $refresh, $col_width, $field_count, $field_search,
-    $debug =        true,       // debug reziim (per tabel väljaspool ptable' enda arendamist)
+    $debug =        false,      // debug reziim (per tabel väljaspool ptable' enda arendamist)
     $header = 		true,		// kas kuvatakse tabeli päist üldse
     $header_sep	= 	false,		// tabeli ülemine eraldusäär
     $footer_sep =	false,		// tabeli alumine eraldusäär
@@ -790,8 +790,8 @@ class PTABLE {
 				if (isset($field["placeholder"]) && $field["placeholder"])
 					$this->content .= "placeholder=\"". $field["placeholder"]. "\" ";
 
-				if (isset($this->field_search) && $this->field_search)
-					$this->content .= "value=\"". $this->field_search("value"). "\" ";
+				//if (isset($this->field_search) && $this->field_search)
+					//$this->content .= "value=\"". $this->field_search("value"). "\" ";
 
 				$this->content .= "class=\"field_search_input\"/>";
 

@@ -8,13 +8,14 @@ $this->way		= "desc";
 
 $this->resizable= false;
 $this->autosearch= true;
+$this->debug	= false;
 
 $this->fields = [
-	[ "field" => "id",     "title" => "id",        "width" => "5%", "searchable" => true ],
+	[ "field" => "id",     "title" => "id",        "width" => "5%",		"searchable" => true ],
 	[ "field" => "prio",   "title" => "prio",      "width" => "5%",		"translate" => "txt_prio_" ],
 	[ "table" => "request","field" => "requester", "width" => "20%",	"title"     => "requester", "searchable"	=> true, "field_search" => true, "placeholder" => "ahaa" ],
 	[ "table" => "request","field" => "subject",   "width" => "",		"title"     => "subject",   "searchable"	=> true, "extend" => "break_long" ],
-	[ "table" => "task",   "field" => "status",    "width" => "5%",		"title"     => "status",    "translate"  	=> "txt_task_status_", "field_search" => true ],
+	[ "table" => "task",   "field" => "status",    "width" => "5%",		"title"     => "status",    "translate"  	=> "txt_task_status_", "field_search" => true, "placeholder" => "status" ],
 	[ "table" => "task",   "field" => "deadline",  "width" => "10%",	"title"     => "deadline",  "extend"		=> "convert_date" ],
 	[ "table" => "task",   "field" => "created",   "width" => "10%",	"title"     => "created",   "extend"		=> "convert_date", "field_search" => true ],
 	[ "table" => "request","field" => "owner_id",  "width" => "5%",		"title"     => "owner",     "searchable"	=> true, "alias" => "owner" ],
