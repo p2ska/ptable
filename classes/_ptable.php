@@ -2,9 +2,8 @@
 
 // [ptable]; Andres Päsoke
 
-define("P_ALLOWED",	"/[^a-zA-Z0-9\s\._-]/");
+define("P_ALLOWED",	"/[^\p{L}\p{N}\s\._-]/u");
 define("P_DOTS",	"/\.+/");
-
 define("P_ALL",		"*");
 define("P_ANY",		"%");
 define("P_Q",		"?");
@@ -12,6 +11,7 @@ define("P_LN",		"\n");
 define("P_SL",		"/");
 define("P_DOT",		".");
 define("P_VOID",	"");
+define("P_FSS",		"___");
 define("P_BR",      "<br/>");
 define("P_2BR",     "<br/><br/>");
 define("P_PREFIX",	"ptable_");
@@ -31,7 +31,7 @@ class PTABLE {
     $content, $db, $l, $mode, $target, $template, $url, $class, $data, $translations, $autoupdate, $store,
     $database, $host, $username, $password, $charset, $collation, $query, $where, $values, $limit,
     $nav_pre, $nav_post, $navigation, $pagesize, $title, $style, $table, $fields, $joins, $order, $way,
-    $external_data, $external_pos, $search, $pages, $records, $refresh, $col_width, $field_count,
+    $external_data, $external_pos, $search, $pages, $records, $refresh, $col_width, $field_count, $field_search,
     $debug =        true,       // debug reziim (per tabel väljaspool ptable' enda arendamist)
     $header = 		true,		// kas kuvatakse tabeli päist üldse
     $header_sep	= 	false,		// tabeli ülemine eraldusäär
@@ -202,7 +202,15 @@ class PTABLE {
 
         // otsingutingumused
 
-        if ($this->search) {
+		if ($this->field_search) {
+			if (substr_count($this->field_search, P_FSS)) {
+				list($f_search, $f_value) = explode(P_FSS, $this->field_search);
+
+				$search[] = $f_search. " like ". P_Q;
+				$this->values[] = P_ANY. trim($f_value). P_ANY;
+			}
+		}
+		elseif ($this->search) {
             foreach ($this->fields as $field) {
                 if (isset($field["searchable"]) && $field["searchable"]) {
                     $left = $right = P_ANY;
@@ -220,11 +228,12 @@ class PTABLE {
 					// kui väljal on alias, siis otsi hoopis selle järgi
 
 					$search[] = $field["table"]. ".". $field["field"]. $find. P_Q;
-
                     $this->values[] = $left. trim($this->search). $right;
                 }
             }
+        }
 
+		if ($search) {
 			// eralda otsingutingimus
 
             $search = "(". implode(P_OR, $search). ")";
@@ -235,7 +244,7 @@ class PTABLE {
                 $this->where .= " && ". $search;
             else
                 $this->where = P_WHERE. $search;
-        }
+		}
 
 		// pane päring kokku
 
@@ -245,9 +254,6 @@ class PTABLE {
 
         if (!$this->pages) {
             $this->db->query($this->query, $this->values);
-
-            //if ($this->debug)
-                //$this->content .= "[ ". $this->query. " ]". P_BR. "< ". ($this->values ? implode(", ", $this->values) : P_VOID). " >". P_2BR;
 
 			// mingi sql päringu viga
 
@@ -490,7 +496,6 @@ class PTABLE {
         $this->content .= "data-navigation=\"". ($this->navigation ? "true" : "false"). "\" ";
         $this->content .= "data-autoupdate=\"". ($this->autoupdate ? $this->autoupdate : "0"). "\" ";
         $this->content .= "data-autosearch=\"". ($this->autosearch ? "true" : "false"). "\" ";
-        $this->content .= "data-resizable=\"". ($this->resizable ? "true" : "false"). "\" ";
         $this->content .= "data-store=\"". ($this->store_prefs ? "true" : "false"). "\">";
         $this->content .= "<thead>";
 
@@ -651,7 +656,11 @@ class PTABLE {
             if ($field["field"] == "ROW")
                 $this->content .= ">";
             else {
-                $this->content .= ">". $data->{ $field["field"] }. "</td>";
+				// otsingusõna värvimine
+
+				$value = $this->highlight($field, $data->{ $field["field"] });
+
+				$this->content .= ">". $value. "</td>";
 
                 if ($this->resizable && $pos < ($this->field_count - 1))
                     $this->content .= "<td class=\"resize\"></td>";
@@ -694,6 +703,12 @@ class PTABLE {
                         $value = $this->l->{ $field["translate"]. $value };
                 }
 
+				// otsingusõna värvimine
+
+				$value = $this->highlight($field, $value);
+
+				// kuva väärus
+
                 $this->content .= $value. "</td>";
 
                 if ($this->resizable && $pos < ($this->field_count - 1))
@@ -702,7 +717,22 @@ class PTABLE {
         }
     }
 
-    // tabeli väljade kirjeldused
+	function highlight($field, $value) {
+		if ($this->search)
+			$value = preg_replace("#". preg_quote($this->search). "#i", "<font class=\"highlight\">\\0</font>", $value);
+		elseif ($this->field_search) {
+			list($f_field, $f_value) = explode(P_FSS, $this->field_search);
+
+			// väljaotsingu puhul värvi ainult selle veeru otsingusõnasid
+
+			if ($f_field == $field["table"]. ".". $field["field"])
+				$value = preg_replace("#". preg_quote($f_value). "#i", "<font class=\"highlight\">\\0</font>", $value);
+		}
+
+		return $value;
+	}
+
+	// tabeli väljade kirjeldused
 
     function fields_descr() {
         $fields = count($this->fields);
@@ -736,23 +766,39 @@ class PTABLE {
 
             if ($this->resizable && isset($this->col_width[$current_field - 1]))
                 $this->content .= " style=\"width: ". $this->col_width[$current_field - 1]. "px\"";
+			elseif (isset($field["width"]) && $field["width"]) // või on tabelikirjelduses paika pandud veergude laiused?
+				$this->content .= " style=\"width: ". $field["width"]. "\"";
 
-            $this->content .= "data-field=\"". $field["table"]. ".". $field["field"]. "\">";
-            $this->content .= $field["title"];
+			// prindi veeru nimi
+
+            $this->content .= "data-field=\"". $field["table"]. ".". $field["field"]. "\">". $field["title"];
 
             if (!$no_order)
                 $this->content .= "<i class=\"sort_icon". $active. " fa fa-". $this->order_icon. "-". ($this->order == $field["table"]. ".". $field["field"] ? $way : "down"). "\"></i>";
 
-            $this->content .= "</th>";
+			// väljaotsing
 
-            /*
 			if (isset($field["field_search"]) && $field["field_search"]) {
-					$this->content .= "<span class=\"field_search\">";
-					$this->content .= "<input type=\"text\" id=\"". P_PREFIX. $this->target. "_". $field["field"]. "_searchbox\" class=\"field_search_input\"></span>";
-					$this->content .= "<span id=\"". P_PREFIX. $this->target. "_". $field["field"]. "_search\" class=\"search_btn field_search_btn small\" title=\"". $this->l->txt_field_search. "\">";
-					$this->content .= "<i class=\"fa fa-search\"></i></span>";
+				$this->content .= "<span class=\"field_search\">";
+
+				$this->content .= "<span id=\"". P_PREFIX. $this->target. "_". $field["field"]. "_search\" ";
+				$this->content .= "class=\"field_search_btn small\" title=\"". $this->l->txt_field_search. "\">";
+				$this->content .= "<i class=\"fa fa-search\"></i></span>";
+
+				$this->content .= "<input type=\"text\" id=\"". P_PREFIX. $this->target. "_". $field["field"]. "_searchbox\" ";
+
+				if (isset($field["placeholder"]) && $field["placeholder"])
+					$this->content .= "placeholder=\"". $field["placeholder"]. "\" ";
+
+				if (isset($this->field_search) && $this->field_search)
+					$this->content .= "value=\"". $this->field_search("value"). "\" ";
+
+				$this->content .= "class=\"field_search_input\"/>";
+
+				$this->content .= "</span>";
 			}
-			*/
+
+			$this->content .= "</th>";
 
             if ($this->resizable && $current_field < $fields)
                 $this->content .= "<th class=\"resize no_order\"><img src=\"/ptable/img/blank.gif\" width=1 height=1 border=0></th>";
@@ -768,11 +814,24 @@ class PTABLE {
         }
     }
 
+	function field_search($what) {
+		if (isset($this->field_search) && $this->field_search) {
+			list($f_field, $f_value) = explode(P_FSS, $this->field_search);
+
+			if ($what == "value")
+				return $f_value;
+			else
+				return $f_field;
+		}
+		else
+			return false;
+	}
+
     // otsingukast
 
     function searchbox() {
         $this->content .= "<span class=\"search\">";
-        $this->content .= "<input type=\"text\" id=\"". P_PREFIX. $this->target. "_search\" class=\"search_field\" value=\"". $this->search. "\"> ";
+        $this->content .= "<input type=\"text\" id=\"". P_PREFIX. $this->target. "_search\" class=\"search_field_input\" value=\"". $this->search. "\"> ";
         $this->content .= "<span id=\"". P_PREFIX. $this->target. "_commit_search\" class=\"search_btn\" title=\"". $this->l->txt_search. "\"><i class=\"fa fa-search\"></i></span>";
         $this->content .= "</span>";
     }

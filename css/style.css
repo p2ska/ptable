@@ -1,10 +1,9 @@
+/* demo jaoks */
+
 html, body, th, td {
 	font-family: "open sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 	font-size: 13px;
 	color: #000;
-    -webkit-box-sizing: content-box;
-    -moz-box-sizing: content-box;
-    box-sizing: content-box;
 	/*
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
@@ -32,6 +31,22 @@ hr {
 
 .current {
 	color: #55aaff;
+}
+
+/* portali jaoks */
+
+.ptable .sep {
+	float: left;
+	margin-top: 15px;
+	width: 16px;
+	height: 2px;
+	background-image: url(/ptable/img/sep.gif);
+}
+
+table *, .prefbox {
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
 }
 
 .no_border {
@@ -168,7 +183,28 @@ hr {
 	vertical-align: top;
 	padding: 5px;
 	overflow: hidden;
-	/*text-overflow: ellipsis;*/
+}
+
+.ptable .field_search {
+	position: absolute;
+	top: 0px;
+	right: 5px;
+	text-align: right;
+}
+
+.ptable .field_search_input {
+	position: absolute;
+	top: 11px;
+	right: 5px;
+	text-align: right;
+	display: none;
+	width: 60px;
+	height: 10px;
+}
+
+.ptable .highlight {
+	color: #55aaff;
+	font-weight: bold;
 }
 
 .ptable select, .ptable input[type="text"] {
@@ -215,7 +251,13 @@ hr {
 	border-radius: 3px;
 }
 
-.ptable .search_btn:hover > i, .ptable .pref_btn:hover > i {
+.ptable .field_search_btn {
+	position: absolute;
+	top: 5px;
+	right: 2px;
+}
+
+.ptable .search_btn:hover > i, .ptable .pref_btn:hover > i, .ptable .field_search_btn:hover > i {
 	color: #55aaff;
 	-ms-transform: scale(1.2, 1.2); /* IE 9 */
 	-webkit-transform: scale(1.2, 1.2); /* Chrome, Safari, Opera */
@@ -245,19 +287,6 @@ hr {
 
 .ptable .active {
 	color: #55aaff;
-}
-
-.ptable .yellowhue {
-	background-color: #ffffee;
-}
-
-.ptable .field_search {
-	position: absolute;
-	width: 100px;
-}
-
-.ptable .field_search_input {
-	display: none;
 }
 
 .ptable .prefbox {
@@ -377,14 +406,6 @@ hr {
 	border: 1px solid rgba(85, 170, 255, 1);
 }
 
-.ptable .sep {
-	float: left;
-	margin-top: 15px;
-	width: 16px;
-	height: 2px;
-	background-image: url(/ptable/img/sep.gif);
-}
-
 .ptable .disabled, .ptable .denied {
 	cursor: default;
 	color: #ccc;
@@ -393,4 +414,11 @@ hr {
 
 .ptable .denied {
 	cursor: default;
+}
+
+::-webkit-input-placeholder,
+:-moz-placeholder,
+::-moz-placeholder,
+:-ms-input-placeholder {
+	color: #e7eaec;
 }

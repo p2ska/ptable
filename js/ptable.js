@@ -32,8 +32,14 @@ $.fn.ptable = function(targets) {
 
 		$("#" + settings[ptable].target).on("click", ".pref_btn", function() {
 			$("#" + $(this).prop("id") + "box").toggle();
+		});
 
-			//autoupdate_check();
+		// peida valikutekasti kast, kui fookus läheb ära sellelt (klikk)
+
+		$(document).click(function(event) {
+			if (!$(event.target).closest(".prefbox").length && !$(event.target).closest(".pref_btn").length) {
+				$(".prefbox").hide();
+			}
 		});
 
 		// klaviatuuriga tabeli juhtimine
@@ -110,27 +116,47 @@ $.fn.ptable = function(targets) {
 
 		// automaatne otsing (kui lubatud)
 
-		$("#" + settings[ptable].target).on("keyup", prefix + settings[ptable].target + "_search", function(e) {
-			if (e.keyCode < 46 && e.keyCode !== 32 && e.keyCode !== 8) // kui ei ole reaalsed tähemärgid ja ei ole del, backspace, tühik
+		$("#" + settings[ptable].target).on("keyup", "input", function(e) { // prefix + settings[ptable].target + "_search"
+			// kui ei ole reaalsed tähemärgid ja ei ole del, backspace, tühik, enter
+
+			if (e.keyCode < 46 && e.keyCode !== 32 && e.keyCode !== 8 && e.keyCode !== 13)
 				return false;
 
-			if ($(prefix + settings[ptable].target).data("autosearch")) {
-				settings[ptable].search = $(prefix + settings[ptable].target + "_search").val();
+			// kui on lühem otsisting kui otsimise alustamiseks vajalik või on tegemist del või backspacega
 
-				if (settings[ptable].search.length < settings[ptable].search_from) {
-					if (e.keyCode === 8 || e.keyCode === 46) // kui vajutatakse backspace või del
-						settings[ptable].search = "";
-					else
-						return false;
+			if ($(this).val().length < settings[ptable].search_from) {
+				if ($(this).hasClass("search_field_input") && e.keyCode === 8 || e.keyCode === 46) { // kui vajutatakse backspace või del põhiotsingukastis
+					settings[ptable].search = "";
+					update(ptable);
 				}
+
+				return false;
+			}
+
+			// kas on põhiotsing või väljaotsing
+
+			if ($(this).hasClass("search_field_input") && $(prefix + settings[ptable].target).data("autosearch")) {
+				settings[ptable].search = $(this).val();
 
 				update(ptable);
 			}
+			else if ($(this).hasClass("field_search_input") && e.keyCode === 13) {
+				settings[ptable].field_search = $(this).closest("th").data("field") + "___" + $(this).val();
+
+				update(ptable);
+
+				settings[ptable].field_search = "";
+			}
+		});
+
+		// peida ja tühjenda väljaotsingu kastid fookuse kadumise korral
+
+		$("#" + settings[ptable].target).on("focusout", ".field_search_input", function() {
+			$(this).html("").hide();
 		});
 
 		// et väljaotsingukastil endal klikkimine ei vallandaks sorteerimistriggerit
 
-		/*
 		$("#" + settings[ptable].target).on("click", ".field_search", function(e) {
 			e.stopImmediatePropagation();
 		});
@@ -140,9 +166,11 @@ $.fn.ptable = function(targets) {
 		$("#" + settings[ptable].target).on("click", ".field_search_btn", function(e) {
 			e.stopImmediatePropagation();
 
-			$("#
-			$("#" + $(this).prop("id") + "_input").toggle();
-		});*/
+			var fieldsearchbox = $("#" + $(this).prop("id") + "box");
+
+			fieldsearchbox.toggle().focus();
+            fieldsearchbox[0].setSelectionRange(100, 100);
+		});
 
 		$("#" + settings[ptable].target).on("click", ".nav, .order, .search_btn", function(e) {
 			if ($(this).hasClass("order")) { // tabeli välja peal klikkimise puhul sorteeri selle järgi
@@ -164,7 +192,10 @@ $.fn.ptable = function(targets) {
 				settings[ptable].order = $(this).data("field");
 			}
 			else if ($(this).hasClass("search_btn")) {
-				settings[ptable].search = $(prefix + settings[ptable].target + "_search").val();
+				var search = $(prefix + settings[ptable].target + "_search").val();
+
+				if (search.length >= settings[ptable].search_from)
+					settings[ptable].search = search;
 			}
 			else { // ära navigeeri, kui see on keelatud või kui leht juba on aktiivne
 				if ($(this).hasClass("denied") || $(this).hasClass("selected"))
@@ -192,10 +223,6 @@ $.fn.ptable = function(targets) {
 		if (settings[ptable].mode == "update")
 			settings[ptable].col_width = col_widths(ptable);
 
-		// salvesta kõik hetkeseaded
-
-		//store_prefs(ptable);
-		
 		// uuenda tabelit
 
 		$.ajax({ url: settings[ptable].url, data: { ptable: settings[ptable] } }).done(function(content) {
@@ -219,7 +246,7 @@ $.fn.ptable = function(targets) {
 		});
 	}
 	
-	/* hangi salvestatud info */
+	// hangi salvestatud info
 
 	function sniff_prefs(ptable) {
 		if (store.get(ptable + "_page") === undefined)
@@ -234,7 +261,7 @@ $.fn.ptable = function(targets) {
 		//settings[ptable].search =		store.get(ptable + "_search");
 	}
 
-	/* salvesta tabeli seaded (vajalikud) */
+	// salvesta tabeli seaded (vajalikud)
 
 	function store_prefs(ptable) {
 		if (settings[ptable].store === false)
@@ -249,7 +276,7 @@ $.fn.ptable = function(targets) {
 		//store.set(ptable + "_search",		settings[ptable].search);
 	}
 
-	/* hangi veergude laiused */
+	// hangi veergude laiused
 
 	function col_widths(ptable) {
 		var widths = "";
@@ -261,7 +288,7 @@ $.fn.ptable = function(targets) {
 		return widths;
 	}
 
-	/* muuda veergude laiust */
+	// muuda veergude laiust
 
 	function resize_columns(ptable) {
 		var resizing = false;
@@ -326,7 +353,7 @@ $.fn.ptable = function(targets) {
 	function worker() {
 		var timestamp = Math.floor(Date.now() / 1000);
 
-		/*$.ajax({ url: "update_sql.php" });*/
+		// $.ajax({ url: "update_sql.php" });
 
 		// uuenda vajalikku tabelit, kui vastav aeg on mööda läinud viimasest uuendusest
 
