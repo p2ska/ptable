@@ -9,6 +9,7 @@ txt_found				=> Leitud kirjeid :: Matches found ;;
 txt_notfound			=> Ei leidnud midagi! :: Nothing found! ;;
 txt_search				=> Otsi :: Search ;;
 txt_field_search		=> Välja piires otsing :: Field limited search ;;
+txt_minimize_btn		=> Minimiseeri tabel :: Minimize table ;;
 txt_pref				=> {{cogs}} Tabeli seadistused :: {{cogs}} Table preferences ;;
 txt_pref_btn			=> Tabeli seadistused :: Table preferences ;;
 txt_pagesize			=> Kirjete arv lehel :: Page size ;;

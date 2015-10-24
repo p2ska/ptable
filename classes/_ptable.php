@@ -32,29 +32,30 @@ class PTABLE {
     $database, $host, $username, $password, $charset, $collation, $query, $where, $values, $limit,
     $nav_pre, $nav_post, $navigation, $pagesize, $title, $style, $table, $fields, $joins, $order, $way,
     $external_data, $external_pos, $search, $pages, $records, $refresh, $col_width, $field_count, $field_search,
-    $debug =        false,      // debug reziim (per tabel väljaspool ptable' enda arendamist)
-    $header = 		true,		// kas kuvatakse tabeli päist üldse
-    $header_sep	= 	false,		// tabeli ülemine eraldusäär
-    $footer_sep =	false,		// tabeli alumine eraldusäär
-    $fields_descr = true,		// väljade kirjeldused tabeli päises
-    $prefs = 		true,		// seadistuste kuvamine
-    $store_prefs =	true,		// kas salvestatakse
-    $fullscreen	=	false,		// kas täisekraanivaade on lubatud
-    $download = 	true,		// tabeli sisu allalaadimise võimaldamine
-    $searchable = 	true,		// kas kuvatakse otsingukasti
-    $resizable =    true,       // kas saab veergude laiust muuta
-    $autosearch =	false,		// automaatne otsing
-    $sizeable = 	true,		// kas lastakse kasutajal muuta kirjete arvu ühel lehel
-    $nav_header = 	false,		// kas kuvatakse ülemist navigatsiooniriba
-    $nav_footer = 	true,		// kas kuvatakse alumist navigatsiooniriba
-    $nav_length = 	5,			// navigeerimisnuppude arv
-    $page = 		1,			// mitmendat lehekülge kuvatakse
-    $page_size = 	10,			// mitu kirjet ühel lehel kuvatakse
-    $order_icon = 	"chevron",	// milliseid ikoone kasutatakse sorteerimisjärjekorra kuvamiseks (chevron, sort, angle-double)
-    $nav_prev = 	"{{angle-double-left}}",	// 'eelmine'-nupp
-    $nav_next = 	"{{angle-double-right}}",	// 'järgmine'-nupp
-    $autoupdates = 	[ 5 => "5s", 10 => "10s", 30 => "30s", 60 => "1m", 300 => "5m", 600 => "10m" ],	// "automaatsed uuendused"-valikukasti väärtused
-    $page_sizes = 	[ 10 => "10", 20 => "20", 50 => "50" ]; // "kirjete arv lehel"-valikukasti väärtused
+    $debug			= false,		// debug reziim (per tabel väljaspool ptable' enda arendamist)
+    $header			= true,			// kas kuvatakse tabeli päist üldse
+    $header_sep		= false,		// tabeli ülemine eraldusäär
+    $footer_sep		= false,		// tabeli alumine eraldusäär
+    $fields_descr	= true,			// väljade kirjeldused tabeli päises
+    $prefs			= true,			// seadistuste kuvamine
+    $store_prefs	= true,			// kas salvestatakse
+    $download		= true,			// tabeli sisu allalaadimise võimaldamine
+    $searchable		= true,			// kas kuvatakse otsingukasti
+    $resizable		= true,   		// kas saab veergude laiust muuta
+    $autosearch		= false,		// automaatne otsing
+    $sizeable		= true,			// kas lastakse kasutajal muuta kirjete arvu ühel lehel
+	$minimize		= true,			// kas saab tabelit minimiseerida
+    $maximize		= true,			// kas saab tabelit maximiseerida
+    $nav_header		= false,		// kas kuvatakse ülemist navigatsiooniriba
+    $nav_footer		= true,			// kas kuvatakse alumist navigatsiooniriba
+    $nav_length		= 5,			// navigeerimisnuppude arv
+    $page			= 1,			// mitmendat lehekülge kuvatakse
+    $page_size		= 10,			// mitu kirjet ühel lehel kuvatakse
+    $order_icon		= "chevron",	// milliseid ikoone kasutatakse sorteerimisjärjekorra kuvamiseks (chevron, sort, angle-double)
+    $nav_prev		= "{{angle-double-left}}",	// 'eelmine'-nupp
+    $nav_next		= "{{angle-double-right}}",	// 'järgmine'-nupp
+    $autoupdates	= [ 5 => "5s", 10 => "10s", 30 => "30s", 60 => "1m", 300 => "5m", 600 => "10m" ],	// "automaatsed uuendused"-valikukasti väärtused
+    $page_sizes		= [ 10 => "10", 20 => "20", 50 => "50" ]; // "kirjete arv lehel"-valikukasti väärtused
 
     // initsialiseeri kõik js poolt määratud muutujad
 
@@ -463,8 +464,9 @@ class PTABLE {
                         $this->prefbox();
 
                         $this->content .= "<span class=\"pref\">";
-                        $this->content .= "<span id=\"". P_PREFIX. $this->target. "_pref\" class=\"pref_btn\" title=\"". $this->l->txt_pref_btn. "\"><i class=\"fa fa-cog\"></i></span>";
-                        $this->content .= "</span>";
+                        $this->content .= "<span id=\"". P_PREFIX. $this->target. "_pref\" class=\"pref_btn\" title=\"". $this->l->txt_pref_btn. "\">";
+						$this->content .= "<i class=\"fa fa-cog\"></i>";
+                        $this->content .= "</span></span>";
                     }
 
                     if ($this->searchable)
@@ -472,6 +474,13 @@ class PTABLE {
 
                     $this->content .= "</div>";
                 }
+
+				// kas võimaldada tabli minimiseerimine
+
+				if ($this->minimize) {
+                    $this->content .= "<span id=\"". P_PREFIX. $this->target. "_pref\" class=\"minimize_btn\" title=\"". $this->l->txt_minimize_btn. "\">";
+					$this->content .= "<i class=\"fa fa-chevron-down\"></i></span>";
+				}
 
                 $this->content .= "</div>";
                 $this->content .= "<br clear=\"all\"/>";

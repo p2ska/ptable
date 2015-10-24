@@ -137,7 +137,7 @@ table *, .prefbox {
 	-o-transition: all 0.30s ease-in-out;*/
 	outline: none;
 	position: relative;
-	overflow: hidden;
+	/*overflow: hidden;*/
 }
 
 .ptable tr {
@@ -198,7 +198,7 @@ table *, .prefbox {
 	right: 5px;
 	text-align: right;
 	display: none;
-	width: 60px;
+	width: 100px;
 	height: 10px;
 }
 
@@ -233,12 +233,19 @@ table *, .prefbox {
 	border: 1px solid rgba(0, 0, 0, 0.2);
 }
 
+/* nupud (min, max, seaded, otsing) */
+
 .ptable .search_btn {
 	margin-right: 8px;
 }
 
-.ptable .pref_btn {
+.ptable .pref_btn, .ptable .minimize_btn {
 	margin-right: 5px;
+}
+
+.ptable .minimize_btn {
+	position: relative;
+	float: right;
 }
 
 .ptable .big_btn {
@@ -256,12 +263,25 @@ table *, .prefbox {
 	top: 5px;
 	right: 2px;
 }
+.ptable .small {
+	font-size: 11px;
+	margin-right: 0px;
+	margin-top: -5px;
+	color: #666;
+}
 
-.ptable .search_btn:hover > i, .ptable .pref_btn:hover > i, .ptable .field_search_btn:hover > i {
+.ptable .search_btn:hover > i,
+.ptable .pref_btn:hover > i,
+.ptable .minimize_btn:hover > i,
+.ptable .field_search_btn:hover > i {
 	color: #55aaff;
 	-ms-transform: scale(1.2, 1.2); /* IE 9 */
 	-webkit-transform: scale(1.2, 1.2); /* Chrome, Safari, Opera */
 	transform: scale(1.2, 1.2);
+}
+
+.ptable .search_btn, .ptable .pref_btn, .ptable .minimize_btn {
+	cursor: pointer;
 }
 
 .ptable .count {
@@ -269,14 +289,7 @@ table *, .prefbox {
 	padding-top: 4px;
 }
 
-.ptable .small { /* field_search'i otsingunupp */
-	font-size: 10px;
-	margin-right: -3px;
-	margin-top: -10px;
-	color: #666;
-}
-
-.ptable .order, .ptable .trigger, .ptable .search_btn, .ptable .pref_btn {
+.ptable .order, .ptable .trigger {
 	cursor: pointer;
 }
 
