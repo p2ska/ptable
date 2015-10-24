@@ -59,7 +59,7 @@ table *, .prefbox {
 	opacity: 0.8;
 }
 
-.ptable:not(.no_border):hover {
+.ptable:not(.no_border):hover, .rolled {
 	opacity: 1;
 	box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
 	border: 1px solid rgba(0, 0, 0, 0.2);
@@ -70,25 +70,118 @@ table *, .prefbox {
 	text-decoration: none;
 }
 
+/* tabeli päis */
+
 .ptable .header {
-	float: right;
 	width: 100%;
 	background-color: #fff;
 	padding-top: 5px;
-	padding-bottom: 5px;
+	padding-bottom: 19px;
 	line-height: 27px;
 }
 
-.ptable .title {
+/* vasak pool päisest (ikoon, tabeli nimi) */
+
+.ptable .header_left {
+	position: relative;
 	float: left;
+}
+
+/* tabeli nimi */
+
+.ptable .title {
 	font-weight: bold;
 	margin-left: 8px;
 	color: #669;
 }
 
-.ptable .pref_search {
+/* parem pool päisest (min, max, seaded, otsing) */
+
+.ptable .header_right {
 	position: relative;
 	float: right;
+}
+
+/* joonda päises olevad elemendid üksteise suhtes vasakule */
+
+.ptable .header_left > span,
+.ptable .header_right > span {
+	float: left;
+	text-align: left;
+}
+
+/* väikesed nupud (min, max, seaded, otsing) */
+
+.ptable .small_btn {
+	position: relative;
+	float: right;
+	margin-right: 8px;
+	cursor: pointer;
+}
+
+/* nupu hoveri korral värvi ja tee suuremaks */
+
+.ptable .small_btn:hover > i {
+	color: #55aaff;
+	-ms-transform: scale(1.2, 1.2); /* IE 9 */
+	-webkit-transform: scale(1.2, 1.2); /* Chrome, Safari, Opera */
+	transform: scale(1.2, 1.2);
+}
+
+/* põhiotsingunupp */
+
+.ptable .search_btn {
+	margin-right: 8px;
+}
+
+/* suured nupud (seadetekastis) */
+
+.ptable .big_btn {
+	margin-right: 20px;
+	padding: 7px;
+	padding-left: 15px;
+	padding-right: 15px;
+	background-color: #fff;
+	border: 1px solid #e7eaec;
+	border-radius: 3px;
+}
+
+/* väljaotsingunupp */
+
+.ptable .field_search_btn {
+	position: absolute;
+	font-size: 11px;
+	top: 5px;
+	right: 2px;
+	color: #666;
+}
+
+/* kirjete arv, milliseid kirjeid kuvatakse */
+
+.ptable .records_found {
+	float: left;
+	padding-top: 4px;
+}
+
+/* väljaotsingukasti positsioon */
+
+.ptable .field_search {
+	position: absolute;
+	top: 0px;
+	right: 5px;
+	text-align: right;
+}
+
+/* väljaotsingukast */
+
+.ptable .field_search_input {
+	position: absolute;
+	top: 11px;
+	right: 20px;
+	text-align: right;
+	display: none;
+	width: 100px;
+	height: 10px;
 }
 
 .ptable table {
@@ -108,10 +201,10 @@ table *, .prefbox {
 	border-bottom: 1px solid #fff;
 }
 
-.ptable .table_hover:hover {
+.ptable .table_hover:hover, .rolled:hover {
 	opacity: 1;
-	box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
-	border: 1px solid rgba(0, 0, 0, 0.2);
+	box-shadow: 0 0 2px rgba(0, 0, 0, 0.2) !impotant;
+	border: 1px solid rgba(0, 0, 0, 0.2) !important;
 }
 
 .ptable .resize {
@@ -185,23 +278,6 @@ table *, .prefbox {
 	overflow: hidden;
 }
 
-.ptable .field_search {
-	position: absolute;
-	top: 0px;
-	right: 5px;
-	text-align: right;
-}
-
-.ptable .field_search_input {
-	position: absolute;
-	top: 11px;
-	right: 5px;
-	text-align: right;
-	display: none;
-	width: 100px;
-	height: 10px;
-}
-
 .ptable .highlight {
 	color: #55aaff;
 	font-weight: bold;
@@ -209,8 +285,8 @@ table *, .prefbox {
 
 .ptable select, .ptable input[type="text"] {
 	padding: 5px;
-	margin-left: 5px;
-	margin-right: 5px;
+	margin-left: 0px;
+	margin-right: 8px;
 	border: 1px solid #ccc;
 	background-color: #f9f9f9;
 	line-height: 17px;
@@ -233,62 +309,6 @@ table *, .prefbox {
 	border: 1px solid rgba(0, 0, 0, 0.2);
 }
 
-/* nupud (min, max, seaded, otsing) */
-
-.ptable .search_btn {
-	margin-right: 8px;
-}
-
-.ptable .pref_btn, .ptable .minimize_btn {
-	margin-right: 5px;
-}
-
-.ptable .minimize_btn {
-	position: relative;
-	float: right;
-}
-
-.ptable .big_btn {
-	margin-right: 20px;
-	padding: 7px;
-	padding-left: 15px;
-	padding-right: 15px;
-	background-color: #fff;
-	border: 1px solid #e7eaec;
-	border-radius: 3px;
-}
-
-.ptable .field_search_btn {
-	position: absolute;
-	top: 5px;
-	right: 2px;
-}
-.ptable .small {
-	font-size: 11px;
-	margin-right: 0px;
-	margin-top: -5px;
-	color: #666;
-}
-
-.ptable .search_btn:hover > i,
-.ptable .pref_btn:hover > i,
-.ptable .minimize_btn:hover > i,
-.ptable .field_search_btn:hover > i {
-	color: #55aaff;
-	-ms-transform: scale(1.2, 1.2); /* IE 9 */
-	-webkit-transform: scale(1.2, 1.2); /* Chrome, Safari, Opera */
-	transform: scale(1.2, 1.2);
-}
-
-.ptable .search_btn, .ptable .pref_btn, .ptable .minimize_btn {
-	cursor: pointer;
-}
-
-.ptable .count {
-	float: left;
-	padding-top: 4px;
-}
-
 .ptable .order, .ptable .trigger {
 	cursor: pointer;
 }
@@ -299,8 +319,10 @@ table *, .prefbox {
 }
 
 .ptable .active {
-	color: #55aaff;
+	color: #55aaff
 }
+
+/* seadistustekasti kraam */
 
 .ptable .prefbox {
 	position: absolute;
@@ -428,6 +450,8 @@ table *, .prefbox {
 .ptable .denied {
 	cursor: default;
 }
+
+/* tekstikastide placeholderid */
 
 ::-webkit-input-placeholder,
 :-moz-placeholder,

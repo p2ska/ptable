@@ -31,14 +31,37 @@ $.fn.ptable = function(targets) {
 		// valikutekasti kuvamine/peitmine
 
 		$("#" + settings[ptable].target).on("click", ".pref_btn", function() {
-			$("#" + $(this).prop("id") + "box").toggle();
+			var prefbox = $("#" + $(this).data("parent") + "_prefbox");
+
+			$(prefbox).toggle();
+
+			// muuda seadetenupu värvust
+
+			if (prefbox.is(":visible"))
+				$(this).addClass("active");
+			else
+				$(this).removeClass("active");
 		});
 
-		// peida valikutekasti kast, kui fookus läheb ära sellelt (klikk)
+		$("#" + settings[ptable].target).on("click", ".minimize_btn", function() {
+			var target = $("#" + $(this).data("parent") + "_container");
+
+			if (target.is(":visible"))
+				$("#" + settings[ptable].target).addClass("rolled");
+			else
+				$("#" + settings[ptable].target).removeClass("rolled");
+
+			$(this).find("i").toggle();
+
+			target.slideToggle("fast");
+		});
+
+		// peida valikutekasti kast, kui fookus läheb ära
 
 		$(document).click(function(event) {
 			if (!$(event.target).closest(".prefbox").length && !$(event.target).closest(".pref_btn").length) {
 				$(".prefbox").hide();
+				$(".pref_btn").removeClass("active");
 			}
 		});
 
@@ -56,11 +79,11 @@ $.fn.ptable = function(targets) {
 				var ct = $(this).prop("id");
 
 				if ($(this).is(":hover") && $(prefix + settings[ct].target).data("navigation")) {
-					if (e.keyCode == 37 && settings[ct].page > 1) { // nool vasakule
+					if (e.keyCode === 37 && settings[ct].page > 1) { // nool vasakule
 						settings[ct].page--;
 						update(ct);
 					}
-					else if (e.keyCode == 39 && settings[ct].page < $(prefix + settings[ct].target).data("pages")) { // nool paremale
+					else if (e.keyCode === 39 && settings[ct].page < $(prefix + settings[ct].target).data("pages")) { // nool paremale
 						settings[ct].page++;
 						update(ct);
 					}					

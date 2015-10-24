@@ -448,6 +448,10 @@ class PTABLE {
             if ($this->header) {
                 $this->content .= "<div id=\"". P_PREFIX. $this->target. "_header\" class=\"header\">";
 
+				// tabeli päise vasak pool (ikoon, tabeli nimi)
+
+				$this->content .= "<div class=\"header_left\">";
+
                 if ($this->title) {
                     $this->content .= "<div class=\"title\">";
 
@@ -457,32 +461,44 @@ class PTABLE {
                     $this->content .= "<u>". $this->title. "</u></div>";
                 }
 
-                if ($this->prefs || $this->searchable) {
-                    $this->content .= "<div class=\"pref_search\">";
+				// header_left lõpp
 
-                    if ($this->prefs) {
-                        $this->prefbox();
+				$this->content .= "</div>";
 
-                        $this->content .= "<span class=\"pref\">";
-                        $this->content .= "<span id=\"". P_PREFIX. $this->target. "_pref\" class=\"pref_btn\" title=\"". $this->l->txt_pref_btn. "\">";
-						$this->content .= "<i class=\"fa fa-cog\"></i>";
-                        $this->content .= "</span></span>";
-                    }
+				// tabeli päise parem pool (min, max, seaded, otsing)
 
-                    if ($this->searchable)
-                        $this->searchbox();
-
-                    $this->content .= "</div>";
-                }
+				$this->content .= "<div class=\"header_right\">";
 
 				// kas võimaldada tabli minimiseerimine
 
-				if ($this->minimize) {
-                    $this->content .= "<span id=\"". P_PREFIX. $this->target. "_pref\" class=\"minimize_btn\" title=\"". $this->l->txt_minimize_btn. "\">";
-					$this->content .= "<i class=\"fa fa-chevron-down\"></i></span>";
-				}
+				if ($this->minimize)
+					$this->small_btn(P_PREFIX. $this->target, "minimize_btn", "chevron-down", "chevron-up", $this->l->txt_minimize_btn);
+
+				// kas võimaldada tabli minimiseerimine
+
+				if ($this->maximize)
+					$this->small_btn(P_PREFIX. $this->target, "maximize_btn", "expand", "compress", $this->l->txt_maximize_btn);
+
+				// seadete kast
+
+				if ($this->prefs)
+					$this->prefbox();
+
+				// otsingukast
+
+				if ($this->searchable)
+					$this->searchbox();
+
+				// header_right lõpp
+
+				$this->content .= "</div>";
+
+				// headeri lõpp
 
                 $this->content .= "</div>";
+
+				// lõpeta igasugused floatimised
+
                 $this->content .= "<br clear=\"all\"/>";
             }
 
@@ -557,6 +573,13 @@ class PTABLE {
             }
         }
     }
+
+	function small_btn($id, $class, $icon, $icon2, $title) {
+		$this->content .= "<span data-parent=\"". $id. "\" class=\"". $class. " small_btn\" title=\"". $title. "\">";
+		$this->content .= "<i class=\"fa fa-". $icon. "\"></i>";
+		$this->content .= "<i class=\"fa fa-". $icon2. "\" style=\"display: none\"></i>";
+		$this->content .= "</span>";
+	}
 
     // väljasta väärtused baasist
 
@@ -791,7 +814,7 @@ class PTABLE {
 				$this->content .= "<span class=\"field_search\">";
 
 				$this->content .= "<span id=\"". P_PREFIX. $this->target. "_". $field["field"]. "_search\" ";
-				$this->content .= "class=\"field_search_btn small\" title=\"". $this->l->txt_field_search. "\">";
+				$this->content .= "class=\"small_btn field_search_btn\" title=\"". $this->l->txt_field_search. "\">";
 				$this->content .= "<i class=\"fa fa-search\"></i></span>";
 
 				$this->content .= "<input type=\"text\" id=\"". P_PREFIX. $this->target. "_". $field["field"]. "_searchbox\" ";
@@ -841,7 +864,7 @@ class PTABLE {
     function searchbox() {
         $this->content .= "<span class=\"search\">";
         $this->content .= "<input type=\"text\" id=\"". P_PREFIX. $this->target. "_search\" class=\"search_field_input\" value=\"". $this->search. "\"> ";
-        $this->content .= "<span id=\"". P_PREFIX. $this->target. "_commit_search\" class=\"search_btn\" title=\"". $this->l->txt_search. "\"><i class=\"fa fa-search\"></i></span>";
+        $this->content .= "<span id=\"". P_PREFIX. $this->target. "_commit_search\" class=\"search_btn small_btn\" title=\"". $this->l->txt_search. "\"><i class=\"fa fa-search\"></i></span>";
         $this->content .= "</span>";
     }
 
@@ -856,6 +879,10 @@ class PTABLE {
         //$this->content .= "<span class=\"big_btn\">". $this->l->txt_save. "</span>";
         //$this->content .= "<span class=\"big_btn\">". $this->l->txt_close. "</span>";
         $this->content .= "</div>";
+
+		//$this->content .= "<span id=\"". P_PREFIX. $this->target. "_pref\" class=\"pref_btn small_btn\" title=\"". $this->l->txt_pref_btn. "\">";
+		//$this->content .= "<i class=\"fa fa-cog\"></i></span>";
+		$this->small_btn(P_PREFIX. $this->target, "pref_btn", "cog", "cog", $this->l->txt_pref_btn);
     }
 
     // valikukasti väljade printimine
@@ -945,7 +972,7 @@ class PTABLE {
             $to = $this->records;
 
         $this->nav_pre = "<tr class=\"no_hover\"><td colspan=100 class=\"";
-        $this->nav_post = "\"><span class=\"count\">". $this->l->txt_found. ": ". $this->records;
+        $this->nav_post = "\"><span class=\"records_found\">". $this->l->txt_found. ": ". $this->records;
         $this->nav_post.= ($this->records && $this->page_size != P_ALL ? " (". $from. "-". $to. ")" : "");
         $this->nav_post.= "</span>";
 
