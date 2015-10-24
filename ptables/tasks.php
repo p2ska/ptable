@@ -3,7 +3,7 @@
 $this->table		= "task";
 //$this->where		= "";
 //$this->values		= [];
-$this->order		= "created";
+$this->order		= "task.created";
 $this->way			= "desc";
 
 $this->fields		= [
@@ -22,8 +22,8 @@ $this->fields		= [
 
 $this->title		= "tasks";
 $this->refresh		= 5;
-$this->header		= false;
-$this->prefs		= false;
+$this->header		= true;
+$this->prefs		= true;
 $this->searchable	= false;
 $this->nav_header	= false;
 $this->nav_footer	= false;

@@ -28,7 +28,7 @@ $c_lang[$lang] = " current";
 	<span class="lang<?= $c_lang["en"] ?>" data-lang="en">EN</span>
 </div>
 <br/>
-<div id="joined" class="ptable no_border"></div><hr/>
+<div id="joined" class="ptable no_border rolled"></div><hr/>
 <div id="requests" class="ptable no_border" data-user="andres"></div><hr/>
 <div id="tasks" class="ptable no_border"></div><hr/>
 <div id="navi" class="ptable"></div><hr/>

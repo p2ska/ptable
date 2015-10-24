@@ -2,98 +2,104 @@
 
 /* päringu koostamine */
 
-$this->table		= "";				// põhitabel														[<table>]: string
-$this->where		= "";				// where tingimused vabas vormis									["where"]: string
-$this->values		= [];				// tingimustele vastavad väärtused									[ [<val>, <val>..] ]
-$this->order		= "";				// esmaselt on tabel sorditud selle välja järgi						[<field>]: string
-$this->way			= "";				// mis suunas järjestatakse tulemused								["asc", "desc"] :"asc"
+$this->table		= "task";				// põhitabel																	[<table>]: string
+$this->where		= "task.status = ?";	// where tingimused vabas vormis												["where"]: string
+$this->values		= [ TASK_CLOSED ];		// väärtused																	[ [<val>, <val>..] ] :array
+$this->order		= "task.created";		// esmaselt on tabel sorditud selle välja järgi									[<field>]: string
+$this->way			= "desc";				// mis suunas järjestatakse tulemused											["asc", "desc"] :"asc"
 
-/* andmebaasi override'd */
+/* andmebaasi override'd (vajadusel) */
 
-$this->host			= "";
-$this->database		= "";
-$this->username		= "";
-$this->password		= "";
-$this->charset		= "utf8";
-$this->collation	= "utf8_estonian_ci";
+$this->host			= "localhost";			// host																			[<host>]: string
+$this->database		= "test";				// baas																			[<name>]: string
+$this->username		= "ptableuser";			// kasutaja																		[<user>]: string
+$this->password		= "ptablepass";			// kasutaja parool																[<pass>]: string
+$this->charset		= "utf8";				// charset																		[<charset>]: "utf8"
+$this->collation	= "utf8_estonian_ci";	// collation																	[<collation>]: "utf8_estonian_ci"
 
-/* tabeli üldised omadused																					[variandid] :vaikeväärtus */
+/* andmemassiiv:
+	baasi asemel võib kasutada sisendina ka andmemassiivi:
 
-$this->title		= $l->?;				// tabeli pealkiri												[<title>]: string
-$this->title_icon	= "odnoklassniki";		// tabeli pealkirjast vasakul olev ikoon						[<font-awesome ikooni klass>] : none
+		ex: $data_array = [ [ "id" => "DE1242" ], [ "id" => "RE3251" ], ... ];
+		* tuleb anda vastav key-value paaride massiiv, klassi loomise: PTABLE($_GET, $data_array, $translations)
+*/
 
 /* tabeliväljade loetelu ja omadused (kõik peale "field" väärtuse on valikulised) */
 
-// "table"			- millise tabeli väli on. kui pole kirjeldatud, siis arvestatakse et on põhitabelis     [<table>]: none
-// "field"			- väljanimetus tabelis                                                                  [<field>]: string
-// "title"			- tabeli päises kuvatav väljakirjeldus (mõistlik panna tõlkestring)						[<title>] :string
-// "class"			- välja stiil, override																	[<class_name>] :string
-// "align"			- välja sisu paiknemine																	["left", "center", "right", "justify"] :"left"
-// "nowrap"			- välja ei wrapita																		[true, false] :false
-// "searchable"		- kui tehakse üldine otsing, siis lisatakse see väli otsingusse							[true, false] :false
-// "search_left"	- otsingu puhul otsitakse vasakule (like "%<otsingusõna>")								[true, false] :true
-// "search_right"	- otsingu puhul otsitakse paremale (like "<otsingusõna>%"								[true, false] :true
-// "sortable"		- antud välja puhul on lubatud kasutaja poolne järjekorra muutmine (üles/alla) 			[true, false] :true
-// "extend"			- määra väljale teisendusfunktsioon (ptable_ext all kirjeldatud)						[<method>, [ <method>, <method>.. ] ]: string
-// "translate"		- prinditakse väärtus tõlke külge (tõlkestring + väärtus)								[false, <translation>] :false
-// "field_search"	- TODO: lisada otsingukast klikitud veerule, täppisotsing veeru piires					[true, false] :false
-
 $this->fields	= [
-	[ "field"	=> "",		"title" => $l->? ]
+   ["table" 		=> "task",		// millise tabeli väli on. kui pole kirjeldatud, siis arvestatakse et on põhitabelis    [<table>] :string
+	"field"			=> "owner",		// väljanimetus tabelis                                                                 [<field>] :string
+ 	"title" 		=> $l->title,	// tabeli päises kuvatav väljakirjeldus (mõistlik panna tõlkestring)					[<title>] :none
+	"class"			=> "neat",		// välja stiil, override																[<class_name>] :none
+	"align" 		=> "center",	// välja sisu paiknemine																["left", "center", "right", "justify"] :"left"
+	"nowrap"		=> false,		// välja ei wrapita																		[true, false] :false
+	"sortable"		=> true,		// antud välja puhul on lubatud kasutaja poolne järjekorra muutmine (üles/alla) 		[true, false] :true
+	"searchable"	=> true,		// kui tehakse üldine otsing, siis lisatakse see väli otsingusse						[true, false] :false
+	"search_left"	=> true,		// otsingu puhul otsitakse vasakule (like "%<otsingusõna>")								[true, false] :true
+	"search_right"	=> true,		// otsingu puhul otsitakse paremale (like "<otsingusõna>%"								[true, false] :true
+	"field_search"	=> true,		// täpisotsingu võimaldamine välja piires												[true, false] :false
+	"placeholder"	=> "Owner",		// väljaotsingukasti placeholder														[<placeholder>] :none
+	"width"			=> "10%",		// kui '$this->resizeable=false', siis saab veergudele panna % või px laiuse			[<width>] :string
+	"alias"			=> "solver",	// kui väli on liidetud tabelist, lisa vajadusel alias, väljakonfliktide vältimiseks	[<field>] :string
+	"translate"		=> "status_%s"	// prinditakse välja väärtus sprintf'iga tõlke külge (tõlkestring + väärtus)			[false, <translation>] :false
+	"extend"		=> "autolink",	// määra väljale teisendusfunktsioon (ptable_ext all kirjeldatud)						[<method>, [ <method>, <method>.. ] ]: string
+	]
 ];
 
 /* liidetavate tabelite kirjeldused */
 
-// "table"			- tabeli nimi																			[
-// "method"			- mis tüüpi join
-// "on"				- mis tingimustel
-
 $this->joins		= [
-	[ "table"	=> "", "method" => "left join", "on" => "" ],
+  ["table"			=> "request",						// milline tabel liidetakse põhitabeliga
+   "method"			=> "left join",						// kuidas tabel liita
+   "on"				=> "request.id = task.parent_id"	// millised on vastavuses olevad väljad
+   ]
 ];
 
-/* triggerid */
-
-// "ROW"			- trigger määratakse kogu valitud reale																	["ROW", "<field>"]: string
-// "<field>"		- trigger lisatakse konkreetsele väljale reas
-// "title"			- triggeri kirjeldus, mida kuvatakse rea/välja kohal ([]-vaheline asendatakse vastava välja väärtusega) [<title>] :string
-// "data"			- siin üksikelement või massiiv, milliseid väärtusi panna kaasa triggerile								[<data>, [<data>, <data>..] ]
-//					  (kõik, mis on []-vahel asendatakse selle välja väärtusega (kui leitakse))
-// "link"			- kui vähemalt üks 'data'-väli pole kirjeldatud, siis minnakse kirjeldatud lingile (asendatakse [])		[<link>]: string
-// "external"		- kas sisemine või välimine link																		[true, false] :false
+/* triggerid (eraldi rea- ja väljatriggerid: väljatrigger omab muidugi suuremat prioriteeti) */
 
 $this->triggers		= [
-	"ROW"		=> [ "title" => "", "data" => [] ],
-	"id"		=> [ "title" => "", "link" => "", "external" => true ]
+	"ROW"		=> [						// "ROW" - trigger määratakse kogu valitud reale								["ROW", "<field>"]: string
+		"title" => "",						// kuvatakse rea kohal ([] kirjelduses asendatakse välja väärtusega)			[<title>] :string
+		"data" => [] ],						// siin üksikelement või massiiv, milliseid väärtusi panna kaasa triggerile		[<data>, [<data>, <data>..] ]
+	 	"link"		=> "www.ttu.ee/#[id]",	// kui 'data'-väli POLE kirjeldatud, siis suunatakse kasutaja lingile)			[<link>]: string
+	 	"external"	=> true					// kas link avatakse uues aknas link											[true, false] :false
+
+	"id"		=> [						// trigger lisatakse konkreetsele väljale reas									[<field>] :string
+		"title" 	=> "[subject]", 		// kuvatakse rea/välja kohal ([] kirjelduses asendatakse välja väärtusega)		[<title>] :string
+	 	"data"		=> [ "id" => "[id]" ],	// siin üksikelement või massiiv, milliseid väärtusi panna kaasa triggerile		[<data>, [<data>, <data>..] ]
+	 	"link"		=> "www.ttu.ee/#[id]",	// kui 'data'-väli POLE kirjeldatud, siis suunatakse kasutaja lingile)			[<link>]: string
+	 	"external"	=> true					// kas link avatakse uues aknas link											[true, false] :false
+	]
 ];
 
-/* TODO: puhas sql-päring (selleasemel, et kasutada päringu moodustamiseks "fields" kirjelduses olevaid ja "joins" & "where" muutujaid) */
+/* tabeli seadistused (need kirjutavad üle default seaded; aga omakorda võib antud seaded üle kirjutada JS kaudu) */
 
-//$this->query_count= "select id from request";
-//$this->query		= "select * from request";
-
-// TODO: per person/tabel meelde jätta vajalikud väljad nendest
-
-$this->order_icon	= "chevron";		// mis tüüpi ikoone kasutatakse otsingutulemuste järjestamiseks						["chevron", "sort", "angle-double"] :"chevron"
-$this->page_sizes	= [ 10 => "10 ". $l->records, 25 => "25 ". $l->records, 50 => "50 ". $l->records, "*" => $l->all_records ]; // valitavad lehepikkused
-$this->page_size	= 10;				// esmane lehepikkus (TODO: milline on varasemalt valitud)							[10..50, "*"] :10
-$this->nav_length	= 5;				// mitu navigatsiooninuppu on kuvatud esimese ja viimase lehe nuppude vahel			[1-10] :5 (TODO: teised väärtused panna korralikult toimima)
-$this->nav_header	= false;			// kas header'i navigatsiooniriba on lubatud										[true, false] :false
-$this->nav_footer	= true;				// kas header'i navigatsiooniriba on lubatud										[true, false] :true
-$this->nav_prev		= $l->?;			// "eelmine leht"-nupu kirjeldus													["text"] : string
-$this->nav_next		= $l->?;			// "järgmine leht"-nupu kirjeldus													["text"] : string
-$this->fields_descr	= true;				// kas väljakirjeldused on lubatud													[true, false] :true
-$this->header_sep	= false;			// eralda väljakirjeldused tabeli sisuosast											[true, false] :false
-$this->footer_sep	= false;			// eralda alumine nav tabeli sisuosast												[true, false] :false
-$this->autoupdate	= false;			// mitme sekundi pärast uuendatakse antud tabelit automaatselt						[false,5-600] :false
-$this->autosearch	= false;			// kas otsingukast käitub automaatsena (alates on kirjeldatud js: search_from = l)	[true, false] :false
-$this->searchable	= true;				// kas otsing ja otsingukast on rakendatud tabelile									[true, false] :true
-$this->prefs		= true;				// kas on lubatud kasutajal muuta tabeli seadeid									[true, false] :true
-$this->store_prefs	= true;				// salvestab tabeli põhiandmed (välja laiused salvestatakse siiski)					[true, false] :true
-$this->sizeable		= true;				// kas on lubatud muuta tabeli kirjete arvu ühel lehel								[true, false] :true
-$this->download		= true;				// TODO: võimalda tabeli sisu allalaadimine .csv, .pdf või excel'ina				[true, false] :true
-$this->smart_select	= true;				// TODO: võimaldab valida märkida tabeli ridasid ja veergusid sõltumatult			[true, false] :true
-$this->fullscreen	= true;				// TODO: ava tabel täisekraanis														[true, false] :true
-$this->fadein		= false;			// TODO: fade'i tabel alles siis sisse, kui on laetud								[0..n (ms)] :false
+$this->title		= $l->txt_task_table;	// tabeli pealkiri																[<title>]: string
+$this->title_icon	= "odnoklassniki";		// tabeli pealkirjast eesolev ikoon												[<font-awesome ikooni klass>] : none
+$this->order_icon	= "chevron";			// mis tüüpi ikoone kasutatakse otsingutulemuste järjestamiseks					["chevron", "sort", "angle-double"] :"chevron"
+$this->nav_length	= 5;					// mitu navigatsiooninuppu on kuvatud esimese ja viimase lehe nuppude vahel		[1-10] :5 (TODO: teised väärtused panna korralikult toimima)
+$this->nav_header	= false;				// kas header'i navigatsiooniriba on lubatud									[true, false] :false
+$this->nav_footer	= true;					// kas header'i navigatsiooniriba on lubatud									[true, false] :true
+$this->nav_prev		= $l->txt_prev;			// "eelmine leht"-nupu kirjeldus												["text"] : string
+$this->nav_next		= $l->txt_next;			// "järgmine leht"-nupu kirjeldus												["text"] : string
+$this->page_size	= 10;					// esmane lehepikkus															[10..50, "*"] :10
+$this->page_sizes	= [ 10 => "10 ". $l->rec, 25 => "25 ". $l->rec, 50 => "50 ". $l->rec, "*" => $l->all ];	// lehepikkus	[10..50, "*"] :array
+$this->autoupdates	= [ 10 => "10s", 30 => "30s", 60 => "1m", 300 => "5m", 600 => "10m" ], // millised uuendusajad			[[1]..[600]..] :array
+$this->refresh		= false;				// mitme sekundi pärast uuendatakse antud tabelit automaatselt					[false,5-600] :false
+$this->header_sep	= false;				// eralda väljakirjeldused tabeli sisuosast										[true, false] :false
+$this->footer_sep	= false;				// eralda alumine nav tabeli sisuosast											[true, false] :false
+$this->fields_descr	= true;					// kas väljakirjeldused on lubatud												[true, false] :true
+$this->autosearch	= false;				// kas otsingukast käitub automaatsena (otsitakse alates: (JS) search_from = l)	[true, false] :false
+$this->searchable	= true;					// kas otsing ja otsingukast on rakendatud tabelile								[true, false] :true
+$this->prefs		= true;					// kas on lubatud kasutajal muuta tabeli seadeid								[true, false] :true
+$this->store_prefs	= true;					// salvestab tabeli põhiandmed (välja laiused salvestatakse siiski alati)		[true, false] :true
+$this->sizeable		= true;					// kas on lubatud muuta tabeli kirjete arvu ühel lehel							[true, false] :true
+$this->resizable	= true;					// kas tabeli veergude laiust saab muuta; kui ei, siis 'width'-ga saab muuta	[true, false] :true
+$this->minimize		= true;					// võimaldab tabeli kokkurullida (mõistlik kus sel juhul on tabelil pealkiri)	[true, false] :true
+$this->minimised	= false;				// algselt on tabel kokkurullitud (vajab pea-div'ile 'rolled'-klassi lisamist) 	[true, false] :false
+$this->maximize		= true;					// TODO: ava tabel täisekraanis													[true, false] :true
+$this->download		= true;					// TODO: võimalda tabeli sisu allalaadimine .csv, .pdf või excel'ina			[true, false] :true
+$this->smart_select	= true;					// TODO: võimaldab valida märkida tabeli ridasid ja veergusid sõltumatult		[true, false] :true
+$this->debug		= false;				// kuvab päringuid arendaja jaoks jms											[true, false] :false
 
 ?>

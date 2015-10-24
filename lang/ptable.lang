@@ -18,7 +18,7 @@ txt_autoupdate			=> Automaatne uuendus :: Automatic updates ;;
 txt_records				=> kirjet :: rows ;;
 txt_all_records			=> Kõik kirjed :: All rows ;;
 
-txt_prio_5				=> Prio 5 :: PRio 5 ;;
+txt_2_status			=> Oluline! :: Important ;;
 
 txt_request				=> Tellimus :: Request ;;
 txt_requester			=> Tellija :: Requester ;;

@@ -1,9 +1,10 @@
 <?php
 
-require_once("classes/_andres.php");
+require_once("c:/xampp/security/ptable/_connector.php");
+require_once("classes/_ptable_ext.php");
 
 $db = new P_DATABASE();
-$db->connect();
+$db->connect(DB_HOST, DB_NAME, DB_USER, DB_PASS, DB_CHARSET, DB_COLLATION);
 
 $kes = array("Andres", "Ketlin", "Thomas", "Simar", "Erkki", "Johann");
 $kes_on = mt_rand(0, 5);

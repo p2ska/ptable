@@ -28,23 +28,24 @@ class PTABLE {
     // kõik parameetrid (nb! need default'id kirjutatakse üle tabeli kirjeldusfaili ja ka ptable.js poolt tulevate väärtustega üle)
 
     var
-    $content, $db, $l, $mode, $target, $template, $url, $class, $data, $translations, $autoupdate, $store,
-    $database, $host, $username, $password, $charset, $collation, $query, $where, $values, $limit,
-    $nav_pre, $nav_post, $navigation, $pagesize, $title, $style, $table, $fields, $joins, $order, $way,
-    $external_data, $external_pos, $search, $pages, $records, $refresh, $col_width, $field_count, $field_search,
+    $content, $db, $l, $mode, $target, $template, $url, $class, $data, $translations, $autoupdate, $refresh,
+    $database, $host, $username, $password, $charset, $collation, $table, $query, $fields, $where, $values,
+	$search, $triggers, $joins, $order, $way, $limit, $records, $field_count, $field_search, $title, $style,
+    $navigation, $nav_pre, $nav_post, $pages, $pagesize, $external_data, $external_pos, $col_width,
     $debug			= false,		// debug reziim (per tabel väljaspool ptable' enda arendamist)
     $header			= true,			// kas kuvatakse tabeli päist üldse
     $header_sep		= false,		// tabeli ülemine eraldusäär
     $footer_sep		= false,		// tabeli alumine eraldusäär
     $fields_descr	= true,			// väljade kirjeldused tabeli päises
-    $prefs			= true,			// seadistuste kuvamine
-    $store_prefs	= true,			// kas salvestatakse
-    $download		= true,			// tabeli sisu allalaadimise võimaldamine
-    $searchable		= true,			// kas kuvatakse otsingukasti
-    $resizable		= true,   		// kas saab veergude laiust muuta
+    $prefs			= true,			// tabeli seadeid saab muuta
+    $store_prefs	= true,			// kas salvestatakse muudatused (sorteerimisväli, suund, uuendused, lehe pikkus)
+    $download		= true,			// TODO: tabeli sisu allalaadimise võimaldamine
     $autosearch		= false,		// automaatne otsing
+    $searchable		= true,			// kas kuvatakse otsingukasti
     $sizeable		= true,			// kas lastakse kasutajal muuta kirjete arvu ühel lehel
-	$minimize		= true,			// kas saab tabelit minimiseerida
+	$resizable		= true,   		// kas saab veergude laiust muuta
+    $minimize		= true,			// kas saab tabelit minimiseerida
+	$minimized		= false,		// kas tabel on algselt minimiseeritud
     $maximize		= true,			// kas saab tabelit maximiseerida
     $nav_header		= false,		// kas kuvatakse ülemist navigatsiooniriba
     $nav_footer		= true,			// kas kuvatakse alumist navigatsiooniriba
@@ -472,7 +473,11 @@ class PTABLE {
 				// kas võimaldada tabli minimiseerimine
 
 				if ($this->minimize)
-					$this->small_btn(P_PREFIX. $this->target, "minimize_btn", "chevron-down", "chevron-up", $this->l->txt_minimize_btn);
+					$this->small_btn(P_PREFIX. $this->target, "minimize_btn",
+						"caret-". ($this->minimized ? "down" : "up"),
+						"caret-". ($this->minimized ? "up" : "down"),
+						$this->l->txt_minimize_btn
+					);
 
 				// kas võimaldada tabli minimiseerimine
 
@@ -502,7 +507,9 @@ class PTABLE {
                 $this->content .= "<br clear=\"all\"/>";
             }
 
-            $this->content .= "<div id=\"". P_PREFIX. $this->target. "_container\">";
+			// kui on minimiseeritud initsialiseerimisel, siis peida tabeli sisuosa kohe
+
+            $this->content .= "<div id=\"". P_PREFIX. $this->target. "_container\"". ($this->minimized ? " class=\"hide\"" : P_VOID). ">";
         }
 
         $this->content .= "<table id=\"". P_PREFIX. $this->target. "\" ";
@@ -731,8 +738,10 @@ class PTABLE {
                 // kas on vaja kuvada hoopis vastava indeksiga tõlget?
 
                 if (isset($field["translate"]) && $field["translate"]) {
-                    if (isset($this->l->{ $field["translate"]. $value }))
-                        $value = $this->l->{ $field["translate"]. $value };
+					$tr_field = sprintf($field["translate"], $value);
+
+					if (isset($this->l->{ $tr_field }))
+                        $value = $this->l->{ $tr_field };
                 }
 
 				// otsingusõna värvimine
@@ -814,7 +823,7 @@ class PTABLE {
 				$this->content .= "<span class=\"field_search\">";
 
 				$this->content .= "<span id=\"". P_PREFIX. $this->target. "_". $field["field"]. "_search\" ";
-				$this->content .= "class=\"small_btn field_search_btn\" title=\"". $this->l->txt_field_search. "\">";
+				$this->content .= "class=\"field_search_btn small_btn\" title=\"". $this->l->txt_field_search. "\">";
 				$this->content .= "<i class=\"fa fa-search\"></i></span>";
 
 				$this->content .= "<input type=\"text\" id=\"". P_PREFIX. $this->target. "_". $field["field"]. "_searchbox\" ";
@@ -840,10 +849,8 @@ class PTABLE {
 
         // kui vaja eraldada tabeliosa väljakirjeldustest
 
-        if ($this->header_sep) {
+        if ($this->header_sep)
             $this->content .= "<tr class=\"no_hover\"><td class=\"border_top\" colspan=100></td></tr>";
-            //$this->content .= "<tr><td colspan=100 style=\"height: 1px\"></td></tr>";
-        }
     }
 
 	function field_search($what) {
@@ -880,8 +887,6 @@ class PTABLE {
         //$this->content .= "<span class=\"big_btn\">". $this->l->txt_close. "</span>";
         $this->content .= "</div>";
 
-		//$this->content .= "<span id=\"". P_PREFIX. $this->target. "_pref\" class=\"pref_btn small_btn\" title=\"". $this->l->txt_pref_btn. "\">";
-		//$this->content .= "<i class=\"fa fa-cog\"></i></span>";
 		$this->small_btn(P_PREFIX. $this->target, "pref_btn", "cog", "cog", $this->l->txt_pref_btn);
     }
 
