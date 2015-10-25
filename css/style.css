@@ -332,7 +332,7 @@ table *, .prefbox {
 	position: absolute;
 	top: 0px;
 	right: 240px;
-	width: 270px;
+	width: 300px;
 	padding: 12px;
 	text-align: left;
 	display: none;
@@ -349,7 +349,7 @@ table *, .prefbox {
 
 .ptable .pref_key {
 	float: left;
-	width: 150px;
+	width: 180px;
 }
 
 .ptable .pref_val {
