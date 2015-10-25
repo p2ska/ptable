@@ -46,7 +46,7 @@ class PTABLE {
 	$resizable		= true,   		// kas saab veergude laiust muuta
     $minimize		= true,			// kas saab tabelit minimiseerida
 	$minimized		= false,		// kas tabel on algselt minimiseeritud
-    $maximize		= true,			// kas saab tabelit maximiseerida
+    $maximize		= false,		// TODO: kas saab tabelit maximiseerida
     $nav_header		= false,		// kas kuvatakse ülemist navigatsiooniriba
     $nav_footer		= true,			// kas kuvatakse alumist navigatsiooniriba
     $nav_length		= 5,			// navigeerimisnuppude arv

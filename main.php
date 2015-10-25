@@ -11,7 +11,7 @@ if (isset($_GET["lang"]))
 
 $lang = $_SESSION["lang"];
 $c_lang["ee"] = $c_lang["en"] = false;
-$c_lang[$lang] = " current";
+$c_lang[$lang] = " current_lang";
 
 ?>
 <!DOCTYPE html>

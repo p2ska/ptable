@@ -4,21 +4,13 @@ html, body, th, td {
 	font-family: "open sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 	font-size: 13px;
 	color: #000;
-	/*
-	-webkit-touch-callout: none;
-	-webkit-user-select: none;
-	-khtml-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
-	*/
 }
 
 hr {
 	width: 100%;
 	height: 0;
 	border: 0px;
-	border-bottom: 2px solid #55aaff;
+	border-bottom: 2px solid #870042; /* #55aaff */
 	margin-top: 40px;
 	margin-bottom: 40px;
 }
@@ -29,11 +21,11 @@ hr {
 	color: #666;
 }
 
-.current {
-	color: #55aaff;
+.current_lang {
+	color: #870042;
 }
 
-/* portali jaoks */
+/* ptable */
 
 .ptable .sep {
 	float: left;
@@ -57,6 +49,12 @@ table *, .prefbox {
 	border: 1px solid #e7eaec;
 	border-bottom: 0px;
 	opacity: 0.8;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 }
 
 .ptable:not(.no_border):hover, .rolled {
@@ -66,7 +64,7 @@ table *, .prefbox {
 }
 
 .ptable a {
-	color: #55aaff;
+	color: #870042;
 	text-decoration: none;
 }
 
@@ -122,7 +120,7 @@ table *, .prefbox {
 /* nupu hoveri korral värvi ja tee suuremaks */
 
 .ptable .small_btn:hover > i {
-	color: #55aaff;
+	color: #870042;
 	-ms-transform: scale(1.2, 1.2); /* IE 9 */
 	-webkit-transform: scale(1.2, 1.2); /* Chrome, Safari, Opera */
 	transform: scale(1.2, 1.2);
@@ -285,7 +283,7 @@ table *, .prefbox {
 }
 
 .ptable .highlight {
-	color: #55aaff;
+	color: #870042;
 	font-weight: bold;
 }
 
@@ -305,8 +303,8 @@ table *, .prefbox {
 
 .ptable input[type="text"]:focus, .ptable select:focus {
 	background-color: #fff;
-	box-shadow: 0 0 5px rgba(85, 170, 255, 1);
-	border: 1px solid rgba(85, 170, 255, 1);
+	box-shadow: 0 0 5px rgba(135, 0, 66, 1); /* rgba(85, 170, 255, 1) */
+	border: 1px solid rgba(135, 0, 66, 1); /* rgba(85, 170, 255, 1) */
 }
 
 .ptable input[type="text"]:hover, .ptable select:hover, .ptable th:hover:not(.no_order) {
@@ -325,7 +323,7 @@ table *, .prefbox {
 }
 
 .ptable .active {
-	color: #55aaff
+	color: #870042
 }
 
 /* seadistustekasti kraam */
@@ -339,8 +337,8 @@ table *, .prefbox {
 	text-align: left;
 	display: none;
 	background-color: #fff;
-	box-shadow: 0 0 5px rgba(85, 170, 255, 1);
-	border: 1px solid rgba(85, 170, 255, 1);
+	box-shadow: 0 0 5px rgba(135, 0, 66, 1); /* rgba(85, 170, 255, 1); */
+	border: 1px solid rgba(135, 0, 66, 1); /* rgba(85, 170, 255, 1); */
 	z-index: 1000;
 }
 
@@ -363,7 +361,7 @@ table *, .prefbox {
 .ptable .autoupdate_check {
 	margin-left: 5px;
 	font-size: 20px;
-	color: #55aaff;
+	color: #870042;
 	line-height: 44px;
 	cursor: pointer;
 }
@@ -440,11 +438,11 @@ table *, .prefbox {
 }
 
 .ptable .selected {
-	color: #55aaff;
+	color: #870042;
 	border: 1px solid #0099ff;
 	background-color: #fff;
-	box-shadow: 0 0 5px rgba(85, 170, 255, 1);
-	border: 1px solid rgba(85, 170, 255, 1);
+	box-shadow: 0 0 5px rgba(135, 0, 66, 1); /* rgba(85, 170, 255, 1); */
+	border: 1px solid rgba(135, 0, 66, 1); /* rgba(85, 170, 255, 1); */
 }
 
 .ptable .disabled, .ptable .denied {
