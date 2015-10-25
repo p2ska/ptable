@@ -1,7 +1,7 @@
 (function ($) {
 	$.fn.ptable = function(targets) {
 		var prefix 		= "#ptable_",
-			debug		= true,
+			debug		= false,
 			need_worker = false,
 			updater		= false,
 			last_resize	= false,
@@ -49,12 +49,22 @@
 			$("#" + settings[ptable].target).on("click", ".minimize_btn", function() {
 				var target = $("#" + $(this).data("parent") + "_container");
 
-				if (target.is(":visible"))
+				if (target.is(":visible")) {
 					$("#" + settings[ptable].target).addClass("rolled");
-				else
+
+					//settings[ptable].minimized = true;
+				}
+				else {
 					$("#" + settings[ptable].target).removeClass("rolled");
 
-				$(this).find("i").toggle();
+					//settings[ptable].minimized = false;
+				}
+
+				//store.set(settings[ptable].target + "_minimized", settings[ptable].minimized);
+
+				//clog(settings[ptable].target, "minimized: " + settings[ptable].minimized);
+
+				$(this).find("i").toggle(); // keera sorteerimisikoonid vastupidiseks
 
 				target.slideToggle("fast");
 			});
@@ -264,6 +274,7 @@
 				settings[ptable].order		= $(prefix + settings[ptable].target).data("order");
 				settings[ptable].way		= $(prefix + settings[ptable].target).data("way");
 				settings[ptable].autoupdate	= $(prefix + settings[ptable].target).data("autoupdate");
+				//settings[ptable].minimized= $(prefix + settings[ptable].target).data("minimized");
 				settings[ptable].store		= $(prefix + settings[ptable].target).data("store");
 				settings[ptable].last_update= timestamp;
 				settings[ptable].mode		= "update";
@@ -273,7 +284,8 @@
 				clog("page_size  = " + settings[ptable].page_size);
 				clog("order      = " + settings[ptable].order);
 				clog("way        = " + settings[ptable].way);
-				clog("autoupdate = " + settings[ptable].autoupdate);
+				//clog("minimized  = " + settings[ptable].minimized);
+				clog("autoupdate = " + settings[ptable].autoupdate, ";");
 
 				autoupdate_check();
 				resize_columns();
@@ -295,14 +307,16 @@
 			settings[ptable].page_size	= store.get(ptable + "_page_size");
 			settings[ptable].order		= store.get(ptable + "_order");
 			settings[ptable].way		= store.get(ptable + "_way");
+			//settings[ptable].minimized= store.get(ptable + "_minimized"); // TODO
 			//settings[ptable].search	= store.get(ptable + "_search");
 
 			clog(ptable,
-				 "autoupdate = " + settings[ptable].autoupdate, "sniffed");
-			clog("col_width  = " + settings[ptable].col_width);
-			clog("page_size  = " + settings[ptable].page_size);
-			clog("order      = " + settings[ptable].order);
-			clog("way        = " + settings[ptable].way, ";");
+				 "autoupdate = " + store.get(ptable + "_autoupdate"), "sniffed");
+			//clog("minimized  = " + store.get(ptable + "_minimized"));
+			clog("col_width  = " + store.get(ptable + "_col_width"));
+			clog("page_size  = " + store.get(ptable + "_page_size"));
+			clog("order      = " + store.get(ptable + "_order"));
+			clog("way        = " + store.get(ptable + "_way"), ";");
 		}
 
 		// salvesta tabeli seaded (vajalikud)
@@ -317,10 +331,12 @@
 			store.set(ptable + "_page_size",	settings[ptable].page_size);
 			store.set(ptable + "_order",		settings[ptable].order);
 			store.set(ptable + "_way",			settings[ptable].way);
+			//store.set(ptable + "_minimized",	settings[ptable].minimized);
 			//store.set(ptable + "_search",		settings[ptable].search);
 
 			clog(ptable,
 				 "autoupdate = " + settings[ptable].autoupdate, "stored");
+			//clog("minimized  = " + settings[ptable].minimized);
 			clog("col_width  = " + settings[ptable].col_width);
 			clog("page_size  = " + settings[ptable].page_size);
 			clog("order      = " + settings[ptable].order);
@@ -381,9 +397,9 @@
 			// kas on vaja seada uuenduse intervall või hoopis panna worker seisma, kuna ükski tabel ei vaja enam seda?
 
 			if (need_worker && !updater) {
-				clog("worker", "i'm needed! running...");
+				//clog("worker", "i'm needed! running...");
 
-				updater = setInterval(worker, 1000);
+				//updater = setInterval(worker, 1000);
 			}
 			else if (!need_worker && updater) {
 				clog("worker", "i'm not needed... zZz..zZz..");

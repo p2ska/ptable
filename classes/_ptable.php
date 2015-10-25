@@ -101,7 +101,7 @@ class PTABLE {
 
         // kirjuta default'id JS omadega üle (puhasta input)
 
-        foreach ($init as $key => $val)
+		foreach ($init as $key => $val)
             $this->{ $key } = $this->safe($val);
 
         // kas on veergude laiused olemas
@@ -528,6 +528,7 @@ class PTABLE {
         $this->content .= "data-navigation=\"". ($this->navigation ? "true" : "false"). "\" ";
         $this->content .= "data-autoupdate=\"". ($this->autoupdate ? $this->autoupdate : "0"). "\" ";
         $this->content .= "data-autosearch=\"". ($this->autosearch ? "true" : "false"). "\" ";
+        //$this->content .= "data-minimized=\"". ($this->minimized ? "true" : "false"). "\" ";
         $this->content .= "data-store=\"". ($this->store_prefs ? "true" : "false"). "\">";
         $this->content .= "<thead>";
 
