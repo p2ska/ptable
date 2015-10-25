@@ -411,6 +411,7 @@
 		// tee midagi triggeriga rea või välja peal klikkimise peale (mitte lingi puhul siis)
 
 		function trigger(data) {
+			/*
 			var what = "";
 
 			$.each(data, function(i, field) {
@@ -418,6 +419,11 @@
 			});
 
 			alert(what);
+			*/
+
+			$("#content-wrapper").load(data["href"], function () {
+                $.getScript("/lemon/plugins/srm/main.js");
+            });
 		}
 
 		// uuenda tabelit automaatselt, kui on autoupdate seatud tabelile ja eelmisest updatest on määratud aeg mööda läinud

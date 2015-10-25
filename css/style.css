@@ -89,6 +89,7 @@ table *, .prefbox {
 
 .ptable .title {
 	font-weight: bold;
+	margin-top: 1px;
 	margin-left: 8px;
 	color: #669;
 }
@@ -113,6 +114,7 @@ table *, .prefbox {
 .ptable .small_btn {
 	position: relative;
 	float: right;
+	margin-top: 1px;
 	margin-right: 8px;
 	cursor: pointer;
 }
@@ -223,24 +225,26 @@ table *, .prefbox {
 .ptable th:not(.resize) {
 	padding: 10px;
 	white-space: nowrap;
+	text-align: center;
 	background-color: #fff;
 	border-top: 1px solid #e7eaec;
 	border-left: 1px solid #f9f9f9;
 	border-right: 1px solid #f9f9f9;
 	border-bottom: 1px solid #fff;
-	/*-webkit-transition: all 0.30s ease-in-out;
-	-moz-transition: all 0.30s ease-in-out;
-	-ms-transition: all 0.30s ease-in-out;
-	-o-transition: all 0.30s ease-in-out;*/
 	outline: none;
 	position: relative;
-	/*overflow: hidden;*/
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
 	-khtml-user-select: none;
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
+	/*
+	-webkit-transition: all 0.30s ease-in-out;
+	-moz-transition: all 0.30s ease-in-out;
+	-ms-transition: all 0.30s ease-in-out;
+	-o-transition: all 0.30s ease-in-out;
+	*/
 }
 
 .ptable tr {
@@ -270,16 +274,16 @@ table *, .prefbox {
 }
 
 .ptable tr:hover:not(.no_hover) > td {
+	outline: none;
 	border-top: 1px solid #999;
 	border-bottom: 1px solid #999;
+	box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
 	/*
 	-webkit-transition: all 0.30s ease-in-out;
 	-moz-transition: all 0.30s ease-in-out;
 	-ms-transition: all 0.30s ease-in-out;
 	-o-transition: all 0.30s ease-in-out;
 	*/
-	outline: none;
-	box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
 }
 
 .ptable td {
@@ -300,11 +304,11 @@ table *, .prefbox {
 	border: 1px solid #ccc;
 	background-color: #f9f9f9;
 	line-height: 17px;
+	outline: none;
 	-webkit-transition: all 0.30s ease-in-out;
 	-moz-transition: all 0.30s ease-in-out;
 	-ms-transition: all 0.30s ease-in-out;
 	-o-transition: all 0.30s ease-in-out;
-	outline: none;
 }
 
 .ptable input[type="text"]:focus, .ptable select:focus {
@@ -411,11 +415,11 @@ table *, .prefbox {
 	display: block;
 	text-align: center;
 	cursor: pointer;
+	outline: none;
 	-webkit-transition: all 0.30s ease-in-out;
 	-moz-transition: all 0.30s ease-in-out;
 	-ms-transition: all 0.30s ease-in-out;
 	-o-transition: all 0.30s ease-in-out;
-	outline: none;
 }
 
 .ptable .nav:hover:not(.denied):not(.selected) {

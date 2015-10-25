@@ -44,7 +44,7 @@ class PTABLE {
     $searchable		= true,			// kas kuvatakse otsingukasti
     $sizeable		= true,			// kas lastakse kasutajal muuta kirjete arvu ühel lehel
 	$resizable		= true,   		// kas saab veergude laiust muuta
-    $minimize		= true,			// kas saab tabelit minimiseerida
+    $minimize		= false,		// kas saab tabelit minimiseerida
 	$minimized		= false,		// kas tabel on algselt minimiseeritud
     $maximize		= false,		// TODO: kas saab tabelit maximiseerida
     $nav_header		= false,		// kas kuvatakse ülemist navigatsiooniriba
@@ -66,7 +66,7 @@ class PTABLE {
 
         // tabeli id
 
-        $this->target = $this->safe($init["target"], 20);
+        $this->target = $this->safe($init["target"]);
 
         // kui pole väliseid tõlkeid juba, siis lae tabeli tõlkefailist;
         // kui translations klassi ka pole, noh siis polegi tõlkeid
