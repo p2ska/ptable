@@ -476,13 +476,13 @@ class PTABLE {
 					$this->small_btn(P_PREFIX. $this->target, "minimize_btn",
 						"caret-". ($this->minimized ? "down" : "up"),
 						"caret-". ($this->minimized ? "up" : "down"),
-						$this->l->txt_minimize_btn
+						@$this->l->txt_minimize_btn
 					);
 
 				// kas võimaldada tabli minimiseerimine
 
 				if ($this->maximize)
-					$this->small_btn(P_PREFIX. $this->target, "maximize_btn", "expand", "compress", $this->l->txt_maximize_btn);
+					$this->small_btn(P_PREFIX. $this->target, "maximize_btn", "expand", "compress", @$this->l->txt_maximize_btn);
 
 				// seadete kast
 
@@ -557,7 +557,7 @@ class PTABLE {
             }
         }
         else
-            $this->content .= "<tr><td colspan=100>". $this->l->txt_notfound. "</td></tr>";
+            $this->content .= "<tr><td colspan=100>". @$this->l->txt_notfound. "</td></tr>";
 
         // footer
 
@@ -824,7 +824,7 @@ class PTABLE {
 				$this->content .= "<span class=\"field_search\">";
 
 				$this->content .= "<span id=\"". P_PREFIX. $this->target. "_". $field["field"]. "_search\" ";
-				$this->content .= "class=\"field_search_btn small_btn\" title=\"". $this->l->txt_field_search. "\">";
+				$this->content .= "class=\"field_search_btn small_btn\" title=\"". @$this->l->txt_field_search. "\">";
 				$this->content .= "<i class=\"fa fa-search\"></i></span>";
 
 				$this->content .= "<input type=\"text\" id=\"". P_PREFIX. $this->target. "_". $field["field"]. "_searchbox\" ";
@@ -843,7 +843,7 @@ class PTABLE {
 			$this->content .= "</th>";
 
             if ($this->resizable && $current_field < $fields)
-                $this->content .= "<th class=\"resize no_order\"><img src=\"/ptable/img/blank.gif\" width=1 height=1 border=0></th>";
+                $this->content .= "<th class=\"resize no_order\"></th>"; // needed? <img src=\"/ptable/img/blank.gif\" width=1 height=1 border=0>
         }
 
         $this->content .= "</tr>";
@@ -872,7 +872,7 @@ class PTABLE {
     function searchbox() {
         $this->content .= "<span class=\"search\">";
         $this->content .= "<input type=\"text\" id=\"". P_PREFIX. $this->target. "_search\" class=\"search_field_input\" value=\"". $this->search. "\"> ";
-        $this->content .= "<span id=\"". P_PREFIX. $this->target. "_commit_search\" class=\"search_btn small_btn\" title=\"". $this->l->txt_search. "\"><i class=\"fa fa-search\"></i></span>";
+        $this->content .= "<span id=\"". P_PREFIX. $this->target. "_commit_search\" class=\"search_btn small_btn\" title=\"". @$this->l->txt_search. "\"><i class=\"fa fa-search\"></i></span>";
         $this->content .= "</span>";
     }
 
@@ -880,15 +880,15 @@ class PTABLE {
 
     function prefbox() {
         $this->content .= "<div id=\"". P_PREFIX. $this->target. "_prefbox\" class=\"prefbox\">";
-        $this->content .= $this->awesome_eee($this->l->txt_pref). "<br/><br/>";
-        $this->content .= $this->print_pref($this->l->txt_pagesize, $this->page_sizes, "dropdown", $this->page_size, "pagesize");
-        $this->content .= $this->print_pref($this->l->txt_autoupdate, $this->autoupdate, "autoupdate_check", $this->autoupdate, "autoupdate");
+        $this->content .= $this->awesome_eee(@$this->l->txt_pref). "<br/><br/>";
+        $this->content .= $this->print_pref(@$this->l->txt_pagesize, $this->page_sizes, "dropdown", $this->page_size, "pagesize");
+        $this->content .= $this->print_pref(@$this->l->txt_autoupdate, $this->autoupdate, "autoupdate_check", $this->autoupdate, "autoupdate");
         //$this->content .= "<br/><br/>";
-        //$this->content .= "<span class=\"big_btn\">". $this->l->txt_save. "</span>";
-        //$this->content .= "<span class=\"big_btn\">". $this->l->txt_close. "</span>";
+        //$this->content .= "<span class=\"big_btn\">". @$this->l->txt_save. "</span>";
+        //$this->content .= "<span class=\"big_btn\">". @$this->l->txt_close. "</span>";
         $this->content .= "</div>";
 
-		$this->small_btn(P_PREFIX. $this->target, "pref_btn", "cog", "cog", $this->l->txt_pref_btn);
+		$this->small_btn(P_PREFIX. $this->target, "pref_btn", "cog", "cog", @$this->l->txt_pref_btn);
     }
 
     // valikukasti väljade printimine
@@ -978,7 +978,7 @@ class PTABLE {
             $to = $this->records;
 
         $this->nav_pre = "<tr class=\"no_hover\"><td colspan=100 class=\"";
-        $this->nav_post = "\"><span class=\"records_found\">". $this->l->txt_found. ": ". $this->records;
+        $this->nav_post = "\"><span class=\"records_found\">". @$this->l->txt_found. ": ". $this->records;
         $this->nav_post.= ($this->records && $this->page_size != P_ALL ? " (". $from. "-". $to. ")" : "");
         $this->nav_post.= "</span>";
 
