@@ -16,10 +16,10 @@
 
 			settings[ptable] = {
 				target: $(this).prop("id"),
-				class: $(this).prop("class"),
-				data: $(this).data(),
-				mode: "init",
-				url: "ptable.php",
+				class:  $(this).prop("class"),
+				data:   user_data($(this).data()),
+				mode:   "init",
+				url:    "ptable.php",
 				search_from: 3
 			}
 
@@ -245,6 +245,20 @@
 				update(ptable);
 			});
 		});
+
+        // kasutaja andmed (võta event'id välja)
+
+        function user_data(data) {
+            var udata = {};
+
+            if (data) {
+                $.each(data, function(key, val) {
+                    udata[key] = val;
+                });
+            }
+
+            return udata;
+        }
 
 		// uuenda tabelit
 
@@ -498,22 +512,16 @@
 		$(".ptable").on("click", ".autoupdate_check", function() {
 			var tbl = $(this).data("table");
 
-			if ($(this).hasClass("off")) {
-				$(prefix + tbl + "_autoupdate_off").hide();
-				$(prefix + tbl + "_autoupdate_on").show();
-				$(prefix +tbl + "_autoupdate_select").prop("disabled", false);
+            $(prefix + tbl + "_autoupdate_off, " + prefix + tbl + "_autoupdate_on").toggle();
 
-				settings[tbl].autoupdate = parseInt($(prefix + tbl + "_autoupdate_select").val());
-			}
-			else {
-				$(prefix + tbl + "_autoupdate_on").hide();
-				$(prefix + tbl + "_autoupdate_off").show();
-				$(prefix + tbl + "_autoupdate_select").prop("disabled", "disabled");
-
-				settings[tbl].autoupdate = 0;
-			}
-
-			clog(tbl, "autoupdate = " + settings[tbl].autoupdate);
+            if ($(prefix + tbl + "_autoupdate_on").is(":visible")) {
+                $(prefix + tbl + "_autoupdate_select").prop("disabled", false);
+                settings[tbl].autoupdate = parseInt($(prefix + tbl + "_autoupdate_select").val());
+            }
+            else {
+                $(prefix + tbl + "_autoupdate_select").prop("disabled", "disabled");
+                settings[tbl].autoupdate = 0;
+            }
 
 			autoupdate_check();
 			store_prefs(tbl);

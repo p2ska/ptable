@@ -942,8 +942,10 @@ class PTABLE {
         $id = P_PREFIX. $this->target;
 
         $pr  = "<div style=\"float: left\">";
-        $pr .= "<i id=\"". $id. "_autoupdate_off\" data-table=\"". $this->target. "\" class=\"autoupdate_check ". ($current_val ? "hide " : ""). "off fa fa-square-o\"></i>";
-        $pr .= "<i id=\"". $id. "_autoupdate_on\" data-table=\"". $this->target. "\" class=\"autoupdate_check ". ($current_val ? "" : "hide "). "fa fa-check-square-o\"></i>";
+        //$pr .= "<i id=\"". $id. "_autoupdate_off\" data-table=\"". $this->target. "\" class=\"autoupdate_check ". ($current_val ? "hide " : ""). "off fa fa-square-o\"></i>";
+        //$pr .= "<i id=\"". $id. "_autoupdate_on\" data-table=\"". $this->target. "\" class=\"autoupdate_check ". ($current_val ? "" : "hide "). "fa fa-check-square-o\"></i>";
+        $pr .= "<i id=\"". $id. "_autoupdate_off\" data-table=\"". $this->target. "\" class=\"autoupdate_check off fa fa-square-o\"". ($current_val ? " style='display:none'" : ""). "></i>";
+        $pr .= "<i id=\"". $id. "_autoupdate_on\" data-table=\"". $this->target. "\" class=\"autoupdate_check fa fa-check-square-o\"". ($current_val ? "" : " style='display:none'"). "></i>";
         $pr .= "<input type=\"hidden\" id=\"". $id. "_autoupdate_value\" class=\"". $id. "_value\" value=\"". $current_val. "\">";
         $pr .= "</div>";
 

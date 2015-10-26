@@ -2,11 +2,11 @@
 
 /* tabeli üldised omadused																					[variandid] :vaikeväärtus */
 
-$this->table		= "request";			// põhitabeli nimi baasis										[<table>]
-//$this->where		= "";		// where tingimused vabas vormis
-//$this->values		= [];		// prepared pärinule omistatavad väärtused
-$this->order		= "request.subject";		// esmaselt on tabel sorditud selle välja järgi (TODO: per person/tabel meelde jätta) ["<field>"]
-$this->way			= "desc";			// mis suunas järjestatakse tulemused
+$this->table		= "request";               // põhitabeli nimi baasis										[<table>]
+//$this->where		= "";                      // where tingimused vabas vormis
+//$this->values		= [];                      // prepared pärinule omistatavad väärtused
+$this->order		= "request.subject";       // esmaselt on tabel sorditud selle välja järgi (TODO: per person/tabel meelde jätta) ["<field>"]
+$this->way			= "desc";                  // mis suunas järjestatakse tulemused
 
 $this->fields	= [
 	[ "field"	=> "id",		"title" => $l->txt_request, "class" => "ohoo" ],

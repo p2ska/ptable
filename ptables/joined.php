@@ -6,11 +6,6 @@ $this->values   = [ 1 ];
 $this->order	= "task.created";
 $this->way		= "desc";
 
-$this->resizable= false;
-$this->autosearch= true;
-$this->debug	= false;
-$this->minimized= true;
-
 $this->fields = [
 	[ "field" => "id",     "title" => "id",        "width" => "5%",		"searchable" => true ],
 	[ "field" => "prio",   "title" => "prio",      "width" => "5%",		"translate" => "txt_prio_" ],
@@ -31,5 +26,7 @@ $this->triggers	= [
 	"ROW"      => [ "title" => "[]", "data" => [ "id" => "[id]", "url" => "http://www.ttu.ee" ] ],
 	"id"       => [ "title" => "dede", "link" => "www.ttu.ee", "external" => true ]
 ];
+
+$this->title = $this->data["example"];
 
 ?>
