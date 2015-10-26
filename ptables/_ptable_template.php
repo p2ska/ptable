@@ -41,7 +41,8 @@ $this->fields	= [
 	"placeholder"	=> "Owner",		// väljaotsingukasti placeholder														[<placeholder>] :none
 	"width"			=> "10%",		// kui '$this->resizeable=false', siis saab veergudele panna % või px laiuse			[<width>] :string
 	"alias"			=> "solver",	// kui väli on liidetud tabelist, lisa vajadusel alias, väljakonfliktide vältimiseks	[<field>] :string
-	"translate"		=> "status_%s"	// prinditakse välja väärtus sprintf'iga tõlke külge (tõlkestring + väärtus)			[false, <translation>] :false
+	"print"			=> "#%s#",		// prindi väärtus antud stringi sisse ([] asendatakse välja väärtusega)					[none, <string>] :none
+	"translate"		=> "status_%s"	// prinditakse välja väärtus sprintf'iga tõlke külge (tõlkestring + väärtus)			[none, <translation>] :none
 	"extend"		=> "autolink",	// määra väljale teisendusfunktsioon (ptable_ext all kirjeldatud)						[<method>, [ <method>, <method>.. ] ]: string
 	]
 ];

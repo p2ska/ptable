@@ -745,6 +745,12 @@ class PTABLE {
                         $value = $this->l->{ $tr_field };
                 }
 
+				// prindi väärtus etteantud stringi sisse (%s)
+
+				if (isset($field["print"]) && $field["print"]) {
+					$value = sprintf($field["print"], $this->replace_markup($field["print"], $data));
+                }
+
 				// otsingusõna värvimine
 
 				$value = $this->highlight($field, $value);
@@ -758,6 +764,8 @@ class PTABLE {
             }
         }
     }
+
+	// värvi otsingusõnad tabelis
 
 	function highlight($field, $value) {
 		if ($this->search)
