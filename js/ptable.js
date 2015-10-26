@@ -1,7 +1,7 @@
 (function ($) {
 	$.fn.ptable = function(targets) {
 		var prefix 		= "#ptable_",
-			debug		= false,
+			debug		= true,
 			need_worker = false,
 			updater		= false,
 			last_resize	= false,
@@ -319,14 +319,13 @@
 			settings[ptable].col_width	= store.get(ptable + "_col_width");
 			//settings[ptable].page		= store.get(ptable + "_page");
 			settings[ptable].page_size	= store.get(ptable + "_page_size");
-			settings[ptable].order		= store.get(ptable + "_order");
-			settings[ptable].way		= store.get(ptable + "_way");
+			//settings[ptable].order	= store.get(ptable + "_order");
+			//settings[ptable].way		= store.get(ptable + "_way");
 			//settings[ptable].minimized= store.get(ptable + "_minimized"); // TODO
 			//settings[ptable].search	= store.get(ptable + "_search");
 
 			clog(ptable,
 				 "autoupdate = " + store.get(ptable + "_autoupdate"), "sniffed");
-			//clog("minimized  = " + store.get(ptable + "_minimized"));
 			clog("col_width  = " + store.get(ptable + "_col_width"));
 			clog("page_size  = " + store.get(ptable + "_page_size"));
 			clog("order      = " + store.get(ptable + "_order"));
@@ -350,7 +349,6 @@
 
 			clog(ptable,
 				 "autoupdate = " + settings[ptable].autoupdate, "stored");
-			//clog("minimized  = " + settings[ptable].minimized);
 			clog("col_width  = " + settings[ptable].col_width);
 			clog("page_size  = " + settings[ptable].page_size);
 			clog("order      = " + settings[ptable].order);
@@ -399,28 +397,29 @@
 			});
 		}
 
-		function autoupdate_check() {
-			need_worker = false;
+        function autoupdate_check() {
+            need_worker = false;
 
-			// kas mõnda tabelit on vaja automaatselt uuendada?
+            // kas mõnda tabelit on vaja automaatselt uuendada?
 
-			for (pt in settings)
-				if (settings[pt].autoupdate)
-					need_worker = true;
+            for (pt in settings)
+                if (settings[pt].autoupdate !== 0)
+                    need_worker = true;
 
-			// kas on vaja seada uuenduse intervall või hoopis panna worker seisma, kuna ükski tabel ei vaja enam seda?
+            // kas on vaja seada uuenduse intervall või hoopis panna worker seisma, kuna ükski tabel ei vaja enam seda?
 
-			if (need_worker && !updater) {
-				//clog("worker", "i'm needed! running...");
+            if (need_worker && !updater) {
+                clog("worker", "i'm needed! running...");
 
-				//updater = setInterval(worker, 1000);
-			}
-			else if (!need_worker && updater) {
-				clog("worker", "i'm not needed... zZz..zZz..");
+                updater = setInterval(worker, 1000);
+            }
+            else if (!need_worker && updater) {
+                clog("worker", "i'm not needed..zZz..");
 
-				clearInterval(updater);
-			}
-		}
+                clearInterval(updater);
+                updater = false;
+            }
+        }
 
 		// tee midagi triggeriga rea või välja peal klikkimise peale (mitte lingi puhul siis)
 
@@ -442,22 +441,19 @@
 
 		// uuenda tabelit automaatselt, kui on autoupdate seatud tabelile ja eelmisest updatest on määratud aeg mööda läinud
 
-		function worker() {
-			var timestamp = Math.floor(Date.now() / 1000);
+        function worker() {
+            var timestamp = Math.floor(Date.now() / 1000);
 
-			clog("worker", "i'm alive!");
+            clog("worker", "i'm alive!");
 
-			$.ajax({ url: "update_sql.php" });
+            // $.ajax({url: "update_sql.php"});
 
-			// uuenda vajalikku tabelit, kui vastav aeg on mööda läinud viimasest uuendusest
+            // uuenda vajalikku tabelit, kui viimasest uuendusest on vajalik aeg möödunud
 
-			for (pt in settings) {
-				if ($(prefix + settings[pt].target).data("autoupdate") &&
-					timestamp > (settings[pt].last_update + $(prefix + settings[pt].target).data("autoupdate"))) {
-					update(pt, true);
-				}
-			}
-		}
+            for (pt in settings)
+                if (settings[pt].autoupdate !== 0 && timestamp > (settings[pt].last_update + settings[pt].autoupdate))
+                    update(pt, true); // ära salvesta tabeli seadeid, kui on autoupdate
+        }
 
 		// korralikum logi formaatimine
 
