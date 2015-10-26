@@ -40,7 +40,7 @@ class PTABLE {
     $prefs			= true,			// tabeli seadeid saab muuta
     $store_prefs	= true,			// kas salvestatakse muudatused (sorteerimisväli, suund, uuendused, lehe pikkus)
     $download		= true,			// TODO: tabeli sisu allalaadimise võimaldamine
-    $autosearch		= false,		// automaatne otsing
+    $autosearch		= true,			// automaatne otsing
     $searchable		= true,			// kas kuvatakse otsingukasti
     $sizeable		= true,			// kas lastakse kasutajal muuta kirjete arvu ühel lehel
 	$resizable		= true,   		// kas saab veergude laiust muuta
@@ -601,12 +601,8 @@ class PTABLE {
 
         $count = 0;
 
-        foreach ($this->fields as $field) {
-		  if (isset($field["extend"]))
-			$obj->{ $field["field"] } = $this->extend($obj->{ $field["field"] }, $field["extend"]);
-
-          $this->output($field, $obj, $count++);
-        }
+        foreach ($this->fields as $field)
+			$this->output($field, $obj, $count++);
 
         $this->content .= "</tr>";
     }
@@ -627,6 +623,9 @@ class PTABLE {
     function output($field, $data, $pos = 0) {
         $link = $title = $class = $style = $colspan = P_VOID;
         $styles = array();
+
+		if (isset($field["hidden"]) && $field["hidden"])
+			return true;
 
         if (isset($this->triggers[$field["field"]])) {
             $class = "trigger";
@@ -698,9 +697,9 @@ class PTABLE {
             else {
 				// otsingusõna värvimine
 
-				$value = $this->highlight($field, $data->{ $field["field"] });
+				//$value = $this->highlight($field, $data->{ $field["field"] });
 
-				$this->content .= ">". $value. "</td>";
+				$this->content .= ">". $this->format_value($field, $data). "</td>";
 
                 if ($this->resizable && $pos < ($this->field_count - 1))
                     $this->content .= "<td class=\"resize\"></td>";
@@ -727,43 +726,49 @@ class PTABLE {
                 if (count($styles))
                     $style = " style=\"". implode("; ", $styles). "\"";
 
-                $this->content .= $colspan. $class. $style. ">";
-
-				// juhuks, kui tabelite liitmisel on vaja kasutada alias'i (erinevates tabelites sama nimega väljad), siis loe väärtust aliase' väljalt
-
-				if (isset($field["alias"]) && $field["alias"])
-					$value = $data->{ $field["alias"] };
-				else
-                	$value = $data->{ $field["field"] };
-
-                // kas on vaja kuvada hoopis vastava indeksiga tõlget?
-
-                if (isset($field["translate"]) && $field["translate"]) {
-					$tr_field = sprintf($field["translate"], $value);
-
-					if (isset($this->l->{ $tr_field }))
-                        $value = $this->l->{ $tr_field };
-                }
-
-				// prindi väärtus etteantud stringi sisse (%s)
-
-				if (isset($field["print"]) && $field["print"]) {
-					$value = sprintf($field["print"], $this->replace_markup($field["print"], $data));
-                }
-
-				// otsingusõna värvimine
-
-				$value = $this->highlight($field, $value);
-
-				// kuva väärus
-
-                $this->content .= $value. "</td>";
+                $this->content .= $colspan. $class. $style. ">". $this->format_value($field, $data). "</td>";
 
                 if ($this->resizable && $pos < ($this->field_count - 1))
                     $this->content .= "<td class=\"resize\"></td>";
             }
         }
     }
+
+	// tee rida väärtuse muutmisi
+
+	function format_value($field, $data) {
+		$field_type = $field["field"];
+
+		// juhuks, kui tabelite liitmisel on vaja kasutada alias'i (erinevates tabelites sama nimega väljad), siis loe väärtust aliase' väljalt
+
+		if (isset($field["alias"]) && $field["alias"])
+			$field_type = $field["alias"];
+
+		// kas on väljale laiendus?
+
+		if (isset($field["extend"]))
+			$data->{ $field_type } = $this->extend($data->{ $field_type }, $field["extend"]);
+
+		$value = $data->{ $field_type };
+
+		// kas on vaja kuvada hoopis vastava indeksiga tõlget?
+
+		if (isset($field["translate"]) && $field["translate"]) {
+			$tr_field = sprintf($field["translate"], $value);
+
+			if (isset($this->l->{ $tr_field }))
+				$value = $this->l->{ $tr_field };
+		}
+
+		// prindi väärtus etteantud stringi sisse (%s)
+
+		if (isset($field["print"]) && $field["print"])
+			$value = sprintf($field["print"], $this->replace_markup($field["print"], $data));
+
+		// otsingusõna värvimine
+
+		return $this->highlight($field, $value);
+	}
 
 	// värvi otsingusõnad tabelis
 
@@ -791,6 +796,9 @@ class PTABLE {
         $this->content .= "<tr>";
 
         foreach ($this->fields as $field) {
+			if (isset($field["hidden"]) && $field["hidden"]) // ignoreeri peidetud välja
+				continue;
+
             $current_field++;
             $no_order = false;
 
@@ -812,9 +820,9 @@ class PTABLE {
 
             $this->content .= "<th class=\"". $no_order. "order". $active. " \" ";
 
-            // kas veeru laiused on muudetavad ja on paika pandud juba JS poolt?
+			// kui veerulaiused pannakse paika JS poolt
 
-            if ($this->resizable && isset($this->col_width[$current_field - 1]))
+			if ($this->resizable && isset($this->col_width[$current_field - 1]))
                 $this->content .= " style=\"width: ". $this->col_width[$current_field - 1]. "px\"";
 			elseif (isset($field["width"]) && $field["width"]) // või on tabelikirjelduses paika pandud veergude laiused?
 				$this->content .= " style=\"width: ". $field["width"]. "\"";
@@ -1097,10 +1105,10 @@ class PTABLE {
 
     // otsi lingist väljade indikaatorid
 
-    function replace_markup($link, $data) {
-        $datalink = $fields = [];
+    function replace_markup($value, $data) {
+        $fields = [];
 
-        foreach (explode("[", $link) as $field) {
+        foreach (explode("[", $value) as $field) {
             $ex = explode("]", $field);
 
             if (!isset($ex[1]))

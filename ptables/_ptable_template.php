@@ -28,16 +28,18 @@ $this->collation	= "utf8_estonian_ci";	// collation																	[<collation>
 
 $this->fields	= [
    ["table" 		=> "task",		// millise tabeli väli on. kui pole kirjeldatud, siis arvestatakse et on põhitabelis    [<table>] :string
-	"field"			=> "owner",		// väljanimetus tabelis                                                                 [<field>] :string
+	"field"			=> "owner",		// väljanimetus tabelis, kui on märgitud '-', siis kuva fiktiivset välja, (kasuta [])	[<field>] :string
  	"title" 		=> $l->title,	// tabeli päises kuvatav väljakirjeldus (mõistlik panna tõlkestring)					[<title>] :none
-	"class"			=> "neat",		// välja stiil, override																[<class_name>] :none
-	"align" 		=> "center",	// välja sisu paiknemine																["left", "center", "right", "justify"] :"left"
+	"class"			=> "neat",		// välja klass (väliseks trigger'damiseks või stiili muutmiseks (nagu ikka)				[<class_name>] :none
+	"align" 		=> "center",	// väljas sisu joondamine																["left", "center", "right", "justify"] :"left"
+	"value"			=> "[id][req]",	// ei kuvata väärtust, vaid kindel string või teiste väljade väärtused (kasuta [])		[none, string]:none
 	"nowrap"		=> false,		// välja ei wrapita																		[true, false] :false
 	"sortable"		=> true,		// antud välja puhul on lubatud kasutaja poolne järjekorra muutmine (üles/alla) 		[true, false] :true
 	"searchable"	=> true,		// kui tehakse üldine otsing, siis lisatakse see väli otsingusse						[true, false] :false
 	"search_left"	=> true,		// otsingu puhul otsitakse vasakule (like "%<otsingusõna>")								[true, false] :true
 	"search_right"	=> true,		// otsingu puhul otsitakse paremale (like "<otsingusõna>%"								[true, false] :true
 	"field_search"	=> true,		// täpisotsingu võimaldamine välja piires												[true, false] :false
+	"hidden"		=> false,		// antud välja ei kuvata eraldi veerus, aga saab kasutada seda väärtusena mujal tabelis	[true, false] :false
 	"placeholder"	=> "Owner",		// väljaotsingukasti placeholder														[<placeholder>] :none
 	"width"			=> "10%",		// kui '$this->resizeable=false', siis saab veergudele panna % või px laiuse			[<width>] :string
 	"alias"			=> "solver",	// kui väli on liidetud tabelist, lisa vajadusel alias, väljakonfliktide vältimiseks	[<field>] :string
