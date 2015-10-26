@@ -32,7 +32,7 @@ class PTABLE {
     $database, $host, $username, $password, $charset, $collation, $table, $query, $fields, $where, $values,
 	$search, $triggers, $joins, $order, $way, $limit, $records, $field_count, $field_search, $title, $style,
     $navigation, $nav_pre, $nav_post, $pages, $pagesize, $external_data, $external_pos, $col_width,
-    $debug			= false,		// debug reziim (per tabel väljaspool ptable' enda arendamist)
+    $debug			= true,			// debug reziim
     $header			= true,			// kas kuvatakse tabeli päist üldse
     $header_sep		= false,		// tabeli ülemine eraldusäär
     $footer_sep		= false,		// tabeli alumine eraldusäär
