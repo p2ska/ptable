@@ -49,6 +49,12 @@ table *, .prefbox {
 	border: 1px solid #e7eaec;
 	border-bottom: 0px;
 	opacity: 0.8;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 }
 
 .ptable:not(.no_border):hover, .rolled {
@@ -233,12 +239,6 @@ table *, .prefbox {
 	border-bottom: 1px solid #fff;
 	outline: none;
 	position: relative;
-	-webkit-touch-callout: none;
-	-webkit-user-select: none;
-	-khtml-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
 	/*
 	-webkit-transition: all 0.30s ease-in-out;
 	-moz-transition: all 0.30s ease-in-out;
@@ -394,12 +394,6 @@ table *, .prefbox {
 
 .ptable .navigation {
 	float: right;
-	-webkit-touch-callout: none;
-	-webkit-user-select: none;
-	-khtml-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
 }
 
 .ptable .nav {

@@ -414,7 +414,7 @@
                 updater = setInterval(worker, 1000);
             }
             else if (!need_worker && updater) {
-                clog("worker", "i'm not needed..zZz..");
+                clog("worker", "i'm not needed! ..zZz..");
 
                 clearInterval(updater);
                 updater = false;
@@ -530,7 +530,7 @@
 
 			settings[tbl].autoupdate = parseInt($(this).val());
 
-			clog(tbl, "autoupdate = " + settings[tbl].autoupdate);
+            autoupdate_check();
 			store_prefs(tbl);
 		});
 
