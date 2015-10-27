@@ -114,7 +114,7 @@
 
 				e.stopImmediatePropagation();							// ära luba mitut trigerit käivitada; välja trigger omab prioriteeti kui rea oma ees
 
-				if (last_resize && (ct - last_resize) < 500)			// kui veerulaiuse muutmisest on möödas vähem kui 500ms, siis ära käivita triggereid
+				if (last_resize && (ct - last_resize) < 500)			// kui veerulaiuse muutmisest on möödas vähem kui pool sek, siis ära käivita triggereid
 					return false;
 
 				if ($(this).data("link")) {
@@ -128,7 +128,13 @@
 				}
 			});
 
-			// tabeli kirjete arvu muutmine ja vastavale uuele leheküljele viimine
+            // kui klikitakse tabelis oleva lingi peal, siis keela välja/rea võimalike triggerite käivitamine
+
+			$("#" + settings[ptable].target).on("click", ".trigger a", function(e) {
+                e.stopPropagation();
+            });
+
+            // tabeli kirjete arvu muutmine ja vastavale uuele leheküljele viimine
 
 			$("#" + settings[ptable].target).on("change", prefix + settings[ptable].target + "_pagesize", function() {
 				var old_pagesize = $(prefix + settings[ptable].target).data("page_size");
@@ -160,7 +166,19 @@
 				if (e.keyCode < 46 && e.keyCode !== 32 && e.keyCode !== 8 && e.keyCode !== 13)
 					return false;
 
-				// kui on lühem otsisting kui otsimise alustamiseks vajalik või on tegemist del või backspacega
+                // kui on väljaotsing
+
+				if ($(this).hasClass("field_search_input") && e.keyCode === 13) {
+					settings[ptable].field_search = $(this).closest("th").data("field") + "___" + $(this).val();
+
+					update(ptable);
+
+					settings[ptable].field_search = "";
+
+                    return false;
+				}
+
+                // kui on lühem otsisting kui automaatse otsimise alustamiseks vajalik või on tegemist del või backspacega
 
 				if ($(this).val().length < settings[ptable].search_from) {
 					if ($(this).hasClass("search_field_input") && e.keyCode === 8 || e.keyCode === 46) { // kui vajutatakse backspace või del põhiotsingukastis
@@ -171,19 +189,12 @@
 					return false;
 				}
 
-				// kas on põhiotsing või väljaotsing
+				// põhiotsing
 
 				if ($(this).hasClass("search_field_input") && $(prefix + settings[ptable].target).data("autosearch")) {
 					settings[ptable].search = $(this).val();
 
 					update(ptable);
-				}
-				else if ($(this).hasClass("field_search_input") && e.keyCode === 13) {
-					settings[ptable].field_search = $(this).closest("th").data("field") + "___" + $(this).val();
-
-					update(ptable);
-
-					settings[ptable].field_search = "";
 				}
 			});
 
@@ -232,8 +243,8 @@
 				else if ($(this).hasClass("search_btn")) {
 					var search = $(prefix + settings[ptable].target + "_search").val();
 
-					if (search.length >= settings[ptable].search_from)
-						settings[ptable].search = search;
+					// if (search.length >= settings[ptable].search_from)
+					settings[ptable].search = search;
 				}
 				else { // ära navigeeri, kui see on keelatud või kui leht juba on aktiivne
 					if ($(this).hasClass("denied") || $(this).hasClass("selected"))
@@ -303,6 +314,16 @@
 
 				autoupdate_check();
 				resize_columns();
+
+                // kuva badge'd
+
+                if ($(prefix + settings[ptable].target).data("badge")) {
+                    var badge = $("#" + settings[ptable].target + "_badge");
+                    var records = $(prefix + settings[ptable].target).data("records");
+
+                    if (records)
+                        badge.html(records);
+                }
 
 				if (!no_store)
 					store_prefs(ptable);
@@ -424,7 +445,6 @@
 		// tee midagi triggeriga rea või välja peal klikkimise peale (mitte lingi puhul siis)
 
 		function trigger(data) {
-			/*
 			var what = "";
 
 			$.each(data, function(i, field) {
@@ -432,11 +452,10 @@
 			});
 
 			alert(what);
-			*/
 
-			$("#content-wrapper").load(data["href"], function () {
+			/*$("#content-wrapper").load(data["href"], function () {
                 $.getScript("/lemon/plugins/srm/main.js");
-            });
+            });*/
 		}
 
 		// uuenda tabelit automaatselt, kui on autoupdate seatud tabelile ja eelmisest updatest on määratud aeg mööda läinud

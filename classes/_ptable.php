@@ -37,9 +37,11 @@ class PTABLE {
     $header_sep		= false,		// tabeli ülemine eraldusäär
     $footer_sep		= false,		// tabeli alumine eraldusäär
     $fields_descr	= true,			// väljade kirjeldused tabeli päises
+    $search_ph      = false,        // otsingukasti placeholder
     $prefs			= true,			// tabeli seadeid saab muuta
     $store_prefs	= true,			// kas salvestatakse muudatused (sorteerimisväli, suund, uuendused, lehe pikkus)
     $download		= true,			// TODO: tabeli sisu allalaadimise võimaldamine
+    $badge          = false,        // kuva badge
     $autosearch		= true,			// automaatne otsing
     $searchable		= true,			// kas kuvatakse otsingukasti
     $sizeable		= true,			// kas lastakse kasutajal muuta kirjete arvu ühel lehel
@@ -289,6 +291,8 @@ class PTABLE {
 
             $this->db->query($this->query, $this->values);
 
+            //dump($this->db->get_all(), true);
+
             if ($this->debug)
                 $this->content .= "[ ". $this->query. " ]". P_BR. "< ". ($this->values ? implode(", ", $this->values) : ""). " >". P_2BR;
 
@@ -529,6 +533,7 @@ class PTABLE {
         $this->content .= "data-autoupdate=\"". ($this->autoupdate ? $this->autoupdate : "0"). "\" ";
         $this->content .= "data-autosearch=\"". ($this->autosearch ? "true" : "false"). "\" ";
         //$this->content .= "data-minimized=\"". ($this->minimized ? "true" : "false"). "\" ";
+        $this->content .= "data-badge=\"". ($this->badge ? "true" : "false"). "\" ";
         $this->content .= "data-store=\"". ($this->store_prefs ? "true" : "false"). "\">";
         $this->content .= "<thead>";
 
@@ -695,10 +700,6 @@ class PTABLE {
             if ($field["field"] == "ROW")
                 $this->content .= ">";
             else {
-				// otsingusõna värvimine
-
-				//$value = $this->highlight($field, $data->{ $field["field"] });
-
 				$this->content .= ">". $this->format_value($field, $data). "</td>";
 
                 if ($this->resizable && $pos < ($this->field_count - 1))
@@ -737,33 +738,33 @@ class PTABLE {
 	// tee rida väärtuse muutmisi
 
 	function format_value($field, $data) {
-		$field_type = $field["field"];
-
-		// juhuks, kui tabelite liitmisel on vaja kasutada alias'i (erinevates tabelites sama nimega väljad), siis loe väärtust aliase' väljalt
+		// kas väljatüüp on alias või tavaline väli
 
 		if (isset($field["alias"]) && $field["alias"])
 			$field_type = $field["alias"];
+        else
+            $field_type = $field["field"];
 
 		// kas on väljale laiendus?
 
 		if (isset($field["extend"]))
 			$data->{ $field_type } = $this->extend($data->{ $field_type }, $field["extend"]);
 
-		$value = $data->{ $field_type };
+        $value = $data->{ $field_type };
 
-		// kas on vaja kuvada hoopis vastava indeksiga tõlget?
+        // kas on vaja kuvada hoopis vastavat tõlget?
 
 		if (isset($field["translate"]) && $field["translate"]) {
-			$tr_field = sprintf($field["translate"], $value);
+            $translation = $this->replace_markup($field["translate"], $data);
 
-			if (isset($this->l->{ $tr_field }))
-				$value = $this->l->{ $tr_field };
+			if (isset($this->l->{ $translation }))
+				$value = $this->l->{ $translation };
 		}
+        elseif (isset($field["print"]) && $field["print"]) {
+            // prindi vastavalt kirjeldusele
 
-		// prindi väärtus etteantud stringi sisse (%s)
-
-		if (isset($field["print"]) && $field["print"])
-			$value = sprintf($field["print"], $this->replace_markup($field["print"], $data));
+            $value = $this->replace_markup($field["print"], $data);
+        }
 
 		// otsingusõna värvimine
 
@@ -773,8 +774,11 @@ class PTABLE {
 	// värvi otsingusõnad tabelis
 
 	function highlight($field, $value) {
-		if ($this->search)
-			$value = preg_replace("#". preg_quote($this->search). "#i", "<font class=\"highlight\">\\0</font>", $value);
+		if ($this->search) {
+			//$value = preg_replace("#". preg_quote($this->search). "#i", "<font class=\"highlight\">\\0</font>", $value);
+
+            $value = preg_replace("#(?!<.*?)(". preg_quote($this->search). ")(?![^<>]*?>)#i", "<font class=\"highlight\">\\1</font>", $value);
+        }
 		elseif ($this->field_search) {
 			list($f_field, $f_value) = explode(P_FSS, $this->field_search);
 
@@ -848,8 +852,7 @@ class PTABLE {
 				if (isset($field["placeholder"]) && $field["placeholder"])
 					$this->content .= "placeholder=\"". $field["placeholder"]. "\" ";
 
-				//if (isset($this->field_search) && $this->field_search)
-					//$this->content .= "value=\"". $this->field_search("value"). "\" ";
+                //$this->content .= "value=\"". $this->field_search("value"). "\" ";
 
 				$this->content .= "class=\"field_search_input\"/>";
 
@@ -887,7 +890,7 @@ class PTABLE {
 
     function searchbox() {
         $this->content .= "<span class=\"search\">";
-        $this->content .= "<input type=\"text\" id=\"". P_PREFIX. $this->target. "_search\" class=\"search_field_input\" value=\"". $this->search. "\"> ";
+        $this->content .= "<input type=\"text\" id=\"". P_PREFIX. $this->target. "_search\" class=\"search_field_input\" placeholder=\"". $this->search_ph. "\" value=\"". $this->search. "\"> ";
         $this->content .= "<span id=\"". P_PREFIX. $this->target. "_commit_search\" class=\"search_btn small_btn\" title=\"". @$this->l->txt_search. "\"><i class=\"fa fa-search\"></i></span>";
         $this->content .= "</span>";
     }
@@ -921,7 +924,7 @@ class PTABLE {
         return $pr;
     }
 
-    // keera tekstis {ikoon} font-awesome ikooniks
+    // keera tekstis {{ikoon}} font-awesome ikooniks
 
     function awesome_eee($str) {
         $str = str_replace("{{", "<i class=\"fa fa-", $str);
@@ -958,8 +961,6 @@ class PTABLE {
         $id = P_PREFIX. $this->target;
 
         $pr  = "<div style=\"float: left\">";
-        //$pr .= "<i id=\"". $id. "_autoupdate_off\" data-table=\"". $this->target. "\" class=\"autoupdate_check ". ($current_val ? "hide " : ""). "off fa fa-square-o\"></i>";
-        //$pr .= "<i id=\"". $id. "_autoupdate_on\" data-table=\"". $this->target. "\" class=\"autoupdate_check ". ($current_val ? "" : "hide "). "fa fa-check-square-o\"></i>";
         $pr .= "<i id=\"". $id. "_autoupdate_off\" data-table=\"". $this->target. "\" class=\"autoupdate_check off fa fa-square-o\"". ($current_val ? " style='display:none'" : ""). "></i>";
         $pr .= "<i id=\"". $id. "_autoupdate_on\" data-table=\"". $this->target. "\" class=\"autoupdate_check fa fa-check-square-o\"". ($current_val ? "" : " style='display:none'"). "></i>";
         $pr .= "<input type=\"hidden\" id=\"". $id. "_autoupdate_value\" class=\"". $id. "_value\" value=\"". $current_val. "\">";
@@ -1098,12 +1099,14 @@ class PTABLE {
         $this->content .= $this->nav_pre. "nav_". ($type == "header" ? "top" : "btm"). $this->nav_post;
     }
 
+    // navigatsiooninupp
+
     function add_nav_btn($page, $title, $denied = false) {
         $this->nav_post.= "<span class=\"nav". ($denied ? " denied" : ""). ($this->page == $page && !$denied ? " selected" : ""). "\" ";
         $this->nav_post.= "data-page=\"". $page. "\">". $title. "</span>";
     }
 
-    // otsi lingist väljade indikaatorid
+    // vaheta kirjeldatud väljade indikaatorid nende väärtustega
 
     function replace_markup($value, $data) {
         $fields = [];

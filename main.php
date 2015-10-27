@@ -28,6 +28,12 @@ $c_lang[$lang] = " current_lang";
 	<span class="lang<?= $c_lang["en"] ?>" data-lang="en">EN</span>
 </div>
 <br/>
+<div>
+    <span id="joined_badge" class="badge"></span>
+    <span id="requests_badge" class="badge"></span>
+    <span id="tasks_badge" class="badge"></span>
+    <span id="navi_badge" class="badge"></span>
+</div>
 <div id="joined" class="ptable no_border" data-example="midagi"></div><hr/>
 <div id="requests" class="ptable no_border" data-user="andres"></div><hr/>
 <div id="tasks" class="ptable no_border"></div><hr/>

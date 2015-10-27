@@ -20,32 +20,37 @@ $this->collation	= "utf8_estonian_ci";	// collation																	[<collation>
 /* andmemassiiv:
 	baasi asemel võib kasutada sisendina ka andmemassiivi:
 
-		ex: $data_array = [ [ "id" => "DE1242" ], [ "id" => "RE3251" ], ... ];
-		* tuleb anda vastav key-value paaride massiiv, klassi loomise: PTABLE($_GET, $data_array, $translations)
+    ex: $data_array = [ [ "id" => "DE1242" ], [ "id" => "RE3251" ], ... ];
+	   * tuleb anda vastav key-value paaride massiiv, klassi loomise: PTABLE($_GET, $data_array, $translations)
+*/
+
+/*
+    printimisreeglid:
+
+    väljade [title, translate, print] puhul on võimalik kasutada kirjeldatud väljade väärtusi nt "ID: [id]-[prio]"
 */
 
 /* tabeliväljade loetelu ja omadused (kõik peale "field" väärtuse on valikulised) */
 
 $this->fields	= [
-   ["table" 		=> "task",		// millise tabeli väli on. kui pole kirjeldatud, siis arvestatakse et on põhitabelis    [<table>] :string
-	"field"			=> "owner",		// väljanimetus tabelis, kui on märgitud '-', siis kuva fiktiivset välja, (kasuta [])	[<field>] :string
- 	"title" 		=> $l->title,	// tabeli päises kuvatav väljakirjeldus (mõistlik panna tõlkestring)					[<title>] :none
-	"class"			=> "neat",		// välja klass (väliseks trigger'damiseks või stiili muutmiseks (nagu ikka)				[<class_name>] :none
-	"align" 		=> "center",	// väljas sisu joondamine																["left", "center", "right", "justify"] :"left"
-	"value"			=> "[id][req]",	// ei kuvata väärtust, vaid kindel string või teiste väljade väärtused (kasuta [])		[none, string]:none
-	"nowrap"		=> false,		// välja ei wrapita																		[true, false] :false
-	"sortable"		=> true,		// antud välja puhul on lubatud kasutaja poolne järjekorra muutmine (üles/alla) 		[true, false] :true
-	"searchable"	=> true,		// kui tehakse üldine otsing, siis lisatakse see väli otsingusse						[true, false] :false
-	"search_left"	=> true,		// otsingu puhul otsitakse vasakule (like "%<otsingusõna>")								[true, false] :true
-	"search_right"	=> true,		// otsingu puhul otsitakse paremale (like "<otsingusõna>%"								[true, false] :true
-	"field_search"	=> true,		// täpisotsingu võimaldamine välja piires												[true, false] :false
-	"hidden"		=> false,		// antud välja ei kuvata eraldi veerus, aga saab kasutada seda väärtusena mujal tabelis	[true, false] :false
-	"placeholder"	=> "Owner",		// väljaotsingukasti placeholder														[<placeholder>] :none
-	"width"			=> "10%",		// kui '$this->resizeable=false', siis saab veergudele panna % või px laiuse			[<width>] :string
-	"alias"			=> "solver",	// kui väli on liidetud tabelist, lisa vajadusel alias, väljakonfliktide vältimiseks	[<field>] :string
-	"print"			=> "#%s#",		// prindi väärtus antud stringi sisse ([] asendatakse välja väärtusega)					[none, <string>] :none
-	"translate"		=> "status_%s"	// prinditakse välja väärtus sprintf'iga tõlke külge (tõlkestring + väärtus)			[none, <translation>] :none
-	"extend"		=> "autolink",	// määra väljale teisendusfunktsioon (ptable_ext all kirjeldatud)						[<method>, [ <method>, <method>.. ] ]: string
+   ["table"        => "task",      // millise tabeli väli on. kui pole kirjeldatud, siis arvestatakse et on põhitabelis    [<table>] :string
+	"field"        => "owner",     // väljanimetus tabelis                                                                 [<field>] :string
+ 	"title"        => $l->title,   // tabeli päises kuvatav väljakirjeldus (mõistlik panna tõlkestring)					   [<title>] :none
+	"class"        => "neat",      // välja klass (väliseks trigger'damiseks või stiili muutmiseks                         [<class_name>] :none
+	"align"        => "center",    // väljas sisu joondamine                                                               ["left", "center", "right", "justify"] :"left"
+	"nowrap"       => false,       // välja ei wrapita                                                                     [true, false] :false
+	"sortable"     => true,        // antud välja puhul on lubatud kasutaja poolne järjekorra muutmine (üles/alla)         [true, false] :true
+	"searchable"   => true,        // kui tehakse üldine otsing, siis lisatakse see väli otsingusse                        [true, false] :false
+	"search_left"  => true,        // otsingu puhul otsitakse vasakule (like "%<otsingusõna>")                             [true, false] :true
+	"search_right" => true,        // otsingu puhul otsitakse paremale (like "<otsingusõna>%"                              [true, false] :true
+	"field_search" => true,        // täpisotsingu võimaldamine välja piires                                               [true, false] :false
+	"hidden"       => false,       // antud välja ei kuvata eraldi veerus, aga saab kasutada seda väärtusena mujal tabelis [true, false] :false
+	"placeholder"  => "Owner",     // väljaotsingukasti placeholder                                                        [<placeholder>] :none
+	"width"        => "10%",       // kui '$this->resizeable=false', siis saab veerule panna % või px laiuse               [<width>] :string
+	"alias"        => "solver",    // kui väli on liidetud tabelist, lisa vajadusel alias, väljakonfliktide vältimiseks    [<field>] :string
+	"translate"    => "pr_[prio]", // prinditakse välja väärtus sprintf'iga tõlke külge ($l->tõlkestring ja väärtus)       [none, <translation>] :none
+	"print"        => "#[value]#", // prindi väärtus antud stringi sisse                                                   [none, <string>] :none
+	"extend"       => "autolink"   // määra väljale teisendusfunktsioon (ptable klassi extensioni all kirjeldatud)         [<method>, [ <method>, <method>.. ] ]: string
 	]
 ];
 
@@ -85,22 +90,24 @@ $this->nav_header	= false;				// kas header'i navigatsiooniriba on lubatud						
 $this->nav_footer	= true;					// kas header'i navigatsiooniriba on lubatud									[true, false] :true
 $this->nav_prev		= $l->txt_prev;			// "eelmine leht"-nupu kirjeldus												["text"] : string
 $this->nav_next		= $l->txt_next;			// "järgmine leht"-nupu kirjeldus												["text"] : string
+$this->search_ph    = $l->txt_search_ph;    // otsingukasti placeholder                                                     ["text"] : string
 $this->page_size	= 10;					// esmane lehepikkus															[10..50, "*"] :10
 $this->page_sizes	= [ 10 => "10 ". $l->rec, 25 => "25 ". $l->rec, 50 => "50 ". $l->rec, "*" => $l->all ];	// lehepikkus	[10..50, "*"] :array
-$this->autoupdates	= [ 10 => "10s", 30 => "30s", 60 => "1m", 300 => "5m", 600 => "10m" ], // millised uuendusajad			[[1]..[600]..] :array
+$this->autoupdates	= [ 10 => "10s", 30 => "30s", 60 => "1m", 300 => "5m", 600 => "10m" ], // millised uuendusajad			[[1]..[600]..]:array
 $this->refresh		= false;				// mitme sekundi pärast uuendatakse antud tabelit automaatselt					[false,5-600] :false
 $this->header_sep	= false;				// eralda väljakirjeldused tabeli sisuosast										[true, false] :false
 $this->footer_sep	= false;				// eralda alumine nav tabeli sisuosast											[true, false] :false
 $this->fields_descr	= true;					// kas väljakirjeldused on lubatud												[true, false] :true
 $this->autosearch	= false;				// kas otsingukast käitub automaatsena (otsitakse alates: (JS) search_from = l)	[true, false] :false
-$this->searchable	= true;					// kas otsing ja otsingukast on rakendatud tabelile								[true, false] :true
+$this->searchable	= true;					// kas otsing on aktiivne                         								[true, false] :true
 $this->prefs		= true;					// kas on lubatud kasutajal muuta tabeli seadeid								[true, false] :true
 $this->store_prefs	= true;					// salvestab tabeli põhiandmed (välja laiused salvestatakse siiski alati)		[true, false] :true
 $this->sizeable		= true;					// kas on lubatud muuta tabeli kirjete arvu ühel lehel							[true, false] :true
 $this->resizable	= true;					// kas tabeli veergude laiust saab muuta; kui ei, siis 'width'-ga saab muuta	[true, false] :true
-$this->minimize		= true;					// võimaldab tabeli kokkurullida (mõistlik kus sel juhul on tabelil pealkiri)	[true, false] :true
 $this->minimised	= false;				// algselt on tabel kokkurullitud (vajab pea-div'ile 'rolled'-klassi lisamist) 	[true, false] :false
-$this->maximize		= true;					// TODO: ava tabel täisekraanis													[true, false] :true
+$this->minimize		= false;       			// võimaldab tabeli kokkurullida (mõistlik kus sel juhul on tabelil pealkiri)	[true, false] :false
+$this->maximize		= false;				// TODO: ava tabel täisekraanis													[true, false] :false
+$this->badge        = false;                // prindi tabeli kirjete arv peale laadimist (id: target + '_badge')            [true, false] :false
 $this->download		= true;					// TODO: võimalda tabeli sisu allalaadimine .csv, .pdf või excel'ina			[true, false] :true
 $this->smart_select	= true;					// TODO: võimaldab valida märkida tabeli ridasid ja veergusid sõltumatult		[true, false] :true
 $this->debug		= false;				// kuvab päringuid arendaja jaoks jms											[true, false] :false
