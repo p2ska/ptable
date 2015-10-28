@@ -1,3 +1,6 @@
+var ptable_url = "ptable.php";
+//var ptable_url = "/api/query:srm:ptable";
+
 (function ($) {
 	$.fn.ptable = function(targets) {
 		var prefix 		= "#ptable_",
@@ -19,7 +22,7 @@
 				class:  $(this).prop("class"),
 				data:   user_data($(this).data()),
 				mode:   "init",
-				url:    "ptable.php",
+				url:    ptable_url,
 				search_from: 3
 			}
 
@@ -445,17 +448,18 @@
 		// tee midagi triggeriga rea või välja peal klikkimise peale (mitte lingi puhul siis)
 
 		function trigger(data) {
-			var what = "";
+			/*var what = "";
 
 			$.each(data, function(i, field) {
 				what += " [" + field + "]";
 			});
 
 			alert(what);
+            */
 
-			/*$("#content-wrapper").load(data["href"], function () {
+			$("#content-wrapper").load(data["href"], function () {
                 $.getScript("/lemon/plugins/srm/main.js");
-            });*/
+            });
 		}
 
 		// uuenda tabelit automaatselt, kui on autoupdate seatud tabelile ja eelmisest updatest on määratud aeg mööda läinud

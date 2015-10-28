@@ -48,9 +48,11 @@ $this->fields	= [
 	"placeholder"  => "Owner",     // väljaotsingukasti placeholder                                                        [<placeholder>] :none
 	"width"        => "10%",       // kui '$this->resizeable=false', siis saab veerule panna % või px laiuse               [<width>] :string
 	"alias"        => "solver",    // kui väli on liidetud tabelist, lisa vajadusel alias, väljakonfliktide vältimiseks    [<field>] :string
+    "is"           => [ 0 => "-" ],// väärtuse teisenduste kirjeldused (kirjutab üle $this->is) P_NULL on tühi väärtus     [[<is>.. ]]: none
+    "info"         => "kirjeldus", // kuva hoveri korral infoaken                                                          [<string>]: none
 	"translate"    => "pr_[prio]", // prinditakse välja väärtus sprintf'iga tõlke külge ($l->tõlkestring ja väärtus)       [none, <translation>] :none
 	"print"        => "#[value]#", // prindi väärtus antud stringi sisse                                                   [none, <string>] :none
-	"extend"       => "autolink"   // määra väljale teisendusfunktsioon (ptable klassi extensioni all kirjeldatud)         [<method>, [ <method>, <method>.. ] ]: string
+	"extend"       => "autolink"   // määra väljale teisendusfunktsioon (ptable klassi extensioni all kirjeldatud)         [<method>, [ <method>, <method>.. ] ]: none
 	]
 ];
 
@@ -94,6 +96,7 @@ $this->search_ph    = $l->txt_search_ph;    // otsingukasti placeholder         
 $this->page_size	= 10;					// esmane lehepikkus															[10..50, "*"] :10
 $this->page_sizes	= [ 10 => "10 ". $l->rec, 25 => "25 ". $l->rec, 50 => "50 ". $l->rec, "*" => $l->all ];	// lehepikkus	[10..50, "*"] :array
 $this->autoupdates	= [ 10 => "10s", 30 => "30s", 60 => "1m", 300 => "5m", 600 => "10m" ], // millised uuendusajad			[[1]..[600]..]:array
+$this->is           = [ P_NULL => "-" ];    // tabeliväljade lõppväärtuste teisenduste kirjeldused                          [[<is>, <is>..]: none
 $this->refresh		= false;				// mitme sekundi pärast uuendatakse antud tabelit automaatselt					[false,5-600] :false
 $this->header_sep	= false;				// eralda väljakirjeldused tabeli sisuosast										[true, false] :false
 $this->footer_sep	= false;				// eralda alumine nav tabeli sisuosast											[true, false] :false

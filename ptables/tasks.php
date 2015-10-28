@@ -15,8 +15,8 @@ $this->fields		= [
 		[ "field"	=> "status",	"title" => "Status" ],
 		[ "field"	=> "type",		"title" => "Type" ],
 		[ "field"	=> "mode",		"title" => "Mode" ],
-		[ "field"	=> "deadline",	"title" => "Deadline" ],
-		[ "field"	=> "prio",		"title" => "Prio", "translate" => "txt_prio_" ],
+		[ "field"	=> "deadline",	"title" => "Deadline", "is" => [ "0000-00-00" => "-" ], "extend" => "convert_date" ],
+		[ "field"	=> "prio",		"title" => "Prio", "translate" => "txt_prio_[prio]" ],
 		[ "field"	=> "result",	"title" => "Result" ],
 ];
 

@@ -26,8 +26,8 @@ $this->triggers		= [
 		"id"		=> [ "title" => "[requester][regdate]", "link" => "http://[heh]www.ttu.ee/#[amet][perenimi][midagi]", "external" => true ]
 ];
 
-$this->title		= $this->data["user"];	// tabeli pealkiri												[<title>]
-$this->title_icon	= "odnoklassniki";		// tabeli pealkirjast vasakul olev ikoon						[<font-awesome ikooni nimetus>]
+$this->title		= $this->data["user"];	// tabeli pealkiri											                    [<title>]: string
+$this->title_icon	= "{{odnoklassniki}}";	// tabeli pealkirjast vasakul olev ikoon	                  					[<icon>]
 $this->order_icon	= "chevron";		// mis tüüpi ikoone kasutatakse otsingutulemuste järjestamiseks ["chevron", "sort", "angle-double"] :"chevron"
 $this->page_sizes	= [ 10 => "10 ". $l->txt_records, 25 => "25 ". $l->txt_records, 50 => "50 ". $l->txt_records, "*" => $l->txt_all_records ]; // valitavad lehepikkused
 $this->page_size	= 10;				// esmane lehepikkus (TODO: milline on varasemalt valitud)

@@ -11,6 +11,7 @@ define("P_LN",		"\n");
 define("P_SL",		"/");
 define("P_DOT",		".");
 define("P_VOID",	"");
+define("P_NULL",    "<null>");
 define("P_FSS",		"___");
 define("P_BR",      "<br/>");
 define("P_2BR",     "<br/><br/>");
@@ -31,8 +32,8 @@ class PTABLE {
     $content, $db, $l, $mode, $target, $template, $url, $class, $data, $translations, $autoupdate, $refresh,
     $database, $host, $username, $password, $charset, $collation, $table, $query, $fields, $where, $values,
 	$search, $triggers, $joins, $order, $way, $limit, $records, $field_count, $field_search, $title, $style,
-    $navigation, $nav_pre, $nav_post, $pages, $pagesize, $external_data, $external_pos, $col_width,
-    $debug			= true,			// debug reziim
+    $navigation, $nav_pre, $nav_post, $pages, $pagesize, $external_data, $external_pos, $col_width, $is,
+    $debug			= false,		// debug reziim
     $header			= true,			// kas kuvatakse tabeli päist üldse
     $header_sep		= false,		// tabeli ülemine eraldusäär
     $footer_sep		= false,		// tabeli alumine eraldusäär
@@ -461,7 +462,7 @@ class PTABLE {
                     $this->content .= "<div class=\"title\">";
 
                     if (isset($this->title_icon) && $this->title_icon)
-                        $this->content .= "<i class=\"fa fa-". $this->title_icon. "\"></i> ";
+                        $this->content .= $this->awesome($this->title_icon). " ";
 
                     $this->content .= "<u>". $this->title. "</u></div>";
                 }
@@ -612,18 +613,31 @@ class PTABLE {
         $this->content .= "</tr>";
     }
 
+    // hangi väline info tabeli jaoks
+
+    function fetch(&$field, $data) {
+        foreach ($field["fetch"] as $method => $value)
+            if (method_exists($this, "ext_". $method)) {
+                // kas on ka markuppi?
+
+                $values = $this->replace_markup($value, $field, $data);
+
+                $field["ext_". $method] = $this->{ "ext_". $method }($values);
+            }
+    }
+
     // muutujate töötlemine
 
-    function extend($value, $extensions) {
-        if (!is_array($extensions))
-            $extensions = [ $extensions ];
+    function extend($field, &$value) {
+        if (!is_array($field["extend"]))
+            $field["extend"] = [ $field["extend"] ];
 
-        foreach ($extensions as $extension)
+        foreach ($field["extend"] as $extension)
             if (method_exists($this, "ext_". $extension))
                 $value = $this->{ "ext_". $extension }($value);
-
-        return $value;
     }
+
+    // prindi
 
     function output($field, $data, $pos = 0) {
         $link = $title = $class = $style = $colspan = P_VOID;
@@ -655,10 +669,10 @@ class PTABLE {
                 $style = " style=\"". implode("; ", $styles). "\"";
 
             if (isset($trigger["title"]))
-                $title = $this->replace_markup($trigger["title"], $data);
+                $title = $this->replace_markup($trigger["title"], $field, $data);
 
             if (isset($trigger["link"])) {
-                $link = $this->replace_markup($trigger["link"], $data);
+                $link = $this->replace_markup($trigger["link"], $field, $data);
 
                 if (!$title)
                     $title = $link;
@@ -680,7 +694,7 @@ class PTABLE {
                     $trigger["data"] = [ $trigger["data"] ];
 
                 foreach ($trigger["data"] as $ext_field => $ext_data) {
-                    $ext_data = $this->replace_markup($ext_data, $data);
+                    $ext_data = $this->replace_markup($ext_data, $field, $data);
 
                     $this->content .= " data-". $ext_field. "=\"". $ext_data. "\"";
                 }
@@ -745,17 +759,22 @@ class PTABLE {
         else
             $field_type = $field["field"];
 
-		// kas on väljale laiendus?
+        // kas tuleks hankida tabeli jaoks välist infot
 
-		if (isset($field["extend"]))
-			$data->{ $field_type } = $this->extend($data->{ $field_type }, $field["extend"]);
+		if (isset($field["fetch"]))
+			$this->fetch($field, $data);
+
+        // kas on väljale laiendus?
+
+        if (isset($field["extend"]))
+			$this->extend($field, $data->{ $field_type });
 
         $value = $data->{ $field_type };
 
         // kas on vaja kuvada hoopis vastavat tõlget?
 
 		if (isset($field["translate"]) && $field["translate"]) {
-            $translation = $this->replace_markup($field["translate"], $data);
+            $translation = $this->replace_markup($field["translate"], $field, $data);
 
 			if (isset($this->l->{ $translation }))
 				$value = $this->l->{ $translation };
@@ -763,17 +782,23 @@ class PTABLE {
         elseif (isset($field["print"]) && $field["print"]) {
             // prindi vastavalt kirjeldusele
 
-            $value = $this->replace_markup($field["print"], $data);
+            $value = $this->replace_markup($field["print"], $field, $data);
         }
 
 		// otsingusõna värvimine
 
-		return $this->highlight($field, $value);
+		$value = $this->highlight($value, $field);
+
+        // kas on vaja hoopis kuvada selle väärtusega seotud kirjeldust?
+
+        $value = $this->is_value($value, $field, $data);
+
+        return $value;
 	}
 
 	// värvi otsingusõnad tabelis
 
-	function highlight($field, $value) {
+	function highlight($value, $field) {
 		if ($this->search) {
 			//$value = preg_replace("#". preg_quote($this->search). "#i", "<font class=\"highlight\">\\0</font>", $value);
 
@@ -785,7 +810,7 @@ class PTABLE {
 			// väljaotsingu puhul värvi ainult selle veeru otsingusõnasid
 
 			if ($f_field == $field["table"]. ".". $field["field"])
-				$value = preg_replace("#". preg_quote($f_value). "#i", "<font class=\"highlight\">\\0</font>", $value);
+				$value = preg_replace("#(?!<.*?)(". preg_quote($f_value). ")(?![^<>]*?>)#i", "<font class=\"highlight\">\\0</font>", $value);
 		}
 
 		return $value;
@@ -833,7 +858,7 @@ class PTABLE {
 
 			// prindi veeru nimi
 
-            $this->content .= "data-field=\"". $field["table"]. ".". $field["field"]. "\">". $field["title"];
+            $this->content .= "data-field=\"". $field["table"]. ".". $field["field"]. "\">". $this->awesome($field["title"]);
 
             if (!$no_order)
                 $this->content .= "<i class=\"sort_icon". $active. " fa fa-". $this->order_icon. "-". ($this->order == $field["table"]. ".". $field["field"] ? $way : "down"). "\"></i>";
@@ -899,7 +924,7 @@ class PTABLE {
 
     function prefbox() {
         $this->content .= "<div id=\"". P_PREFIX. $this->target. "_prefbox\" class=\"prefbox\">";
-        $this->content .= $this->awesome_eee(@$this->l->txt_pref). "<br/><br/>";
+        $this->content .= $this->awesome(@$this->l->txt_pref). "<br/><br/>";
         $this->content .= $this->print_pref(@$this->l->txt_pagesize, $this->page_sizes, "dropdown", $this->page_size, "pagesize");
         $this->content .= $this->print_pref(@$this->l->txt_autoupdate, $this->autoupdate, "autoupdate_check", $this->autoupdate, "autoupdate");
         //$this->content .= "<br/><br/>";
@@ -926,7 +951,7 @@ class PTABLE {
 
     // keera tekstis {{ikoon}} font-awesome ikooniks
 
-    function awesome_eee($str) {
+    function awesome($str) {
         $str = str_replace("{{", "<i class=\"fa fa-", $str);
         $str = str_replace("}}", "\"></i>", $str);
 
@@ -1048,9 +1073,9 @@ class PTABLE {
             $this->nav_post.= "<span class=\"navigation\">";
 
             if ($this->page < 2)
-                $this->add_nav_btn(1, $this->awesome_eee($this->nav_prev), true);
+                $this->add_nav_btn(1, $this->awesome($this->nav_prev), true);
             else
-                $this->add_nav_btn($this->page - 1, $this->awesome_eee($this->nav_prev));
+                $this->add_nav_btn($this->page - 1, $this->awesome($this->nav_prev));
 
             // algusleht
 
@@ -1087,9 +1112,9 @@ class PTABLE {
                 $this->add_nav_btn($this->pages, $this->pages);
 
             if ($this->page >= $this->pages)
-                $this->add_nav_btn($this->pages, $this->awesome_eee($this->nav_next), true);
+                $this->add_nav_btn($this->pages, $this->awesome($this->nav_next), true);
             else
-                $this->add_nav_btn($this->page + 1, $this->awesome_eee($this->nav_next));
+                $this->add_nav_btn($this->page + 1, $this->awesome($this->nav_next));
 
             $this->nav_post.= "</span>";
         }
@@ -1108,24 +1133,46 @@ class PTABLE {
 
     // vaheta kirjeldatud väljade indikaatorid nende väärtustega
 
-    function replace_markup($value, $data) {
-        $fields = [];
+    function replace_markup($value, $field, $data) {
+        $values = [];
 
-        foreach (explode("[", $value) as $field) {
-            $ex = explode("]", $field);
+        foreach (explode("[", $value) as $markup) {
+            $ex = explode("]", $markup);
 
             if (!isset($ex[1]))
-                $fields[] = trim($ex[0]);
-            else {
-                if (isset($ex[0]) && $ex[0] && isset($data->{ $ex[0] }))
-                    $fields[] = trim($data->{ $ex[0] });
+                $values[] = trim($ex[0]);
+            elseif (isset($ex[0]) && $ex[0]) {
+                if (isset($data->{ $ex[0] }))
+                    $values[] = $this->is_value(trim($data->{ $ex[0] }), $field);
 
                 if (isset($ex[1]) && $ex[1])
-                    $fields[] = trim($ex[1]);
+                    $values[] = trim($ex[1]);
             }
         }
 
-        return implode(P_VOID, $fields);
+        return implode(P_VOID, $values);
+    }
+
+    // kontrolli, kas on kirjeldatud kuidas mõnda väärtust printida
+
+    function is_value($value, $field) {
+        // kas on tabeli üldises kirjeldused olemas reegel selle väärtuse kohta
+
+        if ($this->is && $value == P_VOID && isset($this->is[P_NULL]))
+            $value = P_NULL;
+
+        if ($this->is && isset($this->is[$value]))
+            $value = $this->is[$value];
+
+        // kas on väljakirjelduses reegel selle väärtuse kohta
+
+        if ($value == P_VOID && isset($field["is"][P_NULL]))
+            $value = P_NULL;
+
+        if (isset($field["is"]) && isset($field["is"][$value]))
+            return $field["is"][$value];
+        else
+            return $value;
     }
 
     // tee JS tulev sisend turvaliseks

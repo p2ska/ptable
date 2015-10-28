@@ -11,9 +11,9 @@ $this->way		= "desc";
 $this->fields = [
 	[ "field" => "id",		"title" => "id",        "width" => "5%",	"print" 	=> "mida iganes" ],
 	[ "field" => "notes",	"hidden"=> true ],
-	[ "field" => "closed",	"title" => "combined",	"width"	=> "5%",	"print"		=> "[id]-[notes]" ],
+	[ "field" => "closed",	"title" => "combined",	"width"	=> "5%",	"print"		=> "[status]", "is" => [ 0 => "null" ] ],
 	[ "field" => "prio",	"title" => "prio",      "width" => "5%",	"translate"	=> "txt_prio_" ],
-	[ "table" => "request",	"field" => "requester", "width" => "20%",	"title"     => "requester", "extend" => "autolink", "searchable"	=> true, "field_search" => true, "placeholder" => "ahaa" ],
+	[ "table" => "request",	"field" => "requester", "width" => "20%",	"title"     => "{{amazon}} requester", "extend" => "autolink", "fetch" => [ "person" => "[requester]" ], "searchable"	=> true, "field_search" => true, "placeholder" => "ahaa" ],
 	[ "table" => "request",	"field" => "subject",   "width" => "",		"title"     => "subject",   "searchable"	=> true, "extend" => "break_long" ],
 	[ "table" => "task",	"field" => "status",    "width" => "5%",	"title"     => "status",    "translate"     => "txt_[status]_status", "field_search" => true, "placeholder" => "status" ],
 	[ "table" => "task",	"field" => "deadline",  "width" => "10%",	"title"     => "deadline",  "print"			=> "# [deadline] #",	"extend" => "convert_date" ],
@@ -32,6 +32,7 @@ $this->triggers	= [
 ];
 
 $this->title        = $this->data["example"];
+$this->is           = [ P_NULL => "----", 0 => "000" ];
 $this->badge        = true;
 $this->search_ph    = $l->txt_search_ph;
 
