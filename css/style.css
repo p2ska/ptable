@@ -237,6 +237,7 @@ table *, .prefbox {
 	border-left: 1px solid #f9f9f9;
 	border-right: 1px solid #f9f9f9;
 	border-bottom: 1px solid #fff;
+	opacity: 0.9;
 	outline: none;
 	position: relative;
 	/*
@@ -245,6 +246,14 @@ table *, .prefbox {
 	-ms-transition: all 0.30s ease-in-out;
 	-o-transition: all 0.30s ease-in-out;
 	*/
+}
+
+.ptable th > i {
+	opacity: 0.5;
+}
+
+.ptable th:hover > i {
+	opacity: 1;
 }
 
 .ptable tr {
@@ -289,7 +298,7 @@ table *, .prefbox {
 .ptable td {
 	vertical-align: top;
 	padding: 5px;
-	overflow: hidden;
+	/*overflow: hidden;*/
 }
 
 .ptable .highlight {
@@ -328,7 +337,7 @@ table *, .prefbox {
 }
 
 .ptable .sort_icon {
-	color: #ddd;
+	color: #000;
 	padding-left: 5px;
 }
 
@@ -392,8 +401,9 @@ table *, .prefbox {
 	display: none;
 }
 
-.ptable .navigation {
+.ptable .navigation, .ptable .infobox {
 	float: right;
+	position: relative;
 }
 
 .ptable .nav {
@@ -404,12 +414,14 @@ table *, .prefbox {
 	padding-right: 10px;
 	margin-left: 3px;
 	margin-right: 3px;
-	border: 1px solid #ccc;
+	border: 1px solid #bbb;
 	border-radius: 3px;
 	display: block;
 	text-align: center;
 	cursor: pointer;
 	outline: none;
+	font-weight: bold;
+	opacity: 0.7;
 	-webkit-transition: all 0.30s ease-in-out;
 	-moz-transition: all 0.30s ease-in-out;
 	-ms-transition: all 0.30s ease-in-out;
@@ -417,6 +429,7 @@ table *, .prefbox {
 }
 
 .ptable .nav:hover:not(.denied):not(.selected) {
+	opacity: 1;
 	box-shadow: 0 0 5px rgba(170, 170, 170, 1); /* 81, 203, 239 */
 	border: 1px solid rgba(170, 170, 170, 1);
 }
@@ -448,6 +461,7 @@ table *, .prefbox {
 }
 
 .ptable .selected {
+	opacity: 1;
 	color: #870042;
 	border: 1px solid #0099ff;
 	background-color: #fff;
@@ -463,6 +477,15 @@ table *, .prefbox {
 
 .ptable .denied {
 	cursor: default;
+}
+
+.ptable .bubble {
+	position: absolute;
+	width: 200px;
+	border: 1px solid #f00;
+	background-color: #fff;
+	z-index: 1000;
+	/*display: none;*/
 }
 
 /* tekstikastide placeholderid */

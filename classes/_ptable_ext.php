@@ -10,13 +10,13 @@ require_once("_ptable.php");
 class PTABLE_EXT extends PTABLE {
     // hangi kasutajainfo
 
-    function ext_person($string) {
+    function person($string) {
         return "nimi: ". $string;
     }
 
 	// koverteeri kuupäevad eesti regioonile vastavaks
 
-	function ext_convert_date($date) {
+	function convert_date($date) {
         $timestamp = strtotime($date);
 
         // kui ei ole korrektne sisend, siis ära töötle
@@ -32,13 +32,13 @@ class PTABLE_EXT extends PTABLE {
 
     // võta sekundid maha
 
-	function ext_convert_time($time) {
+	function convert_time($time) {
 		return substr($time, 0, 5);
 	}
 
 	// muuda emailiaadressid ja veebilingid linkideks
 
-	function ext_autolink($string) {
+	function autolink($string) {
 		$string = preg_replace("/(([\w\.]+))(@)([\w\.]+)\b/i", "<a href=\"mailto:$0\">$0</a>", $string);
 		$string = preg_replace('#(http|https|ftp)://([^\s]*)#', '<a href="\\1://\\2" target="_blank">\\1://\\2</a>', $string);
 
@@ -47,7 +47,7 @@ class PTABLE_EXT extends PTABLE {
 
     // lõhu kõige pikemad sõnad (kristo pärast :))
 
-	function ext_break_long($string) {
+	function break_long($string) {
 		return preg_replace("/([^\s]{80})(?=[^\s])/", "$1<br/>", $string);
 	}
 }

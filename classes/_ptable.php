@@ -2,28 +2,34 @@
 
 // [ptable]; Andres Päsoke
 
-define("P_ALLOWED",	"/[^\p{L}\p{N}\s\._-]/u");
-define("P_DOTS",	"/\.+/");
-define("P_ALL",		"*");
-define("P_ANY",		"%");
-define("P_Q",		"?");
-define("P_LN",		"\n");
-define("P_SL",		"/");
-define("P_DOT",		".");
-define("P_VOID",	"");
-define("P_NULL",    "<null>");
-define("P_FSS",		"___");
-define("P_BR",      "<br/>");
-define("P_2BR",     "<br/><br/>");
-define("P_PREFIX",	"ptable_");
-define("P_EXACT",	" = ");
-define("P_LIKE",	" like ");
-define("P_OR",		" || ");
-define("P_SELECT",	" select ");
-define("P_FROM",	" from ");
-define("P_WHERE",	" where ");
-define("P_ORDER",	" order by ");
-define("P_LIMIT",	" limit ");
+define("P_ALLOWED",		"/[^\p{L}\p{N}\s\.@_-]/u");	// millised sümbolid on lubatud, sisendina
+define("P_DOTS",		"/\.+/");
+define("P_ALL",			"*");
+define("P_ANY",			"%");
+define("P_Q",			"?");
+define("P_LN",			"\n");
+define("P_SL",			"/");
+define("P_DOT",			".");
+define("P_VOID",		"");
+define("P_NULL",    	"<null>");
+define("P_FSS",			"___");
+define("P_BR",      	"<br/>");
+define("P_2BR",     	"<br/><br/>");
+define("P_PREFIX",		"ptable_");
+define("P_EXACT",		" = ");
+define("P_LIKE",		" like ");
+define("P_OR",			" || ");
+define("P_SELECT",		" select ");
+define("P_FROM",		" from ");
+define("P_WHERE",		" where ");
+define("P_ORDER",		" order by ");
+define("P_LIMIT",		" limit ");
+define("P_FIELD_L",		"[");
+define("P_FIELD_R",		"]");
+define("P_EXTERNAL_L",	"{%");
+define("P_EXTERNAL_R",	"%}");
+define("P_AWESOME_L",	"{{");
+define("P_AWESOME_R",	"}}");
 
 class PTABLE {
     // kõik parameetrid (nb! need default'id kirjutatakse üle tabeli kirjeldusfaili ja ka ptable.js poolt tulevate väärtustega üle)
@@ -615,14 +621,14 @@ class PTABLE {
 
     // hangi väline info tabeli jaoks
 
-    function fetch(&$field, $data) {
+    function fetch_external(&$field, $data) {
         foreach ($field["fetch"] as $method => $value)
-            if (method_exists($this, "ext_". $method)) {
+            if (method_exists($this, $method)) {
                 // kas on ka markuppi?
 
                 $values = $this->replace_markup($value, $field, $data);
 
-                $field["ext_". $method] = $this->{ "ext_". $method }($values);
+                $field["external_". $method] = $this->{ $method }($values);
             }
     }
 
@@ -633,8 +639,8 @@ class PTABLE {
             $field["extend"] = [ $field["extend"] ];
 
         foreach ($field["extend"] as $extension)
-            if (method_exists($this, "ext_". $extension))
-                $value = $this->{ "ext_". $extension }($value);
+            if (method_exists($this, $extension))
+                $value = $this->{ $extension }($value);
     }
 
     // prindi
@@ -702,6 +708,9 @@ class PTABLE {
                 if ($title)
                     $this->content .= " title=\"". $title. "\"";
             }
+			elseif (isset($trigger["info"]) && $trigger["info"]) {
+				$this->content .= " data-info=\"\"";
+			}
             elseif ($link) {
                 $this->content .= " data-link=\"". $link. "\"";
 
@@ -714,7 +723,16 @@ class PTABLE {
             if ($field["field"] == "ROW")
                 $this->content .= ">";
             else {
-				$this->content .= ">". $this->format_value($field, $data). "</td>";
+				$this->content .= ">". $this->format_value($field, $data);
+
+				if (isset($field["info"]) && $field["info"]) {
+					$this->content .= "<div class=\"infobox\">";
+					$this->content .= "<div class=\"bubble\">";
+					$this->content .= $this->replace_markup($field["info"], $field, $data);
+					$this->content .= "</div></div>";
+				}
+
+				$this->content .= "</td>";
 
                 if ($this->resizable && $pos < ($this->field_count - 1))
                     $this->content .= "<td class=\"resize\"></td>";
@@ -751,7 +769,7 @@ class PTABLE {
 
 	// tee rida väärtuse muutmisi
 
-	function format_value($field, $data) {
+	function format_value(&$field, $data) {
 		// kas väljatüüp on alias või tavaline väli
 
 		if (isset($field["alias"]) && $field["alias"])
@@ -762,9 +780,9 @@ class PTABLE {
         // kas tuleks hankida tabeli jaoks välist infot
 
 		if (isset($field["fetch"]))
-			$this->fetch($field, $data);
+			$this->fetch_external($field, $data);
 
-        // kas on väljale laiendus?
+		// kas on väljale laiendus?
 
         if (isset($field["extend"]))
 			$this->extend($field, $data->{ $field_type });
@@ -951,9 +969,9 @@ class PTABLE {
 
     // keera tekstis {{ikoon}} font-awesome ikooniks
 
-    function awesome($str) {
-        $str = str_replace("{{", "<i class=\"fa fa-", $str);
-        $str = str_replace("}}", "\"></i>", $str);
+    function awesome($str, $pre = "fa fa-", $post = P_VOID) {
+        $str = str_replace(P_AWESOME_L, "<i class=\"". $pre, $str);
+        $str = str_replace(P_AWESOME_R, $post. "\"></i>", $str);
 
         return $str;
     }
@@ -1131,13 +1149,13 @@ class PTABLE {
         $this->nav_post.= "data-page=\"". $page. "\">". $title. "</span>";
     }
 
-    // vaheta kirjeldatud väljade indikaatorid nende väärtustega
+    // vaheta kirjeldatud väljade kirjeldused nende väärtustega
 
     function replace_markup($value, $field, $data) {
         $values = [];
 
-        foreach (explode("[", $value) as $markup) {
-            $ex = explode("]", $markup);
+		foreach (explode(P_FIELD_L, $value) as $markup) {
+            $ex = explode(P_FIELD_R, $markup);
 
             if (!isset($ex[1]))
                 $values[] = trim($ex[0]);
@@ -1150,7 +1168,27 @@ class PTABLE {
             }
         }
 
-        return implode(P_VOID, $values);
+		$output = implode(P_VOID, $values);
+
+		// kas on väliseid andmeid?
+
+		$values = [];
+
+        foreach (explode(P_EXTERNAL_L, $output) as $markup) {
+            $ex = explode(P_EXTERNAL_R, $markup);
+
+            if (!isset($ex[1]))
+                $values[] = trim($ex[0]);
+            elseif (isset($ex[0]) && $ex[0]) {
+                if (isset($field["external_". $ex[0]]))
+                    $values[] = $this->is_value(trim($field["external_". $ex[0]]), $field);
+
+                if (isset($ex[1]) && $ex[1])
+                    $values[] = trim($ex[1]);
+            }
+        }
+
+		return implode(P_VOID, $values);
     }
 
     // kontrolli, kas on kirjeldatud kuidas mõnda väärtust printida
@@ -1168,6 +1206,10 @@ class PTABLE {
 
         if ($value == P_VOID && isset($field["is"][P_NULL]))
             $value = P_NULL;
+
+		// kas on font-awesome kirjeldusi?
+
+		$value = $this->awesome($value);
 
         if (isset($field["is"]) && isset($field["is"][$value]))
             return $field["is"][$value];

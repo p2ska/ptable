@@ -4,7 +4,7 @@ var ptable_url = "ptable.php";
 (function ($) {
 	$.fn.ptable = function(targets) {
 		var prefix 		= "#ptable_",
-			debug		= true,
+			debug		= false,
 			need_worker = false,
 			updater		= false,
 			last_resize	= false,
@@ -74,8 +74,8 @@ var ptable_url = "ptable.php";
 
 			// peida valikutekasti kast, kui fookus läheb ära
 
-			$(document).click(function(event) {
-				if (!$(event.target).closest(".prefbox").length && !$(event.target).closest(".pref_btn").length) {
+			$(document).click(function(e) {
+				if (!$(e.target).closest(".prefbox").length && !$(e.target).closest(".pref_btn").length) {
 					$(".prefbox").hide();
 					$(".pref_btn").removeClass("active");
 				}
@@ -121,13 +121,13 @@ var ptable_url = "ptable.php";
 					return false;
 
 				if ($(this).data("link")) {
-					if ($(this).data("ext"))
+					if ($(this).data("external"))
 						window.open($(this).data("link"), "_blank");	// avab uues aknas
 					else
 						location.href = $(this).data("link");			// avab samas aknas
 				}
 				else {
-					trigger($(this).data());							// tee midagi selle saadetava infoga
+					trigger($(this));										// tee midagi selle saadetava infoga
 				}
 			});
 
@@ -447,7 +447,7 @@ var ptable_url = "ptable.php";
 
 		// tee midagi triggeriga rea või välja peal klikkimise peale (mitte lingi puhul siis)
 
-		function trigger(data) {
+		function trigger(target) {
 			/*var what = "";
 
 			$.each(data, function(i, field) {
@@ -456,10 +456,17 @@ var ptable_url = "ptable.php";
 
 			alert(what);
             */
+			var data = target.data();
 
-			$("#content-wrapper").load(data["href"], function () {
-                $.getScript("/lemon/plugins/srm/main.js");
-            });
+			if (data["info"]) {
+				var bub = target.closest(".bubble");
+				//target.closest(".bubble").css("border", "1px solid #f00");
+			}
+			else {
+				$("#content-wrapper").load(data["href"], function () {
+                	$.getScript("/lemon/plugins/srm/main.js");
+            	});
+			}
 		}
 
 		// uuenda tabelit automaatselt, kui on autoupdate seatud tabelile ja eelmisest updatest on määratud aeg mööda läinud
