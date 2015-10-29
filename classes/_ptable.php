@@ -709,7 +709,7 @@ class PTABLE {
                     $this->content .= " title=\"". $title. "\"";
             }
 			elseif (isset($trigger["info"]) && $trigger["info"]) {
-				$this->content .= " data-info=\"\"";
+				$this->content .= " title=\"". $trigger["title"]. "\" data-info=\"true\"";
 			}
             elseif ($link) {
                 $this->content .= " data-link=\"". $link. "\"";

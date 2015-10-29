@@ -42,450 +42,509 @@ table *, .prefbox {
 }
 
 .no_border {
-	border: 1px solid #fff !important;
+    border: 1px solid #fff !important;
 }
 
 .ptable {
-	border: 1px solid #e7eaec;
-	border-bottom: 0px;
-	opacity: 0.8;
-	-webkit-touch-callout: none;
-	-webkit-user-select: none;
-	-khtml-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
+    border: 1px solid #e7eaec;
+    border-bottom: 0px;
+    opacity: 0.8;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .ptable:not(.no_border):hover, .rolled {
-	opacity: 1;
-	box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
-	border: 1px solid rgba(0, 0, 0, 0.2);
+    opacity: 1;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(0, 0, 0, 0.2);
 }
 
 .ptable u {
-   color: #870042;
-   font-weight: bold;
-   text-decoration: underline;
+    color: #870042;
+    font-weight: bold;
+    text-decoration: underline;
 }
 
 .ptable a {
-	color: #870042;
-	text-decoration: none;
+    color: #870042;
+    text-decoration: none;
 }
 
 /* tabeli päis */
 
 .ptable .header {
-	width: 100%;
-	background-color: #fff;
-	padding-top: 5px;
-	padding-bottom: 19px;
-	line-height: 27px;
+    width: 100%;
+    background-color: #fff;
+    padding-top: 5px;
+    padding-bottom: 19px;
+    line-height: 27px;
 }
 
 /* vasak pool päisest (ikoon, tabeli nimi) */
 
 .ptable .header_left {
-	position: relative;
-	float: left;
+    position: relative;
+    float: left;
 }
 
 /* tabeli nimi */
 
 .ptable .title {
-	font-weight: bold;
-	margin-top: 1px;
-	margin-left: 8px;
-	color: #669;
+    font-weight: bold;
+    margin-top: 1px;
+    margin-left: 8px;
+    color: #669;
 }
 
 /* parem pool päisest (min, max, seaded, otsing) */
 
 .ptable .header_right {
-	position: relative;
-	float: right;
+    position: relative;
+    float: right;
 }
 
 /* joonda päises olevad elemendid üksteise suhtes vasakule */
 
 .ptable .header_left > span,
 .ptable .header_right > span {
-	float: left;
-	text-align: left;
+    float: left;
+    text-align: left;
 }
 
 /* väikesed nupud (min, max, seaded, otsing) */
 
 .ptable .small_btn {
-	position: relative;
-	float: right;
-	margin-top: 1px;
-	margin-right: 8px;
-	cursor: pointer;
+    position: relative;
+    float: right;
+    margin-top: 1px;
+    margin-right: 8px;
+    cursor: pointer;
 }
 
 /* nupu hoveri korral värvi ja tee suuremaks */
 
 .ptable .small_btn:hover > i {
-	color: #870042;
-	-ms-transform: scale(1.2, 1.2); /* IE 9 */
-	-webkit-transform: scale(1.2, 1.2); /* Chrome, Safari, Opera */
-	transform: scale(1.2, 1.2);
+    color: #870042;
+    -ms-transform: scale(1.2, 1.2); /* IE 9 */
+    -webkit-transform: scale(1.2, 1.2); /* Chrome, Safari, Opera */
+    transform: scale(1.2, 1.2);
 }
 
 /* põhiotsingunupp */
 
 .ptable .search_btn {
-	margin-right: 8px;
+    margin-right: 8px;
 }
 
 /* tabeli min */
 
 .ptable .minimize_btn > i {
-	font-size: 15px;
+    font-size: 15px;
 }
 
 /* suured nupud (seadetekastis) */
 
 .ptable .big_btn {
-	margin-right: 20px;
-	padding: 7px;
-	padding-left: 15px;
-	padding-right: 15px;
-	background-color: #fff;
-	border: 1px solid #e7eaec;
-	border-radius: 3px;
+    margin-right: 20px;
+    padding: 7px;
+    padding-left: 15px;
+    padding-right: 15px;
+    background-color: #fff;
+    border: 1px solid #e7eaec;
+    border-radius: 3px;
 }
 
 /* väljaotsingunupp */
 
 .ptable .field_search_btn {
-	position: absolute;
-	font-size: 11px;
-	top: 2px;
-	right: -5px;
-	color: #666;
+    position: absolute;
+    font-size: 11px;
+    top: 2px;
+    right: -5px;
+    color: #666;
 }
 
 /* kirjete arv, milliseid kirjeid kuvatakse */
 
 .ptable .records_found {
-	float: left;
-	padding-top: 4px;
+    float: left;
+    padding-top: 4px;
 }
 
 /* väljaotsingukasti positsioon */
 
 .ptable .field_search {
-	position: absolute;
-	top: 0px;
-	right: 5px;
-	text-align: right;
+    position: absolute;
+    top: 0px;
+    right: 5px;
+    text-align: right;
 }
 
 /* väljaotsingukast */
 
 .ptable .field_search_input {
-	position: absolute;
-	top: 11px;
-	right: 15px;
-	text-align: right;
-	display: none;
-	width: 100px;
-	height: 10px;
+    position: absolute;
+    top: 11px;
+    right: 15px;
+    text-align: right;
+    display: none;
+    width: 100px;
+    height: 10px;
 }
 
 .ptable table {
-	width: 100%;
-	padding: 0px;
-	border-spacing: 0px;
-	border-collapse: separate;
-	transition: opacity .25s ease-in-out;
-	-moz-transition: opacity .25s ease-in-out;
-	-webkit-transition: opacity .25s ease-in-out;
+    width: 100%;
+    padding: 0px;
+    border-spacing: 0px;
+    border-collapse: separate;
+    transition: opacity .25s ease-in-out;
+    -moz-transition: opacity .25s ease-in-out;
+    -webkit-transition: opacity .25s ease-in-out;
 }
 
 .ptable .table_hover {
-	border-left: 1px solid #e7eaec;
-	border-right: 1px solid #e7eaec;
-	border-top: 1px solid #fff;
-	border-bottom: 1px solid #fff;
+    border-left: 1px solid #e7eaec;
+    border-right: 1px solid #e7eaec;
+    border-top: 1px solid #fff;
+    border-bottom: 1px solid #fff;
 }
 
 .ptable .table_hover:hover, .rolled:hover {
-	opacity: 1;
-	box-shadow: 0 0 2px rgba(0, 0, 0, 0.2) !impotant;
-	border: 1px solid rgba(0, 0, 0, 0.2) !important;
+    opacity: 1;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.2) !impotant;
+    border: 1px solid rgba(0, 0, 0, 0.2) !important;
 }
 
 .ptable .resize {
-	width: 1px !important;
-	max-width: 1px !important;
-	border: 0px;
-	padding: 0px;
-	margin: 0px;
-	cursor: col-resize;
+    width: 1px !important;
+    max-width: 1px !important;
+    border: 0px;
+    padding: 0px;
+    margin: 0px;
+    cursor: col-resize;
 }
 
 .ptable th:not(.resize) {
-	padding: 10px;
-	white-space: nowrap;
-	text-align: center;
-	background-color: #fff;
-	border-top: 1px solid #e7eaec;
-	border-left: 1px solid #f9f9f9;
-	border-right: 1px solid #f9f9f9;
-	border-bottom: 1px solid #fff;
-	opacity: 0.9;
-	outline: none;
-	position: relative;
-	/*
-	-webkit-transition: all 0.30s ease-in-out;
-	-moz-transition: all 0.30s ease-in-out;
-	-ms-transition: all 0.30s ease-in-out;
-	-o-transition: all 0.30s ease-in-out;
-	*/
+    padding: 10px;
+    white-space: nowrap;
+    text-align: center;
+    background-color: #fff;
+    border-top: 1px solid #e7eaec;
+    border-left: 1px solid #f9f9f9;
+    border-right: 1px solid #f9f9f9;
+    border-bottom: 1px solid #fff;
+    opacity: 0.9;
+    outline: none;
+    position: relative;
+    /*
+    -webkit-transition: all 0.30s ease-in-out;
+    -moz-transition: all 0.30s ease-in-out;
+    -ms-transition: all 0.30s ease-in-out;
+    -o-transition: all 0.30s ease-in-out;
+    */
 }
 
 .ptable th > i {
-	opacity: 0.5;
+    opacity: 0.5;
 }
 
 .ptable th:hover > i {
-	opacity: 1;
+    opacity: 1;
 }
 
 .ptable tr {
-	line-height: 25px;
+    line-height: 25px;
 }
 
 .ptable tr:nth-child(even) {
-	background-color: #f9f9f9;
+    background-color: #f9f9f9;
 }
 
 .ptable tr:nth-child(off) {
-	background-color: #fff;
+    background-color: #fff;
 }
 
 .ptable tr:nth-child(odd) > td {
-	border-top: 1px solid #e7eaec;
-	border-bottom: 1px solid #fff;
+    border-top: 1px solid #e7eaec;
+    border-bottom: 1px solid #fff;
 }
 
 .ptable tr:nth-child(even) > td {
-	border-top: 1px solid #e7eaec;
-	border-bottom: 1px solid #f9f9f9;
+    border-top: 1px solid #e7eaec;
+    border-bottom: 1px solid #f9f9f9;
 }
 
 .ptable tr:last-child > td {
-	border-bottom: 1px solid #e7eaec;
+    border-bottom: 1px solid #e7eaec;
 }
 
 .ptable tr:hover:not(.no_hover) > td {
-	outline: none;
-	border-top: 1px solid #999;
-	border-bottom: 1px solid #999;
-	box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
-	/*
-	-webkit-transition: all 0.30s ease-in-out;
-	-moz-transition: all 0.30s ease-in-out;
-	-ms-transition: all 0.30s ease-in-out;
-	-o-transition: all 0.30s ease-in-out;
-	*/
+    outline: none;
+    border-top: 1px solid #999;
+    border-bottom: 1px solid #999;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+    /*
+    -webkit-transition: all 0.30s ease-in-out;
+    -moz-transition: all 0.30s ease-in-out;
+    -ms-transition: all 0.30s ease-in-out;
+    -o-transition: all 0.30s ease-in-out;
+    */
 }
 
 .ptable td {
-	vertical-align: top;
-	padding: 5px;
-	/*overflow: hidden;*/
+    vertical-align: top;
+    padding: 5px;
+    /*overflow: hidden;*/
 }
 
 .ptable .highlight {
-	color: #870042;
-	font-weight: bold;
+    color: #870042;
+    font-weight: bold;
 }
 
 .ptable select, .ptable input[type="text"] {
-	padding: 5px;
-	margin-left: 0px;
-	margin-right: 8px;
-	border: 1px solid #ccc;
-	background-color: #f9f9f9;
-	line-height: 17px;
-	outline: none;
-	-webkit-transition: all 0.30s ease-in-out;
-	-moz-transition: all 0.30s ease-in-out;
-	-ms-transition: all 0.30s ease-in-out;
-	-o-transition: all 0.30s ease-in-out;
+    padding: 5px;
+    margin-left: 0px;
+    margin-right: 8px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    line-height: 17px;
+    outline: none;
+    -webkit-transition: all 0.30s ease-in-out;
+    -moz-transition: all 0.30s ease-in-out;
+    -ms-transition: all 0.30s ease-in-out;
+    -o-transition: all 0.30s ease-in-out;
 }
 
 .ptable input[type="text"]:focus, .ptable select:focus {
-	background-color: #fff;
-	box-shadow: 0 0 5px rgba(135, 0, 66, 1); /* rgba(85, 170, 255, 1) */
-	border: 1px solid rgba(135, 0, 66, 1); /* rgba(85, 170, 255, 1) */
+    background-color: #fff;
+    box-shadow: 0 0 5px rgba(135, 0, 66, 1); /* rgba(85, 170, 255, 1) */
+    border: 1px solid rgba(135, 0, 66, 1); /* rgba(85, 170, 255, 1) */
 }
 
 .ptable input[type="text"]:hover, .ptable select:hover, .ptable th:hover:not(.no_order) {
-	opacity: 1;
-	box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
-	border: 1px solid rgba(0, 0, 0, 0.2);
+    opacity: 1;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(0, 0, 0, 0.2);
 }
 
 .ptable .order, .ptable .trigger {
-	cursor: pointer;
+    cursor: pointer;
 }
 
 .ptable .sort_icon {
-	color: #000;
-	padding-left: 5px;
+    color: #000;
+    padding-left: 5px;
 }
 
 .ptable .active {
-	color: #870042
+    color: #870042
 }
 
 /* seadistustekasti kraam */
 
 .ptable .prefbox {
-	position: absolute;
-	top: 0px;
-	right: 240px;
-	width: 300px;
-	padding: 12px;
-	text-align: left;
-	display: none;
-	background-color: #fff;
-	box-shadow: 0 0 5px rgba(135, 0, 66, 1); /* rgba(85, 170, 255, 1); */
-	border: 1px solid rgba(135, 0, 66, 1); /* rgba(85, 170, 255, 1); */
-	z-index: 1000;
+    position: absolute;
+    top: 0px;
+    right: 240px;
+    width: 300px;
+    padding: 12px;
+    text-align: left;
+    display: none;
+    background-color: #fff;
+    box-shadow: 0 0 5px rgba(135, 0, 66, 1); /* rgba(85, 170, 255, 1); */
+    border: 1px solid rgba(135, 0, 66, 1); /* rgba(85, 170, 255, 1); */
+    z-index: 1000;
 }
 
 .ptable .pref_row {
-	width: 100%;
-	line-height: 40px;
+    width: 100%;
+    line-height: 40px;
 }
 
 .ptable .pref_key {
-	float: left;
-	width: 180px;
+    float: left;
+    width: 180px;
 }
 
 .ptable .pref_val {
-	width: 120px;
-	float: right;
-	text-align: right;
+    width: 120px;
+    float: right;
+    text-align: right;
 }
 
 .ptable .autoupdate_check {
-	margin-left: 5px;
-	font-size: 20px;
-	color: #870042;
-	line-height: 44px;
-	cursor: pointer;
+    margin-left: 5px;
+    font-size: 20px;
+    color: #870042;
+    line-height: 44px;
+    cursor: pointer;
 }
 
 .ptable .autoupdate_check:hover, .ptable .hover:hover {
-	font-weight: bold;
+    font-weight: bold;
 }
 
 .ptable .pagesize {
-	width: 110px;
+    width: 110px;
 }
 
 .ptable .off {
-	color: #999;
+    color: #999;
 }
 
 .ptable .hide {
-	display: none;
+    display: none;
 }
 
 .ptable .navigation, .ptable .infobox {
-	float: right;
-	position: relative;
+    float: right;
+    position: relative;
 }
 
 .ptable .nav {
-	float: left;
-	min-width: 15px;
-	padding: 3px;
-	padding-left: 10px;
-	padding-right: 10px;
-	margin-left: 3px;
-	margin-right: 3px;
-	border: 1px solid #bbb;
-	border-radius: 3px;
-	display: block;
-	text-align: center;
-	cursor: pointer;
-	outline: none;
-	font-weight: bold;
-	opacity: 0.7;
-	-webkit-transition: all 0.30s ease-in-out;
-	-moz-transition: all 0.30s ease-in-out;
-	-ms-transition: all 0.30s ease-in-out;
-	-o-transition: all 0.30s ease-in-out;
+    float: left;
+    min-width: 15px;
+    padding: 3px;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-left: 3px;
+    margin-right: 3px;
+    border: 1px solid #bbb;
+    border-radius: 3px;
+    display: block;
+    text-align: center;
+    cursor: pointer;
+    outline: none;
+    font-weight: bold;
+    opacity: 0.7;
+    -webkit-transition: all 0.30s ease-in-out;
+    -moz-transition: all 0.30s ease-in-out;
+    -ms-transition: all 0.30s ease-in-out;
+    -o-transition: all 0.30s ease-in-out;
 }
 
 .ptable .nav:hover:not(.denied):not(.selected) {
-	opacity: 1;
-	box-shadow: 0 0 5px rgba(170, 170, 170, 1); /* 81, 203, 239 */
-	border: 1px solid rgba(170, 170, 170, 1);
+    opacity: 1;
+    box-shadow: 0 0 5px rgba(170, 170, 170, 1); /* 81, 203, 239 */
+    border: 1px solid rgba(170, 170, 170, 1);
 }
 
 .ptable .nav_top, .ptable .nav_btm {
-	padding: 10px;
-	background-color: #f9f9f9;
+    padding: 10px;
+    background-color: #f9f9f9;
 }
 
 .ptable .nav_top {
-	border-top: 1px solid #e7eaec !important;
-	border-bottom: 1px solid #f9f9f9 !important;
+    border-top: 1px solid #e7eaec !important;
+    border-bottom: 1px solid #f9f9f9 !important;
 }
 
 .ptable .nav_btm {
-	border-bottom: 1px solid #e7eaec !important;
+    border-bottom: 1px solid #e7eaec !important;
 }
 
 .ptable .border_top {
-	background-color: #f9f9f9;
-	border-top: 1px solid #e7eaec !important;
-	border-bottom: 1px solid #f9f9f9 !important;
+    background-color: #f9f9f9;
+    border-top: 1px solid #e7eaec !important;
+    border-bottom: 1px solid #f9f9f9 !important;
 }
 
 .ptable .border_btm {
-	background-color: #fff;
-	border-top: 1px solid #e7eaec !important;
-	border-bottom: 0px !important;
+    background-color: #fff;
+    border-top: 1px solid #e7eaec !important;
+    border-bottom: 0px !important;
 }
 
 .ptable .selected {
-	opacity: 1;
-	color: #870042;
-	border: 1px solid #0099ff;
-	background-color: #fff;
-	box-shadow: 0 0 5px rgba(135, 0, 66, 1); /* rgba(85, 170, 255, 1); */
-	border: 1px solid rgba(135, 0, 66, 1); /* rgba(85, 170, 255, 1); */
+    opacity: 1;
+    color: #870042;
+    border: 1px solid #0099ff;
+    background-color: #fff;
+    box-shadow: 0 0 5px rgba(135, 0, 66, 1); /* rgba(85, 170, 255, 1); */
+    border: 1px solid rgba(135, 0, 66, 1); /* rgba(85, 170, 255, 1); */
 }
 
 .ptable .disabled, .ptable .denied {
-	cursor: default;
-	color: #ccc;
-	border: 1px solid #ccc;
+    cursor: default;
+    color: #ccc;
+    border: 1px solid #ccc;
 }
 
 .ptable .denied {
-	cursor: default;
+    cursor: default;
 }
 
-.ptable .bubble {
-	position: absolute;
-	width: 200px;
-	border: 1px solid #f00;
-	background-color: #fff;
-	z-index: 1000;
-	/*display: none;*/
+.bubble {
+    position: absolute;
+    width: 400px;
+    /*height: 60px;*/
+    top: -15px;
+    left: -5px;
+    padding: 10px;
+    background: #f2f2f2;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    border: #870042 solid 1px;
+    box-shadow: 0 0 5px rgba(135, 0, 66, 1); /* 81, 203, 239 */
+    display: none;
+    z-index: 2000;
+}
+
+.bubble:after {
+    content: '';
+    position: absolute;
+    border-style: solid;
+    border-width: 10px 10px 10px 0;
+    border-color: transparent #f2f2f2;
+    display: block;
+    width: 0;
+    z-index: 1;
+    left: -10px;
+    top: 16px;
+}
+
+.bubble:before {
+    content: '';
+    position: absolute;
+    border-style: solid;
+    border-width: 10px 10px 10px 0;
+    border-color: transparent #870042;
+    display: block;
+    width: 0;
+    z-index: 0;
+    left: -11px;
+    top: 16px;
+}
+
+.ptable .info_row {
+    -webkit-touch-callout: text;
+    -webkit-user-select: text;
+    -khtml-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: default;
+    clear: all;
+}
+
+.ptable .info_key {
+    width: 80px;
+    text-align: right;
+}
+
+.ptable .info_val {
+    padding-left: 10px;
+    width: 310px;
+    text-align: left;
+}
+
+.ptable .info_key, .ptable .info_val {
+    float: left;
 }
 
 /* tekstikastide placeholderid */
@@ -494,5 +553,5 @@ table *, .prefbox {
 :-moz-placeholder,
 ::-moz-placeholder,
 :-ms-input-placeholder {
-	color: #e7eaec;
+    color: #e7eaec;
 }
