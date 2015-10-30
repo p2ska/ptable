@@ -528,18 +528,18 @@ table *, .prefbox {
     -khtml-user-select: text;
     -moz-user-select: text;
     -ms-user-select: text;
-    user-select: default;
+    user-select: text;
     clear: all;
 }
 
 .ptable .info_key {
-    width: 80px;
+    width: 100px;
     text-align: right;
 }
 
 .ptable .info_val {
     padding-left: 10px;
-    width: 310px;
+    width: 290px;
     text-align: left;
 }
 
