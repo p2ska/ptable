@@ -1,8 +1,8 @@
 var ptable_url = "ptable.php";
 //var ptable_url = "/api/query:srm:ptable:" + $("#_lang").prop("class");
 
-(function ($) {
-    $.fn.ptable = function (targets) {
+(function($) {
+    $.fn.ptable = function(targets) {
         var prefix      = "#ptable_",
             debug       = false,
             need_worker = false,
@@ -15,7 +15,7 @@ var ptable_url = "ptable.php";
         if (targets === undefined)
             targets = ".ptable";
 
-        $(targets).each(function () {
+        $(targets).each(function() {
             var ptable = $(this).prop("id");
 
             settings[ptable] = {
@@ -35,9 +35,17 @@ var ptable_url = "ptable.php";
 
             update(ptable);
 
+            $("#" + settings[ptable].target).on("click", ".subdata", function(e) {
+                e.stopImmediatePropagation();
+
+                $.ajax({ url: settings[ptable].url, data: { subtable: $(this).data("id") } }).done(function(content) {
+                    alert(content);
+                });
+            });
+
             // valikutekasti kuvamine/peitmine
 
-            $("#" + settings[ptable].target).on("click", ".pref_btn", function () {
+            $("#" + settings[ptable].target).on("click", ".pref_btn", function() {
                 var prefbox = $("#" + $(this).data("parent") + "_prefbox");
 
                 $(prefbox).toggle();
@@ -50,7 +58,7 @@ var ptable_url = "ptable.php";
                     $(this).removeClass("active");
             });
 
-            $("#" + settings[ptable].target).on("click", ".minimize_btn", function () {
+            $("#" + settings[ptable].target).on("click", ".minimize_btn", function() {
                 var target = $("#" + $(this).data("parent") + "_container");
 
                 if (target.is(":visible")) {
@@ -75,7 +83,7 @@ var ptable_url = "ptable.php";
 
             // peida valikutekasti kast, kui fookus läheb ära
 
-            $(document).click(function (e) {
+            $(document).click(function(e) {
                 $(".bubble").hide();
                 bubble = false;
 
@@ -87,7 +95,7 @@ var ptable_url = "ptable.php";
 
             // klaviatuuriga tabeli juhtimine
 
-            $(document).on("keyup", function (e) {
+            $(document).on("keyup", function(e) {
                 // TODO: "keydown" actioniga pgup/pgdown ja nooltega ka üles/alla liikumine tabelis (ainult kui tabel on fookuses)
 
                 //e.preventDefault();
@@ -95,7 +103,7 @@ var ptable_url = "ptable.php";
 
                 // kui mingi tabel omab fookust (mouseover) ja navigeerimine on lubatud (vasakule-paremale nooled)
 
-                $(".ptable").each(function () {
+                $(".ptable").each(function() {
                     var ct = $(this).prop("id");
 
                     if ($(this).is(":hover") && $(prefix + settings[ct].target).data("navigation")) {
@@ -138,13 +146,13 @@ var ptable_url = "ptable.php";
 
             // kui klikitakse tabelis oleva lingi peal, siis keela välja/rea võimalike triggerite käivitamine
 
-            $("#" + settings[ptable].target).on("click", ".trigger a", function (e) {
+            $("#" + settings[ptable].target).on("click", ".trigger a", function(e) {
                 e.stopPropagation();
             });
 
             // tabeli kirjete arvu muutmine ja vastavale uuele leheküljele viimine
 
-            $("#" + settings[ptable].target).on("change", prefix + settings[ptable].target + "_pagesize", function () {
+            $("#" + settings[ptable].target).on("change", prefix + settings[ptable].target + "_pagesize", function() {
                 var old_pagesize = $(prefix + settings[ptable].target).data("page_size");
                 var old_page = $(prefix + settings[ptable].target).data("page") - 1;
                 var landing_page = 1;
@@ -162,13 +170,13 @@ var ptable_url = "ptable.php";
 
             // otsingukasti sisu puhul enter triggerdab otsingunuppu
 
-            $("#" + settings[ptable].target).on("change", prefix + settings[ptable].target + "_search", function () {
+            $("#" + settings[ptable].target).on("change", prefix + settings[ptable].target + "_search", function() {
                 $(prefix + settings[ptable].target + "_commit_search").trigger("click");
             });
 
             // automaatne otsing (kui lubatud)
 
-            $("#" + settings[ptable].target).on("keyup", "input", function (e) { // prefix + settings[ptable].target + "_search"
+            $("#" + settings[ptable].target).on("keyup", "input", function(e) { // prefix + settings[ptable].target + "_search"
                 // kui ei ole reaalsed tähemärgid ja ei ole del, backspace, tühik, enter
 
                 if (e.keyCode < 46 && e.keyCode !== 32 && e.keyCode !== 8 && e.keyCode !== 13)
@@ -208,19 +216,19 @@ var ptable_url = "ptable.php";
 
             // peida ja tühjenda väljaotsingu kastid fookuse kadumise korral
 
-            $("#" + settings[ptable].target).on("focusout", ".field_search_input", function () {
+            $("#" + settings[ptable].target).on("focusout", ".field_search_input", function() {
                 $(this).html("").hide();
             });
 
             // et väljaotsingukastil endal klikkimine ei vallandaks sorteerimistriggerit
 
-            $("#" + settings[ptable].target).on("click", ".field_search", function (e) {
+            $("#" + settings[ptable].target).on("click", ".field_search", function(e) {
                 e.stopImmediatePropagation();
             });
 
             // väljaotsingu kasti kuvamine
 
-            $("#" + settings[ptable].target).on("click", ".field_search_btn", function (e) {
+            $("#" + settings[ptable].target).on("click", ".field_search_btn", function(e) {
                 e.stopImmediatePropagation();
 
                 var fieldsearchbox = $("#" + $(this).prop("id") + "box");
@@ -229,7 +237,7 @@ var ptable_url = "ptable.php";
                 fieldsearchbox[0].setSelectionRange(100, 100);
             });
 
-            $("#" + settings[ptable].target).on("click", ".nav, .order, .search_btn", function (e) {
+            $("#" + settings[ptable].target).on("click", ".nav, .order, .search_btn", function(e) {
                 if ($(this).hasClass("order")) { // tabeli välja peal klikkimise puhul sorteeri selle järgi
                     if (settings[ptable].order === undefined) {
                         settings[ptable].order = $(prefix + settings[ptable].target).data("order");
@@ -271,7 +279,7 @@ var ptable_url = "ptable.php";
             var udata = {};
 
             if (data) {
-                $.each(data, function (key, val) {
+                $.each(data, function(key, val) {
                     udata[key] = val;
                 });
             }
@@ -296,7 +304,7 @@ var ptable_url = "ptable.php";
 
             // uuenda tabelit
 
-            $.ajax({url: settings[ptable].url, data: {ptable: settings[ptable]}}).done(function (content) {
+            $.ajax({url: settings[ptable].url, data: { ptable: settings[ptable] } }).done(function(content) {
                 if (settings[ptable].mode === "init")
                     $("#" + settings[ptable].target).html(content);
                 else
@@ -389,7 +397,7 @@ var ptable_url = "ptable.php";
         function col_widths(ptable) {
             var widths = "";
 
-            $(prefix + settings[ptable].target + " th:not(.resize)").each(function () {
+            $(prefix + settings[ptable].target + " th:not(.resize)").each(function() {
                 widths += $(this).width() + "-";
             });
 
@@ -403,7 +411,7 @@ var ptable_url = "ptable.php";
             var el = undefined;
             var el_x, el_width;
 
-            $(".resize").mousedown(function (e) {
+            $(".resize").mousedown(function(e) {
                 resizing = $(this).closest("table").prop("id").substr(prefix.length - 1); // hangi tabeli id
                 el = $(prefix + resizing).find("th").eq(this.cellIndex - 1); // õige th (nii td kui th muutmisel)
                 el_x = e.pageX;
@@ -411,12 +419,12 @@ var ptable_url = "ptable.php";
                 $(el).addClass("resizing");
             });
 
-            $(document).mousemove(function (e) {
+            $(document).mousemove(function(e) {
                 if (resizing)
                     $(el).width(el_width + (e.pageX - el_x));
             });
 
-            $(document).mouseup(function () {
+            $(document).mouseup(function() {
                 if (resizing) {
                     store.set(resizing + "_col_width", col_widths(resizing));
                     $(el).removeClass("resizing");
@@ -464,7 +472,7 @@ var ptable_url = "ptable.php";
             var data = target.data();
 
             if (data["info"]) {
-                target.find(".bubble").each(function () {
+                target.find(".bubble").each(function() {
                     $(".bubble").hide();
 
                     if (!$(this).is(bubble) || !bubble) {
@@ -478,7 +486,7 @@ var ptable_url = "ptable.php";
                 });
             }
             else {
-                $("#content-wrapper").load(data["href"], function () {
+                $("#content-wrapper").load(data["href"], function() {
                     $.getScript("/lemon/plugins/srm/main.js");
                 });
             }
@@ -550,7 +558,7 @@ var ptable_url = "ptable.php";
 
         // autoupdate checkboxi ja valikukasti aktiveerimine
 
-        $(".ptable").on("click", ".autoupdate_check", function () {
+        $(".ptable").on("click", ".autoupdate_check", function() {
             var tbl = $(this).data("table");
 
             $(prefix + tbl + "_autoupdate_off, " + prefix + tbl + "_autoupdate_on").toggle();
@@ -570,7 +578,7 @@ var ptable_url = "ptable.php";
 
         // kui muudetakse autoupdate aega
 
-        $(".ptable").on("change", ".autoupdate_select", function () {
+        $(".ptable").on("change", ".autoupdate_select", function() {
             var tbl = $(this).data("table");
 
             settings[tbl].autoupdate = parseInt($(this).val());
@@ -581,7 +589,7 @@ var ptable_url = "ptable.php";
 
         // keeleuuendus (ainult demo jaoks)
 
-        $(".lang").click(function () {
+        $(".lang").click(function() {
             if ($(this).hasClass("current"))
                 return false;
 

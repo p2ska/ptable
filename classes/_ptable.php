@@ -70,6 +70,13 @@ class PTABLE {
     // initsialiseeri kõik js poolt määratud muutujad
 
     function ptable($init, $source = false, $lang = false) {
+        if (isset($init["subtable"])) {
+            $this->content .= "kjk";
+
+            return false;
+        }
+        var_dump($init);
+
         if (!isset($init["target"]))
             return false;
 
@@ -723,13 +730,17 @@ class PTABLE {
             if ($field["field"] == "ROW")
                 $this->content .= ">";
             else {
-				$this->content .= ">". $this->format_value($field, $data);
+				$this->content .= ">";
+
+                if (isset($this->triggers["+"]) && $field["field"] == "id")
+                    $this->content .= "<span class=\"subdata\" data-id=\"". $data->id. "\">". $this->awesome("{{plus-square}}"). "</span> ";
+
+                $this->content .= $this->format_value($field, $data);
 
 				if (isset($field["info"]) && $field["info"]) {
 					$this->content .= "<div class=\"infobox\">";
-					$this->content .= "<div class=\"bubble\">";
-					$this->content .= $this->replace_markup($field["info"], $field, $data);
-					$this->content .= "</div></div>";
+					$this->content .= "<div class=\"bubble\">". $this->replace_markup($field["info"], $field, $data). "</div>";
+                    $this->content .= "</div>";
 				}
 
 				$this->content .= "</td>";

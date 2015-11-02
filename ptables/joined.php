@@ -1,35 +1,45 @@
 <?php
 
-$this->table    = "task";
-$this->where    = "task.prio != ?";
+$this->table    = "request";
+$this->where    = "request.prio != ?";
 $this->values   = [ 1 ];
-$this->order	= "task.notes";
+$this->order	= "request.regdate";
 $this->way		= "desc";
 
 //$this->resizable= false;
 
 $this->fields = [
-	[ "field" => "notes",	"hidden"=> true ],
-	[ "field" => "id",		"title" => "id",        "width" => "5%",	"print" 	=> "mida iganes" ],
-	[ "field" => "closed",	"title" => "combined",	"width"	=> "5%",	"print"		=> "[status]", "is" => [ 0 => "null" ] ],
-	[ "field" => "prio",	"title" => "prio",      "width" => "5%",	"translate"	=> "txt_prio_" ],
-	[ "table" => "request",	"field" => "requester", "width" => "20%",	"info"		=> "{%person%}", "fetch"		=> [ "person" => "[requester]" ], "print" => "{{amazon}}[id]{%person%}", "title" => "{{amazon}} requester", "extend" => "autolink", "searchable"	=> true, "field_search" => true, "placeholder" => "ahaa" ],
-	[ "table" => "request",	"field" => "subject",   "width" => "",		"title"     => "subject",   "searchable"	=> true, "extend" => "break_long" ],
-	[ "table" => "task",	"field" => "status",    "width" => "5%",	"title"     => "status",    "translate"     => "txt_[status]_status", "field_search" => true, "placeholder" => "status" ],
-	[ "table" => "task",	"field" => "deadline",  "width" => "10%",	"title"     => "deadline",  "print"			=> "-[deadline]-",	"extend" => "convert_date" ],
-	[ "table" => "task",	"field" => "created",   "width" => "10%",	"title"     => "created",   "extend"		=> "convert_date", "field_search" => true ],
-	[ "table" => "request",	"field" => "domain",    "width" => "5%",	"title"     => "owner",     "searchable"	=> true, "alias" => "owner" ],
-	[ "table" => "task",	"field" => "owner_id",  "width" => "10%",	"title"     => "solver",    "searchable"	=> true ]
+	[ "field" => "id",         "title" => "id" ],
+	[ "field" => "prio",	   "title" => "prio",      "translate"	=> "txt_prio_" ],
+	[ "field" => "requester",  "info"  => "{%person%}","fetch"      => [ "person" => "[requester]" ], "print" => "{{amazon}}[id]{%person%}", "title" => "{{amazon}} requester", "extend" => "autolink", "searchable"	=> true, "field_search" => true, "placeholder" => "ahaa" ],
+	[ "field" => "subject",    "title" => "subject",   "searchable"	=> true, "extend" => "break_long" ],
+	//[ "table" => "task",	   "field" => "status",    "title"      => "status",    "translate"     => "txt_[status]_status", "field_search" => true, "placeholder" => "status" ],
+    [ "field" => "status",     "title" => "status",    "translate"  => "txt_[status]_status" ],
+	//[ "table" => "task",	   "field" => "deadline",  "title"      => "deadline",  "print"			=> "-[deadline]-",	"extend" => "convert_date" ],
+    [ "field" => "duedate",    "title" => "duedate",   "print"	    => "-[duedate]-",	"extend" => "convert_date" ],
+	[ "field" => "regdate",    "title" => "regdate",   "extend"		=> "convert_date" ]
+	//[ "field" => "domain",   "title" => "owner",     "searchable"	=> true, "alias" => "owner" ]
+	//[ "table" => "task",     "field" => "owner_id",  "title"      => "solver",    "searchable"	=> true ]
 ];
 
+$this->subtable = [
+    "query" => "select * from task where parent_id = ?",
+    //"values"=> [ $this->subtable["ee"] ],
+    "order" => "created",
+    "way"   => "desc"
+];
+
+/*
 $this->joins = [
     "request"	=> [ "method" => "left join", "on" => "request.id = task.parent_id" ]
 ];
+*/
 
 $this->triggers	= [
+    "+"         => [ "title" => "kuva ülesandeid" ],
 	"ROW"		=> [ "title" => "[id]", "data" => [ "id" => "[id]", "url" => "http://www.ttu.ee" ] ],
 	"id"		=> [ "title" => "dede", "link" => "www.ttu.ee", "external" => true ],
-	"requester"	=> [ "title" => "ah", "info" => true ]
+	"requester"	=> [ "title" => "ah", "info" => true ],
 ];
 
 $this->title        = $this->data["example"];

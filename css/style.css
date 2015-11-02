@@ -547,6 +547,10 @@ table *, .prefbox {
     float: left;
 }
 
+.ptable .subdata {
+    color: #870042;
+}
+
 /* tekstikastide placeholderid */
 
 ::-webkit-input-placeholder,
