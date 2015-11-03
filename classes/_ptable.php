@@ -12,6 +12,7 @@ define("P_SL",			"/");
 define("P_DOT",			".");
 define("P_VOID",		"");
 define("P_NULL",    	"<null>");
+define("P_EX",          "-");
 define("P_FSS",			"___");
 define("P_BR",      	"<br/>");
 define("P_2BR",     	"<br/><br/>");
@@ -39,6 +40,7 @@ class PTABLE {
     $database, $host, $username, $password, $charset, $collation, $table, $query, $fields, $where, $values,
 	$search, $triggers, $joins, $order, $way, $limit, $records, $field_count, $field_search, $title, $style,
     $navigation, $nav_pre, $nav_post, $pages, $pagesize, $external_data, $external_pos, $col_width, $is,
+    $subdata, $subtable,
     $debug			= false,		// debug reziim
     $header			= true,			// kas kuvatakse tabeli päist üldse
     $header_sep		= false,		// tabeli ülemine eraldusäär
@@ -70,12 +72,7 @@ class PTABLE {
     // initsialiseeri kõik js poolt määratud muutujad
 
     function ptable($init, $source = false, $lang = false) {
-        if (isset($init["subtable"])) {
-            $this->content .= "kjk";
-
-            return false;
-        }
-        var_dump($init);
+        // kas target on ikka olemas
 
         if (!isset($init["target"]))
             return false;
@@ -100,6 +97,11 @@ class PTABLE {
         if (isset($init["data"]) && $init["data"])
             $this->data = $this->safe($init["data"]);
 
+        // subdata[] muutuja edastamiseks tabelikirjeldusele
+
+        if (isset($init["subdata"]) && $init["subdata"])
+            $this->subdata = explode(P_EX, $this->safe($init["subdata"]));
+
         // kirjuta klassi default'id tabelikirjelduse omadega üle
 
         if (!$this->init())
@@ -109,7 +111,7 @@ class PTABLE {
 
         $this->field_count = count($this->fields);
 
-        // kui kirjelduses pole tabelit paika pandud, siis võta defaultiks põhitabel
+        // kui kirjelduses pole tabelit paika pandud, siis võta default'iks põhitabel
 
         for ($a = 0; $a < $this->field_count; $a++)
             if (!isset($this->fields[$a]["table"]))
@@ -120,10 +122,10 @@ class PTABLE {
 		foreach ($init as $key => $val)
             $this->{ $key } = $this->safe($val);
 
-        // kas on veergude laiused olemas
+        // kui on veergude laiused olemas, siis tee sellest massiiv
 
         if ($this->col_width)
-            $this->col_width = explode("-", $this->col_width);
+            $this->col_width = explode(P_EX, $this->col_width);
 
         // esmasel initsialiseerimisel vaadatakse, kas autoupdate sisse lülitada (tabelikirjelduse poolt nõutud)
 
@@ -161,6 +163,11 @@ class PTABLE {
             $this->db->connect(DB_HOST, DB_NAME, DB_USER, DB_PASS, DB_CHARSET, DB_COLLATION);
         }
 
+        // kui on tegemist alamtabeliga
+
+        if (isset($init["subdata"]))
+            return $this->subtable();
+
         // hangi ja töötle andmeid
 
         if ($this->external_data)
@@ -192,19 +199,22 @@ class PTABLE {
         if (file_exists($this->template)) {
             require_once($this->template);
 
-            // kas navigeerimine lubada?
-
-            if ($this->nav_header || $this->nav_footer)
-                $this->navigation = true;
-            else
-                $this->navigation = false;
-
             return true;
         }
         else {
-            // väga halb, et tabeli kirjeldust ei leidnud!
+            // väga halb, et tabeli kirjeldust ei leidnud
 
             return false;
+        }
+    }
+
+    // hangi alamtabeli andmed
+
+    function subtable() {
+        $this->db->query($this->subtable["query"], $this->subtable["values"]);
+
+        while ($obj = $this->db->get_obj()) {
+            $this->content .= $obj->id;
         }
     }
 
@@ -532,6 +542,13 @@ class PTABLE {
 
         $this->content .= "<table id=\"". P_PREFIX. $this->target. "\" ";
 
+        // kas navigeerimine on lubatud?
+
+        if ($this->nav_header || $this->nav_footer)
+            $this->navigation = true;
+        else
+            $this->navigation = false;
+
         // kui on ilma ülemise ääreta tabel, siis muuda tabeli hover'i käitumist (äär kuvatakse hover'i puhul ümber tabeli sisuosa)
 
         if (substr_count($this->class, "no_border"))
@@ -730,20 +747,7 @@ class PTABLE {
             if ($field["field"] == "ROW")
                 $this->content .= ">";
             else {
-				$this->content .= ">";
-
-                if (isset($this->triggers["+"]) && $field["field"] == "id")
-                    $this->content .= "<span class=\"subdata\" data-id=\"". $data->id. "\">". $this->awesome("{{plus-square}}"). "</span> ";
-
-                $this->content .= $this->format_value($field, $data);
-
-				if (isset($field["info"]) && $field["info"]) {
-					$this->content .= "<div class=\"infobox\">";
-					$this->content .= "<div class=\"bubble\">". $this->replace_markup($field["info"], $field, $data). "</div>";
-                    $this->content .= "</div>";
-				}
-
-				$this->content .= "</td>";
+				$this->content .= ">". $this->format_value($field, $data). "</td>";
 
                 if ($this->resizable && $pos < ($this->field_count - 1))
                     $this->content .= "<td class=\"resize\"></td>";
@@ -770,7 +774,29 @@ class PTABLE {
                 if (count($styles))
                     $style = " style=\"". implode("; ", $styles). "\"";
 
-                $this->content .= $colspan. $class. $style. ">". $this->format_value($field, $data). "</td>";
+                $this->content .= $colspan. $class. $style. ">";
+
+                if (isset($field["subtable"]) && $field["subtable"]) {
+                    $values = $this->replace_markup($field["subtable"], $field, $data);
+
+                    $this->content .= "<span class=\"subdata\" data-values=\"". $values. "\">". $this->awesome("{{plus-square}}"). "</span> ";
+                }
+
+                $this->content .= $this->format_value($field, $data);
+
+                if (isset($field["info"]) && $field["info"]) {
+                    $info = $this->replace_markup($field["info"], $field, $data);
+
+                    if ($info) {
+                        $this->content .= "<span class=\"infobox\">". $this->awesome("{{info-circle}}", "#870042");
+                        $this->content .= "<div class=\"bubble\">";
+                        $this->content .= "<span class=\"close_btn\" title=\"". @$this->l->txt_close. "\">". $this->awesome("{{close}}"). "</span>";
+                        $this->content .= $info;
+                        $this->content .= "</div></span>";
+                    }
+				}
+
+                $this->content .= "</td>";
 
                 if ($this->resizable && $pos < ($this->field_count - 1))
                     $this->content .= "<td class=\"resize\"></td>";
@@ -953,6 +979,7 @@ class PTABLE {
 
     function prefbox() {
         $this->content .= "<div id=\"". P_PREFIX. $this->target. "_prefbox\" class=\"prefbox\">";
+        $this->content .= "<span class=\"close_btn\" title=\"". @$this->l->txt_close. "\">". $this->awesome("{{close}}"). "</span>";
         $this->content .= $this->awesome(@$this->l->txt_pref). "<br/><br/>";
         $this->content .= $this->print_pref(@$this->l->txt_pagesize, $this->page_sizes, "dropdown", $this->page_size, "pagesize");
         $this->content .= $this->print_pref(@$this->l->txt_autoupdate, $this->autoupdate, "autoupdate_check", $this->autoupdate, "autoupdate");
@@ -980,9 +1007,12 @@ class PTABLE {
 
     // keera tekstis {{ikoon}} font-awesome ikooniks
 
-    function awesome($str, $pre = "fa fa-", $post = P_VOID) {
+    function awesome($str, $color = P_VOID, $pre = "fa fa-", $post = P_VOID) {
+        if ($color)
+            $color = " style=\"color: ". $color. "\"";
+
         $str = str_replace(P_AWESOME_L, "<i class=\"". $pre, $str);
-        $str = str_replace(P_AWESOME_R, $post. "\"></i>", $str);
+        $str = str_replace(P_AWESOME_R, $post. "\"". $color. "></i>", $str);
 
         return $str;
     }

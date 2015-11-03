@@ -31,6 +31,9 @@ foreach ($example_data as $ex) {
 }
 */
 
+if (isset($_GET["subdata"]))
+    $_GET["ptable"]["subdata"] = $_GET["subdata"];
+
 $pt = new PTABLE_EXT($_GET["ptable"]); //, $data);
 
 echo $pt->content;

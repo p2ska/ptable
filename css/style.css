@@ -401,8 +401,13 @@ table *, .prefbox {
     display: none;
 }
 
-.ptable .navigation, .ptable .infobox {
+.ptable .navigation {
     float: right;
+    position: relative;
+}
+
+.ptable .infobox {
+    margin: 5px;
     position: relative;
 }
 
@@ -483,8 +488,8 @@ table *, .prefbox {
     position: absolute;
     width: 400px;
     /*height: 60px;*/
-    top: -15px;
-    left: -5px;
+    top: -19px;
+    left: 30px;
     padding: 10px;
     background: #f2f2f2;
     -webkit-border-radius: 5px;
@@ -494,6 +499,16 @@ table *, .prefbox {
     box-shadow: 0 0 5px rgba(135, 0, 66, 1); /* 81, 203, 239 */
     display: none;
     z-index: 2000;
+}
+
+.close_btn {
+    float: right;
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+.close_btn:hover {
+    opacity: 1;
 }
 
 .bubble:after {

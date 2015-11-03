@@ -35,10 +35,25 @@ var ptable_url = "ptable.php";
 
             update(ptable);
 
+            $("#" + settings[ptable].target).on("click", ".infobox", function(e) {
+                $(this).find(".bubble").each(function() {
+                    $(".bubble").hide();
+
+                    if (!$(this).is(bubble) || !bubble) {
+                        $(this).show();
+                        bubble = $(this);
+                    }
+                    else {
+                        $(this).hide();
+                        bubble = false;
+                    }
+                });
+            });
+
             $("#" + settings[ptable].target).on("click", ".subdata", function(e) {
                 e.stopImmediatePropagation();
 
-                $.ajax({ url: settings[ptable].url, data: { subtable: $(this).data("id") } }).done(function(content) {
+                $.ajax({ url: settings[ptable].url, data: { ptable: settings[ptable], subdata: $(this).data("values") } }).done(function(content) {
                     alert(content);
                 });
             });
@@ -87,7 +102,7 @@ var ptable_url = "ptable.php";
                 $(".bubble").hide();
                 bubble = false;
 
-                if (!$(e.target).closest(".prefbox").length && !$(e.target).closest(".pref_btn").length) {
+                if ($(e.target).hasClass("fa-close") || (!$(e.target).closest(".prefbox").length && !$(e.target).closest(".pref_btn").length)) {
                     $(".prefbox").hide();
                     $(".pref_btn").removeClass("active");
                 }
@@ -126,6 +141,9 @@ var ptable_url = "ptable.php";
 
             $("#" + settings[ptable].target).on("click", ".trigger", function(e) {
                 var ct = Date.now();
+
+                //$(".bubble").hide();
+                //bubble = false;
 
                 e.stopPropagation();		              				// ära luba mitut trigerit käivitada; välja trigger omab prioriteeti kui rea oma ees
                 //e.stopImmediatePropagation();
@@ -469,27 +487,11 @@ var ptable_url = "ptable.php";
 
              alert(what);
              */
-            var data = target.data();
+            //var data = target.data();
 
-            if (data["info"]) {
-                target.find(".bubble").each(function() {
-                    $(".bubble").hide();
-
-                    if (!$(this).is(bubble) || !bubble) {
-                        $(this).show();
-                        bubble = $(this);
-                    }
-                    else {
-                        $(this).hide();
-                        bubble = false;
-                    }
-                });
-            }
-            else {
-                $("#content-wrapper").load(data["href"], function() {
-                    $.getScript("/lemon/plugins/srm/main.js");
-                });
-            }
+            $("#content-wrapper").load(target.data["href"], function() {
+                $.getScript("/lemon/plugins/srm/main.js");
+            });
         }
 
         // uuenda tabelit automaatselt, kui on autoupdate seatud tabelile ja eelmisest updatest on määratud aeg mööda läinud

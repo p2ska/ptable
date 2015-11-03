@@ -9,7 +9,7 @@ $this->way		= "desc";
 //$this->resizable= false;
 
 $this->fields = [
-	[ "field" => "id",         "title" => "id" ],
+	[ "field" => "id",         "title" => "id",        "subtable"   => "[id]" ],
 	[ "field" => "prio",	   "title" => "prio",      "translate"	=> "txt_prio_" ],
 	[ "field" => "requester",  "info"  => "{%person%}","fetch"      => [ "person" => "[requester]" ], "print" => "{{amazon}}[id]{%person%}", "title" => "{{amazon}} requester", "extend" => "autolink", "searchable"	=> true, "field_search" => true, "placeholder" => "ahaa" ],
 	[ "field" => "subject",    "title" => "subject",   "searchable"	=> true, "extend" => "break_long" ],
@@ -24,7 +24,7 @@ $this->fields = [
 
 $this->subtable = [
     "query" => "select * from task where parent_id = ?",
-    //"values"=> [ $this->subtable["ee"] ],
+    "values"=> $this->subdata,
     "order" => "created",
     "way"   => "desc"
 ];
@@ -36,10 +36,8 @@ $this->joins = [
 */
 
 $this->triggers	= [
-    "+"         => [ "title" => "kuva ülesandeid" ],
-	"ROW"		=> [ "title" => "[id]", "data" => [ "id" => "[id]", "url" => "http://www.ttu.ee" ] ],
-	"id"		=> [ "title" => "dede", "link" => "www.ttu.ee", "external" => true ],
-	"requester"	=> [ "title" => "ah", "info" => true ],
+	"ROW"		=> [ "title" => "[id]", "data" => [ "id" => "[id]", "url" => "http://www.ttu.ee" ] ]
+	//"id"		=> [ "title" => "dede", "link" => "www.ttu.ee", "external" => true ]
 ];
 
 $this->title        = $this->data["example"];
