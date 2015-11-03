@@ -213,9 +213,23 @@ class PTABLE {
     function subtable() {
         $this->db->query($this->subtable["query"], $this->subtable["values"]);
 
-        while ($obj = $this->db->get_obj()) {
-            $this->content .= $obj->id;
+		$this->content .= "<table class=\"subtable\"><tr>";
+
+		foreach ($this->subtable["fields"] as $subfield => $subtitle)
+			$this->content .= "<th class=\"no_order\">". $subtitle. "</th>";
+
+		$this->content .= "</tr>";
+
+       	while ($obj = $this->db->get_obj()) {
+			$this->content .= "<tr class=\"trigger\" data-href=\"\">";
+
+			foreach ($this->subtable["fields"] as $subfield => $subtitle)
+				$this->content .= "<td>". $obj->{ $subfield }. "</td>";
+
+			$this->content .= "</tr>";
         }
+
+		$this->content .= "</table>";
     }
 
     // hangi tabeli andmed
@@ -636,9 +650,21 @@ class PTABLE {
         // nüüd vaata, kas väljale on defineeritud trigger või mitte, ja väljasta väärtus
 
         $count = 0;
+		$subtable = false;
 
-        foreach ($this->fields as $field)
+        foreach ($this->fields as $field) {
+			if (isset($field["subtable"]) && $field["subtable"])
+				$subtable = true;
+
 			$this->output($field, $obj, $count++);
+		}
+
+		// kui on alamtabel, siis kuva lisarida selle jaoks
+
+		if ($subtable) {
+			$this->content .= "<tr><td class=\"subrow\" id=\"subrow_". $obj->id. "\" colspan=100></td></tr>";
+			$this->content .= "<tr><td class=\"hide\" colspan=100></td></tr>";
+		}
 
         $this->content .= "</tr>";
     }
@@ -779,7 +805,10 @@ class PTABLE {
                 if (isset($field["subtable"]) && $field["subtable"]) {
                     $values = $this->replace_markup($field["subtable"], $field, $data);
 
-                    $this->content .= "<span class=\"subdata\" data-values=\"". $values. "\">". $this->awesome("{{plus-square}}"). "</span> ";
+                    $this->content .= "<span class=\"subdata\" data-values=\"". $values. "\">";
+					$this->content .= "<span class=\"sub_closed\">". $this->awesome("{{plus-square}}"). "</span>";
+					$this->content .= "<span class=\"sub_opened\">". $this->awesome("{{minus-square}}"). "</span>";
+					$this->content .= "</span> ";
                 }
 
                 $this->content .= $this->format_value($field, $data);

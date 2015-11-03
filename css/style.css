@@ -22,6 +22,7 @@ hr {
 }
 
 .current_lang {
+	font-weight: bold;
 	color: #870042;
 }
 
@@ -48,7 +49,7 @@ table *, .prefbox {
 .ptable {
     border: 1px solid #e7eaec;
     border-bottom: 0px;
-    opacity: 0.8;
+    /*opacity: 0.8;*/
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
@@ -249,7 +250,7 @@ table *, .prefbox {
 }
 
 .ptable th > i {
-    opacity: 0.5;
+    opacity: 0.7;
 }
 
 .ptable th:hover > i {
@@ -560,6 +561,64 @@ table *, .prefbox {
 
 .ptable .info_key, .ptable .info_val {
     float: left;
+}
+
+.ptable .sub_closed {
+}
+
+.ptable .sub_opened {
+	display: none;
+}
+
+.ptable .subdata {
+	padding: 5px;
+	opacity: 0.8;
+}
+
+.ptable .subdata:hover {
+	opacity: 1;
+}
+
+.ptable .subrow {
+	display: none;
+	padding: 20px;
+	background-color: #fff;
+}
+
+.ptable .subrow:hover {
+	border-color: inherit !important;
+}
+
+.ptable .subtable table:hover {
+	border: 0px !important;
+}
+
+.ptable .subtable th {
+	color: #fff;
+	height: 15px;
+	line-height: 15px;
+	padding: 5px;
+	border: 0px;
+	border: 1px solid #7a0037;
+	/*border-bottom: 1px solid #fff;*/
+	background-color: #870042;
+}
+
+.ptable .subtable td {
+	border: 1px solid #e7eaec;
+}
+
+.ptable .subtable tr:hover > td {
+	border-left: 1px solid #999;
+	border-right: 1px solid #999;
+}
+
+.ptable .subtable tr:hover > td:first-child {
+	border-left: 1px solid #999 !important;
+}
+
+.ptable .subtable tr:hover > td:last-child {
+	border-right: 1px solid #999 !important;
 }
 
 .ptable .subdata {

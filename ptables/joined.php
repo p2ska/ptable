@@ -23,10 +23,17 @@ $this->fields = [
 ];
 
 $this->subtable = [
-    "query" => "select * from task where parent_id = ?",
+    "query" => "select * from task where parent_id = ? order by created desc",
     "values"=> $this->subdata,
-    "order" => "created",
-    "way"   => "desc"
+	"fields"=> [
+		"id"		=> "id",
+		"prio"		=> "prio",
+		"status"	=> "status",
+		"owner_id"	=> "owner",
+		"created"	=> "created",
+		"closed"	=> "closed",
+		"deadline"	=> "deadline"
+	]
 ];
 
 /*

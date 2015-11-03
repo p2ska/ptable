@@ -36,6 +36,8 @@ var ptable_url = "ptable.php";
             update(ptable);
 
             $("#" + settings[ptable].target).on("click", ".infobox", function(e) {
+				e.stopImmediatePropagation();
+
                 $(this).find(".bubble").each(function() {
                     $(".bubble").hide();
 
@@ -53,9 +55,22 @@ var ptable_url = "ptable.php";
             $("#" + settings[ptable].target).on("click", ".subdata", function(e) {
                 e.stopImmediatePropagation();
 
-                $.ajax({ url: settings[ptable].url, data: { ptable: settings[ptable], subdata: $(this).data("values") } }).done(function(content) {
-                    alert(content);
-                });
+				var subdata = $(this);
+				var subrow = $("#subrow_" + $(this).data("values"));
+
+				if (subrow.is(":hidden")) {
+					$.ajax({ url: settings[ptable].url, data: { ptable: settings[ptable], subdata: $(this).data("values") } }).done(function(content) {
+						subrow.html(content);
+						subrow.show();
+						subdata.find(".sub_closed").hide();
+						subdata.find(".sub_opened").show();
+                	});
+				}
+				else {
+					subrow.hide();
+					subdata.find(".sub_opened").hide();
+					subdata.find(".sub_closed").show();
+				}
             });
 
             // valikutekasti kuvamine/peitmine
@@ -488,6 +503,8 @@ var ptable_url = "ptable.php";
              alert(what);
              */
             //var data = target.data();
+
+			alert("triggered");
 
             $("#content-wrapper").load(target.data["href"], function() {
                 $.getScript("/lemon/plugins/srm/main.js");
