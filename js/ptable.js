@@ -114,7 +114,8 @@ var ptable_url = "ptable.php";
             // peida valikutekasti kast, kui fookus läheb ära
 
             $(document).click(function(e) {
-                $(".bubble").hide();
+                $(".bubble, .sub_opened, .subrow").hide();
+                $(".sub_closed").show();
                 bubble = false;
 
                 if ($(e.target).hasClass("fa-close") || (!$(e.target).closest(".prefbox").length && !$(e.target).closest(".pref_btn").length)) {
