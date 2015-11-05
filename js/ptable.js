@@ -178,6 +178,26 @@ var ptable_url = "ptable.php";
                 }
             });
 
+            // tee midagi triggeriga rea või välja peal klikkimise peale (mitte lingi puhul siis)
+
+            function trigger(target) {
+                /*var what = "";
+
+                $.each(data, function(i, field) {
+                    what += " [" + field + "]";
+                });
+
+                alert(what);
+                */
+                //var data = target.data();
+
+                alert("triggered");
+
+                $("#content-wrapper").load(target.data["href"], function() {
+                    $.getScript("/lemon/plugins/srm/main.js");
+                });
+            }
+
             // kui klikitakse tabelis oleva lingi peal, siis keela välja/rea võimalike triggerite käivitamine
 
             $("#" + settings[ptable].target).on("click", ".trigger a", function(e) {
@@ -490,26 +510,6 @@ var ptable_url = "ptable.php";
                 clearInterval(updater);
                 updater = false;
             }
-        }
-
-        // tee midagi triggeriga rea või välja peal klikkimise peale (mitte lingi puhul siis)
-
-        function trigger(target) {
-            /*var what = "";
-
-             $.each(data, function(i, field) {
-             what += " [" + field + "]";
-             });
-
-             alert(what);
-             */
-            //var data = target.data();
-
-			alert("triggered");
-
-            $("#content-wrapper").load(target.data["href"], function() {
-                $.getScript("/lemon/plugins/srm/main.js");
-            });
         }
 
         // uuenda tabelit automaatselt, kui on autoupdate seatud tabelile ja eelmisest updatest on määratud aeg mööda läinud

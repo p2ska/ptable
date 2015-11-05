@@ -75,6 +75,14 @@ table *, .prefbox {
     text-decoration: none;
 }
 
+.ptable i {
+    opacity: 0.8;
+}
+
+.ptable i:hover {
+    opacity: 1;
+}
+
 /* tabeli päis */
 
 .ptable .header {
@@ -238,7 +246,7 @@ table *, .prefbox {
     border-left: 1px solid #f9f9f9;
     border-right: 1px solid #f9f9f9;
     border-bottom: 1px solid #fff;
-    opacity: 0.9;
+    opacity: 0.8;
     outline: none;
     position: relative;
     /*
@@ -247,14 +255,6 @@ table *, .prefbox {
     -ms-transition: all 0.30s ease-in-out;
     -o-transition: all 0.30s ease-in-out;
     */
-}
-
-.ptable th > i {
-    opacity: 0.7;
-}
-
-.ptable th:hover > i {
-    opacity: 1;
 }
 
 .ptable tr {
@@ -427,7 +427,7 @@ table *, .prefbox {
     cursor: pointer;
     outline: none;
     font-weight: bold;
-    opacity: 0.7;
+    opacity: 0.8;
     -webkit-transition: all 0.30s ease-in-out;
     -moz-transition: all 0.30s ease-in-out;
     -ms-transition: all 0.30s ease-in-out;
@@ -503,7 +503,9 @@ table *, .prefbox {
 }
 
 .close_btn {
-    float: right;
+    position: absolute;
+    top: 5px;
+    right: 10px;
     cursor: pointer;
     opacity: 0.8;
 }
