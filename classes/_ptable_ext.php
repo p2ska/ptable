@@ -14,6 +14,26 @@ class PTABLE_EXT extends PTABLE {
         return "nimi: ". $string;
     }
 
+    // hangi lugemata kirjade arv
+
+    function unread_messages($parent_id) {
+        $db = new P_DATABASE();
+        $db->connect(DB_HOST, DB_NAME, DB_USER, DB_PASS, DB_CHARSET, DB_COLLATION);
+
+        $db->query("select sum(notes) as notes from task where parent_id = ?", array($parent_id));
+
+        if ($db->rows) {
+            $result = $db->get_obj();
+
+            // kui on lugemata teateid
+
+            if ($result->notes)
+                $parent_id .= " ". $result->notes;
+        }
+
+        return $parent_id;
+    }
+
 	// koverteeri kuupäevad eesti regioonile vastavaks
 
 	function convert_date($date) {

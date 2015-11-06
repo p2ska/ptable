@@ -58,7 +58,7 @@ var ptable_url = "ptable.php";
 				var subdata = $(this);
 				var subrow = $("#subrow_" + $(this).data("values"));
 
-				if (subrow.is(":hidden")) {
+                if (subrow.is(":hidden")) {
 					$.ajax({ url: settings[ptable].url, data: { ptable: settings[ptable], subdata: $(this).data("values") } }).done(function(content) {
 						subrow.html(content);
 						subrow.show();
@@ -181,17 +181,7 @@ var ptable_url = "ptable.php";
             // tee midagi triggeriga rea või välja peal klikkimise peale (mitte lingi puhul siis)
 
             function trigger(target) {
-                /*var what = "";
-
-                $.each(data, function(i, field) {
-                    what += " [" + field + "]";
-                });
-
-                alert(what);
-                */
-                //var data = target.data();
-
-                alert("triggered");
+                alert("triggered: " + target.data("href"));
 
                 $("#content-wrapper").load(target.data["href"], function() {
                     $.getScript("/lemon/plugins/srm/main.js");

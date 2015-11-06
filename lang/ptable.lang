@@ -17,9 +17,17 @@ txt_pagesize			=> Kirjete arv lehel :: Page size ;;
 txt_autoupdate			=> Automaatne uuendus :: Automatic updates ;;
 txt_records				=> kirjet :: rows ;;
 txt_all_records			=> Kõik kirjed :: All rows ;;
-
-txt_2_status			=> Oluline! :: Important ;;
 txt_search_ph           => Otsi :: Search ;;
+
+txt_status_1			=> Koostamisel :: Scrambling ;;
+txt_status_2			=> Lahendamisel :: Solving ;;
+txt_status_3			=> Lõpetatud :: Closed ;;
+txt_status_4			=> Tühistatud :: Discarded ;;
+
+txt_prio_1              => Madal :: Low ;;
+txt_prio_2              => Keskmine :: Medium ;;
+txt_prio_3              => Kõrge :: High ;;
+txt_prio_4              => Kriitiline :: Critical ;;
 
 txt_request				=> Tellimus :: Request ;;
 txt_requester			=> Tellija :: Requester ;;

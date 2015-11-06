@@ -40,8 +40,8 @@ class PTABLE {
     $database, $host, $username, $password, $charset, $collation, $table, $query, $fields, $where, $values,
 	$search, $triggers, $joins, $order, $way, $limit, $records, $field_count, $field_search, $title, $style,
     $navigation, $nav_pre, $nav_post, $pages, $pagesize, $external_data, $external_pos, $col_width, $is,
-    $subdata, $subtable,
-    $debug			= false,		// debug reziim
+    $subdata, $subquery, $subvalues, $subfields,
+    $debug			= false,	    // debug reziim
     $header			= true,			// kas kuvatakse tabeli päist üldse
     $header_sep		= false,		// tabeli ülemine eraldusäär
     $footer_sep		= false,		// tabeli alumine eraldusäär
@@ -63,6 +63,8 @@ class PTABLE {
     $nav_length		= 5,			// navigeerimisnuppude arv
     $page			= 1,			// mitmendat lehekülge kuvatakse
     $page_size		= 10,			// mitu kirjet ühel lehel kuvatakse
+    $column_align   = "center",     // kui ei ole väljakirjelduses määratud teisiti, siis see on default joondumine
+    $column_width   = "5%",         // kui veerulaius pole muudetav ega väljakirjelduses paika pandud, siis see on default
     $order_icon		= "chevron",	// milliseid ikoone kasutatakse sorteerimisjärjekorra kuvamiseks (chevron, sort, angle-double)
     $nav_prev		= "{{angle-double-left}}",	// 'eelmine'-nupp
     $nav_next		= "{{angle-double-right}}",	// 'järgmine'-nupp
@@ -111,11 +113,9 @@ class PTABLE {
 
         $this->field_count = count($this->fields);
 
-        // kui kirjelduses pole tabelit paika pandud, siis võta default'iks põhitabel
+        // pane väljade default'id paika
 
-        for ($a = 0; $a < $this->field_count; $a++)
-            if (!isset($this->fields[$a]["table"]))
-                $this->fields[$a]["table"] = $this->table;
+        $this->field_defaults();
 
         // kirjuta default'id JS omadega üle (puhasta input)
 
@@ -208,26 +208,60 @@ class PTABLE {
         }
     }
 
+    // pane mõned default'id paika, mis pole kasutaja poolt väljadele lisatud
+
+    function field_defaults() {
+        for ($a = 0; $a < $this->field_count; $a++) {
+            // kui kirjelduses pole tabelit paika pandud, siis võta default'iks põhitabel
+
+            if (!isset($this->fields[$a]["table"]))
+                $this->fields[$a]["table"] = $this->table;
+
+            // kui ei ole määratud joondumist, siis pane default
+
+            if (!isset($this->fields[$a]["align"]))
+                $this->fields[$a]["align"] = $this->column_align;
+
+            // kui veergude laius pole muudetav ja pole ka kirjelduses laiust paika pandud, siis pane 10% laiuseks
+
+            if (!$this->resizable && !isset($this->fields[$a]["width"]))
+                $this->fields[$a]["width"] = $this->column_width;
+        }
+
+        // kui on ka alamtabel, siis säti selle defaulte ka
+
+        if (isset($this->subquery) && isset($this->subfields)) {
+            for ($a = 0; $a < count($this->subfields); $a++) {
+                // veerulaius
+
+                if (!isset($this->subfields[$a]["width"]))
+                    $this->subfields[$a]["width"] = $this->column_width;
+
+                // joondumine
+
+                if (!isset($this->subfields[$a]["align"]))
+                    $this->subfields[$a]["align"] = $this->column_align;
+            }
+        }
+    }
+
     // hangi alamtabeli andmed
 
     function subtable() {
-        $this->db->query($this->subtable["query"], $this->subtable["values"]);
+        if (!isset($this->subquery) || !isset($this->subvalues))
+            return false;
+
+        $this->db->query($this->subquery, $this->subvalues);
 
 		$this->content .= "<table class=\"subtable\"><tr>";
 
-		foreach ($this->subtable["fields"] as $subfield => $subtitle)
-			$this->content .= "<th class=\"no_order\">". $subtitle. "</th>";
+		foreach ($this->subfields as $subfield)
+			$this->content .= "<th class=\"no_order\">". $subfield["title"]. "</th>";
 
 		$this->content .= "</tr>";
 
-       	while ($obj = $this->db->get_obj()) {
-			$this->content .= "<tr class=\"trigger\" data-href=\"\">";
-
-			foreach ($this->subtable["fields"] as $subfield => $subtitle)
-				$this->content .= "<td>". $obj->{ $subfield }. "</td>";
-
-			$this->content .= "</tr>";
-        }
+        while ($obj = $this->db->get_obj())
+            $this->print_row($obj, "sub");
 
 		$this->content .= "</table>";
     }
@@ -641,30 +675,38 @@ class PTABLE {
 
     // väljasta väärtused baasist
 
-    function print_row($obj) {
+    function print_row($obj, $type = "main") {
         // kas kogu real on trigger küljes?
 
         $row["field"] = "ROW";
-        $this->output($row, $obj);
+        $this->output($row, $obj, $type);
 
         // nüüd vaata, kas väljale on defineeritud trigger või mitte, ja väljasta väärtus
 
         $count = 0;
 		$subtable = false;
 
-        foreach ($this->fields as $field) {
-			if (isset($field["subtable"]) && $field["subtable"])
-				$subtable = true;
+        // kui on põhiväli, siis kuva vajadusel alamtabeli trigger
 
-			$this->output($field, $obj, $count++);
-		}
+        if ($type == "main") {
+            foreach ($this->fields as $field) {
+                if (isset($field["subtable"]) && $field["subtable"])
+                    $subtable = true;
 
-		// kui on alamtabel, siis kuva lisarida selle jaoks
+                $this->output($field, $obj, $type, $count++);
+            }
 
-		if ($subtable) {
-			$this->content .= "<tr><td class=\"subrow\" id=\"subrow_". $obj->id. "\" colspan=100></td></tr>";
-			$this->content .= "<tr><td class=\"hide\" colspan=100></td></tr>";
-		}
+            // kui on alamtabel, siis kuva lisarida selle jaoks
+
+            if ($subtable) {
+                $this->content .= "<tr><td class=\"subrow\" id=\"subrow_". $obj->subrow_id. "\" colspan=100></td></tr>";
+                $this->content .= "<tr><td class=\"hide\" colspan=100></td></tr>";
+            }
+        }
+        else {
+            foreach ($this->subfields as $subfield)
+                $this->output($subfield, $obj, $type, $count++);
+        }
 
         $this->content .= "</tr>";
     }
@@ -695,16 +737,20 @@ class PTABLE {
 
     // prindi
 
-    function output($field, $data, $pos = 0) {
-        $link = $title = $class = $style = $colspan = P_VOID;
+    function output($field, &$data, $type = "main", $pos = 0) {
+        $trigger = $link = $title = $class = $style = $colspan = $subcount = P_VOID;
         $styles = array();
 
 		if (isset($field["hidden"]) && $field["hidden"])
 			return true;
 
-        if (isset($this->triggers[$field["field"]])) {
-            $class = "trigger";
+        if ($type == "main" && isset($this->triggers[$field["field"]]))
             $trigger = $this->triggers[$field["field"]];
+        elseif ($type != "main" && isset($this->subtriggers[$field["field"]]))
+            $trigger = $this->subtriggers[$field["field"]];
+
+        if ($trigger) {
+            $class = "trigger";
 
             if (isset($trigger["class"]) && $trigger["class"])
                 $class .= " ". $trigger["class"];
@@ -775,7 +821,12 @@ class PTABLE {
             else {
 				$this->content .= ">". $this->format_value($field, $data). "</td>";
 
-                if ($this->resizable && $pos < ($this->field_count - 1))
+                if ($type == "main")
+                    $last = $this->field_count - 1;
+                else
+                    $last = count($this->subfields) - 1;
+
+                if ($this->resizable && $pos < $last)
                     $this->content .= "<td class=\"resize\"></td>";
             }
         }
@@ -803,9 +854,9 @@ class PTABLE {
                 $this->content .= $colspan. $class. $style. ">";
 
                 if (isset($field["subtable"]) && $field["subtable"]) {
-                    $values = $this->replace_markup($field["subtable"], $field, $data);
+                    $data->subrow_id = $this->replace_markup($field["subtable"], $field, $data);
 
-                    $this->content .= "<span class=\"subdata\" data-values=\"". $values. "\">";
+                    $this->content .= "<span class=\"subdata\" data-values=\"". $data->subrow_id. "\">";
 					$this->content .= "<span class=\"sub_closed\">". $this->awesome("{{plus-square}}"). "</span>";
 					$this->content .= "<span class=\"sub_opened\">". $this->awesome("{{minus-square}}"). "</span>";
 					$this->content .= "</span> ";
@@ -827,7 +878,12 @@ class PTABLE {
 
                 $this->content .= "</td>";
 
-                if ($this->resizable && $pos < ($this->field_count - 1))
+                if ($type == "main")
+                    $last = $this->field_count - 1;
+                else
+                    $last = count($this->subfields) - 1;
+
+                if ($this->resizable && $pos < $last)
                     $this->content .= "<td class=\"resize\"></td>";
             }
         }
