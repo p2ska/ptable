@@ -103,10 +103,19 @@ table *, .prefbox {
 /* tabeli nimi */
 
 .ptable .title {
+	float: left;
     font-weight: bold;
     margin-top: 1px;
     margin-left: 8px;
+	margin-right: 50px;
     color: #669;
+}
+
+/* tabeli where' valikud */
+
+.ptable .selection {
+	float: left;
+	margin-top: -8px;
 }
 
 /* parem pool päisest (min, max, seaded, otsing) */
@@ -387,6 +396,19 @@ table *, .prefbox {
 }
 
 .ptable .autoupdate_check:hover, .ptable .hover:hover {
+    font-weight: bold;
+}
+
+.ptable .check_off, .ptable .check_on {
+	width: 20px;
+    margin-left: 5px;
+    font-size: 20px;
+    color: #870042;
+    line-height: 44px;
+    cursor: pointer;
+}
+
+.ptable .check_off:hover, .ptable .check_on:hover {
     font-weight: bold;
 }
 

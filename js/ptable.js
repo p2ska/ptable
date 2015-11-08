@@ -24,6 +24,7 @@ var ptable_url = "ptable.php";
                 data:   user_data($(this).data()),
                 mode:   "init",
                 url:    ptable_url,
+				selected: [],
                 search_from: 3
             }
 
@@ -34,6 +35,23 @@ var ptable_url = "ptable.php";
             // tabeli kuvamine
 
             update(ptable);
+
+			$("#" + settings[ptable].target).on("click", ".check", function() {
+				var chk = $(this).prop("id");
+				var cid = $(this).data("cid");
+				var tbl = $(this).data("table");
+
+            	$("#" + chk + " > .check_off, #" + chk + " > .check_on").toggle();
+
+            	if ($("#" + chk + " > .check_on").is(":visible"))
+                	$("#" + chk + "_val").val(1);
+            	else
+                	$("#" + chk + "_val").val(0);
+
+               	settings[tbl].selected[cid] = parseInt($("#" + chk + "_val").val());
+
+				update(tbl);
+			});
 
             $("#" + settings[ptable].target).on("click", ".infobox", function(e) {
 				e.stopImmediatePropagation();
@@ -181,9 +199,9 @@ var ptable_url = "ptable.php";
             // tee midagi triggeriga rea või välja peal klikkimise peale (mitte lingi puhul siis)
 
             function trigger(target) {
-                alert("triggered: " + target.data("href"));
+                //alert("triggered: " + target.data("href"));
 
-                $("#content-wrapper").load(target.data["href"], function() {
+                $("#content-wrapper").load(target.data("href"), function() {
                     $.getScript("/lemon/plugins/srm/main.js");
                 });
             }
@@ -354,7 +372,7 @@ var ptable_url = "ptable.php";
                 else
                     $(prefix + settings[ptable].target + "_container").html(content);
 
-                settings[ptable].page = $(prefix + settings[ptable].target).data("page");
+				settings[ptable].page = $(prefix + settings[ptable].target).data("page");
                 settings[ptable].page_size = $(prefix + settings[ptable].target).data("page_size");
                 settings[ptable].order = $(prefix + settings[ptable].target).data("order");
                 settings[ptable].way = $(prefix + settings[ptable].target).data("way");
@@ -400,13 +418,13 @@ var ptable_url = "ptable.php";
             settings[ptable].col_width = store.get(ptable + "_col_width");
             //settings[ptable].page		= store.get(ptable + "_page");
             settings[ptable].page_size = store.get(ptable + "_page_size");
+            settings[ptable].selected = store.get(ptable + "_selected");
             //settings[ptable].order	= store.get(ptable + "_order");
             //settings[ptable].way		= store.get(ptable + "_way");
             //settings[ptable].minimized= store.get(ptable + "_minimized"); // TODO
             //settings[ptable].search	= store.get(ptable + "_search");
 
-            clog(ptable,
-                    "autoupdate = " + store.get(ptable + "_autoupdate"), "sniffed");
+            clog(ptable, "autoupdate = " + store.get(ptable + "_autoupdate"), "sniffed");
             clog("col_width  = " + store.get(ptable + "_col_width"));
             clog("page_size  = " + store.get(ptable + "_page_size"));
             clog("order      = " + store.get(ptable + "_order"));
@@ -425,6 +443,7 @@ var ptable_url = "ptable.php";
             store.set(ptable + "_page_size", settings[ptable].page_size);
             store.set(ptable + "_order", settings[ptable].order);
             store.set(ptable + "_way", settings[ptable].way);
+			store.set(ptable + "_selected", settings[ptable].selected);
             //store.set(ptable + "_minimized",	settings[ptable].minimized);
             //store.set(ptable + "_search",		settings[ptable].search);
 

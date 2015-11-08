@@ -40,7 +40,7 @@ class PTABLE {
     $database, $host, $username, $password, $charset, $collation, $table, $query, $fields, $where, $values,
 	$search, $triggers, $joins, $order, $way, $limit, $records, $field_count, $field_search, $title, $style,
     $navigation, $nav_pre, $nav_post, $pages, $pagesize, $external_data, $external_pos, $col_width, $is,
-    $subdata, $subquery, $subvalues, $subfields,
+    $subdata, $subquery, $subvalues, $subfields, $selected, $selection,
     $debug			= false,	    // debug reziim
     $header			= true,			// kas kuvatakse tabeli päist üldse
     $header_sep		= false,		// tabeli ülemine eraldusäär
@@ -99,7 +99,7 @@ class PTABLE {
         if (isset($init["data"]) && $init["data"])
             $this->data = $this->safe($init["data"]);
 
-        // subdata[] muutuja edastamiseks tabelikirjeldusele
+		// subdata[] muutuja edastamiseks tabelikirjeldusele
 
         if (isset($init["subdata"]) && $init["subdata"])
             $this->subdata = explode(P_EX, $this->safe($init["subdata"]));
@@ -177,7 +177,7 @@ class PTABLE {
 
         // moodusta tabel
 
-        $this->display();
+		$this->display();
 
         // kuvamiseks kasuta
         // echo $this->content;
@@ -276,7 +276,29 @@ class PTABLE {
         if ($this->where)
             $this->where = P_WHERE. $this->where;
 
-        // otsingutingumused
+		if ($this->selection) {
+			$where_sel = [];
+
+			if (!$this->selected) {
+				foreach ($this->selection as $key => $val)
+					$this->selected[$key] = $val["checked"];
+			}
+
+			foreach ($this->selected as $key => $val)
+				if ($val)
+					$where_sel[] = $this->selection[$key]["where"];
+
+			if ($where_sel) {
+				if ($this->where)
+					$this->where .= " && ";
+				else
+					$this->where = P_WHERE;
+
+				$this->where .= "(". implode(" || ", $where_sel). ")";
+			}
+		}
+
+		// otsingutingumused
 
 		if ($this->field_search) {
 			if (substr_count($this->field_search, P_FSS)) {
@@ -538,6 +560,21 @@ class PTABLE {
                     $this->content .= "<u>". $this->title. "</u></div>";
                 }
 
+				if (is_array($this->selection)) {
+					$this->content .= "<div class=\"selection\">";
+
+					foreach ($this->selection as $key => $val) {
+						if ($this->selected[$key])
+							$checked = true;
+						else
+							$checked = false;
+
+						$this->checkbox($key, $val["title"], $checked);
+					}
+
+					$this->content .= "</div>";
+				}
+
 				// header_left lõpp
 
 				$this->content .= "</div>";
@@ -665,6 +702,17 @@ class PTABLE {
             }
         }
     }
+
+	function checkbox($cid, $title, $checked) {
+		$id = $this->target. "_checkbox_". $cid;
+
+		$this->content .= "<span id=\"". $id. "\" class=\"check\" data-table=\"". $this->target. "\" data-cid=\"". $cid. "\">";
+		$this->content .= "<i class=\"check_off fa fa-square-o\"". ($checked ? " style='display:none'" : ""). "></i>";
+        $this->content .= "<i class=\"check_on fa fa-check-square-o\"". ($checked ? "" : " style='display:none'"). "></i>";
+		$this->content .= " ". $title. " ";
+        $this->content .= "<input type=\"hidden\" id=\"". $id. "_val\" value=\"". $checked. "\">";
+		$this->content .= "</span>";
+	}
 
 	function small_btn($id, $class, $icon, $icon2, $title) {
 		$this->content .= "<span data-parent=\"". $id. "\" class=\"". $class. " small_btn\" title=\"". $title. "\">";
