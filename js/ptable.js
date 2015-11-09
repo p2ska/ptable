@@ -24,7 +24,7 @@ var ptable_url = "ptable.php";
                 data:   user_data($(this).data()),
                 mode:   "init",
                 url:    ptable_url,
-				selected: [],
+				selected: {},
                 search_from: 3
             }
 
@@ -48,8 +48,7 @@ var ptable_url = "ptable.php";
             	else
                 	$("#" + chk + "_val").val(0);
 
-               	settings[tbl].selected[cid] = parseInt($("#" + chk + "_val").val());
-
+                settings[tbl].selected[cid] = parseInt($("#" + chk + "_val").val());
 				update(tbl);
 			});
 
@@ -416,9 +415,9 @@ var ptable_url = "ptable.php";
 
             settings[ptable].autoupdate = store.get(ptable + "_autoupdate");
             settings[ptable].col_width = store.get(ptable + "_col_width");
-            //settings[ptable].page		= store.get(ptable + "_page");
             settings[ptable].page_size = store.get(ptable + "_page_size");
             settings[ptable].selected = store.get(ptable + "_selected");
+            //settings[ptable].page		= store.get(ptable + "_page");
             //settings[ptable].order	= store.get(ptable + "_order");
             //settings[ptable].way		= store.get(ptable + "_way");
             //settings[ptable].minimized= store.get(ptable + "_minimized"); // TODO
@@ -439,16 +438,15 @@ var ptable_url = "ptable.php";
 
             store.set(ptable + "_autoupdate", settings[ptable].autoupdate);
             store.set(ptable + "_col_width", settings[ptable].col_width);
-            //store.set(ptable + "_page",		settings[ptable].page);
             store.set(ptable + "_page_size", settings[ptable].page_size);
             store.set(ptable + "_order", settings[ptable].order);
             store.set(ptable + "_way", settings[ptable].way);
 			store.set(ptable + "_selected", settings[ptable].selected);
+            //store.set(ptable + "_page",		settings[ptable].page);
             //store.set(ptable + "_minimized",	settings[ptable].minimized);
             //store.set(ptable + "_search",		settings[ptable].search);
 
-            clog(ptable,
-                    "autoupdate = " + settings[ptable].autoupdate, "stored");
+            clog(ptable, "autoupdate = " + settings[ptable].autoupdate, "stored");
             clog("col_width  = " + settings[ptable].col_width);
             clog("page_size  = " + settings[ptable].page_size);
             clog("order      = " + settings[ptable].order);

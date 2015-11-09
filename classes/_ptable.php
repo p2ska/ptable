@@ -284,9 +284,11 @@ class PTABLE {
 					$this->selected[$key] = $val["checked"];
 			}
 
-			foreach ($this->selected as $key => $val)
-				if ($val)
-					$where_sel[] = $this->selection[$key]["where"];
+            if (is_array($this->selected)) {
+                foreach ($this->selected as $key => $val)
+                    if ($val)
+                        $where_sel[] = $this->selection[$key]["where"];
+            }
 
 			if ($where_sel) {
 				if ($this->where)
@@ -564,7 +566,7 @@ class PTABLE {
 					$this->content .= "<div class=\"selection\">";
 
 					foreach ($this->selection as $key => $val) {
-						if ($this->selected[$key])
+						if (isset($this->selected[$key]) && $this->selected[$key])
 							$checked = true;
 						else
 							$checked = false;
@@ -669,7 +671,7 @@ class PTABLE {
 
         if ($this->records) {
             if ($this->db) {
-                while ($obj = $this->db->get_obj())
+				foreach ($this->db->get_all() as $obj)
                     $this->print_row($obj);
             }
             else {
@@ -904,10 +906,17 @@ class PTABLE {
                 if (isset($field["subtable"]) && $field["subtable"]) {
                     $data->subrow_id = $this->replace_markup($field["subtable"], $field, $data);
 
-                    $this->content .= "<span class=\"subdata\" data-values=\"". $data->subrow_id. "\">";
-					$this->content .= "<span class=\"sub_closed\">". $this->awesome("{{plus-square}}"). "</span>";
-					$this->content .= "<span class=\"sub_opened\">". $this->awesome("{{minus-square}}"). "</span>";
-					$this->content .= "</span> ";
+					$this->db->query($this->subquery, array($data->subrow_id));
+
+                    if ($this->db->rows) {
+                        $this->content .= "<span class=\"subdata\" data-values=\"". $data->subrow_id. "\">";
+                        $this->content .= "<span class=\"sub_closed\">". $this->awesome("{{plus-square}}"). "</span>";
+                        $this->content .= "<span class=\"sub_opened\">". $this->awesome("{{minus-square}}"). "</span>";
+                        $this->content .= "</span> ";
+                    }
+                    else {
+						$this->content .= "<span class=\"subdata\">". $this->awesome("{{square-o}}"). "</span> ";
+                    }
                 }
 
                 $this->content .= $this->format_value($field, $data);
