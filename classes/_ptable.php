@@ -791,8 +791,8 @@ class PTABLE {
         $trigger = $link = $title = $class = $style = $colspan = $subcount = P_VOID;
         $styles = array();
 
-		if (isset($field["hidden"]) && $field["hidden"])
-			return true;
+		if (isset($field["hidden"]) && $this->hide_column($field["hidden"]))
+            return true;
 
         if ($type == "main" && isset($this->triggers[$field["field"]]))
             $trigger = $this->triggers[$field["field"]];
@@ -1013,6 +1013,48 @@ class PTABLE {
 		return $value;
 	}
 
+    // TODO: veeru peitmine mingitel tingimustel
+
+    function hide_column($hide) {
+        // kui on väljakirjelduses sunnitud peitmine
+
+        if ($hide === true)
+            return true;
+
+        $operator = false;
+        $operators = array("<", ">", "=", "<=", ">=");
+
+        // kas mõni operaator on olemas?
+
+        foreach ($operators as $op)
+            if (strpos($hide, $op)) {
+                $operator = $op;
+
+                break;
+            }
+
+        // kui mitte, siis peida väli
+
+        if ($operator === false)
+            return true;
+
+        // kas on arusaadav millega võrreldakse üldse
+
+        list($key, $val) = explode($operator, $hide);
+
+        $key = trim(strtolower($key));
+        $val = trim($val);
+
+        // hetkel ainult tabeli üldine laius 'width' on aksepteeritav parameeter
+
+        if ($key != "width")
+            return true;
+
+        // kontrolli, kas tingimus vastab tõele
+
+        //var_dump($this->col_width);
+    }
+
 	// tabeli väljade kirjeldused
 
     function fields_descr() {
@@ -1022,7 +1064,9 @@ class PTABLE {
         $this->content .= "<tr>";
 
         foreach ($this->fields as $field) {
-			if (isset($field["hidden"]) && $field["hidden"]) // ignoreeri peidetud välja
+            // kas on vaja välja peita?
+
+			if (isset($field["hidden"]) && $this->hide_column($field["hidden"]))
 				continue;
 
             $current_field++;

@@ -649,6 +649,16 @@ table *, .prefbox {
     color: #870042;
 }
 
+@media all and (min-width: 768px) and (max-width: 959px) {
+    .ptable {
+        display: none;
+        width: 0px;
+        height: 0px;
+        opacity: 0;
+        visibility: collapse;
+    }
+}
+
 /* tekstikastide placeholderid */
 
 ::-webkit-input-placeholder,

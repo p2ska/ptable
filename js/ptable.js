@@ -363,6 +363,9 @@ var ptable_url = "ptable.php";
             if (settings[ptable].mode === "update")
                 settings[ptable].col_width = col_widths(ptable);
 
+            //settings[ptable].tbl_width = $(prefix + settings[ptable].target).width();
+            //console.log(settings[ptable].tbl_width);
+
             // uuenda tabelit
 
             $.ajax({url: settings[ptable].url, data: { ptable: settings[ptable] } }).done(function(content) {

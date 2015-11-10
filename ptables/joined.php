@@ -14,7 +14,7 @@ $this->selection= [
 
 $this->fields = [
 	[ "field" => "id",         "title" => "id",        "subtable"   => "[id]", "searchable" => true, "align" => "left", "fetch" => [ "unread_messages" => "[id]" ], "print" => "{%unread_messages%}" ],
-	[ "field" => "prio",	   "title" => "prio",      "translate"	=> "txt_prio_[prio]" ],
+	[ "field" => "prio",	   "title" => "prio",      "hidden"     => "width<700", "translate"	=> "txt_prio_[prio]" ],
 	[ "field" => "requester",  "info"  => "{%person%}","align"		=> "left", "nowrap"     => "true", "fetch"      => [ "person" => "[requester]" ], "print" => "{{amazon}}[id]{%person%}", "title" => "{{amazon}} requester", "extend" => "autolink", "searchable"	=> true, "field_search" => true, "placeholder" => "ahaa" ],
 	[ "field" => "subject",    "title" => "subject",   "align"      => "left", "searchable"	=> true, "width" => "*", "extend" => "break_long" ],
     [ "field" => "status",     "title" => "status",    "translate"  => "txt_status_[status]" ],
@@ -46,7 +46,6 @@ $this->subtriggers	= [
 $this->resizable    = false;
 //$this->title        = $this->data["example"];
 $this->is           = [ P_NULL => "----", 0 => "000", "0000-00-00 00:00:00" => "-" ];
-$this->badge        = true;
 $this->search_ph    = $l->txt_search_ph;
 
 ?>
