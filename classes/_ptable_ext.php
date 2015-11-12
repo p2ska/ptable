@@ -14,6 +14,12 @@ class PTABLE_EXT extends PTABLE {
         return "nimi: ". $string;
     }
 
+	// hangi sõnumi sisu
+
+	function msg_content($uid) {
+		return "hahah";
+	}
+
     // hangi lugemata kirjade arv
 
     function unread_messages($parent_id) {
@@ -59,7 +65,7 @@ class PTABLE_EXT extends PTABLE {
 	// muuda emailiaadressid ja veebilingid linkideks
 
 	function autolink($string) {
-		$string = preg_replace("/(([\w\.]+))(@)([\w\.]+)\b/i", "<a href=\"mailto:$0\">$0</a>", $string);
+		$string = preg_replace("/(([\w\.-]+))(@)([\w\.]+)\b/i", "<a href=\"mailto:$0\">$0</a>", $string);
 		$string = preg_replace('#(http|https|ftp)://([^\s]*)#', '<a href="\\1://\\2" target="_blank">\\1://\\2</a>', $string);
 
 		return $string;

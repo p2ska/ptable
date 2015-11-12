@@ -26,6 +26,10 @@ hr {
 	color: #870042;
 }
 
+.btn {
+	color: #fff;
+}
+
 /* ptable */
 
 .ptable .sep {
@@ -500,11 +504,10 @@ table *, .prefbox {
 .ptable .disabled, .ptable .denied {
     cursor: default;
     color: #ccc;
-    border: 1px solid #ccc;
 }
 
-.ptable .denied {
-    cursor: default;
+.ptable .border {
+	border: 1px solid #ccc;
 }
 
 .bubble {
@@ -595,6 +598,7 @@ table *, .prefbox {
 }
 
 .ptable .subdata {
+    cursor: pointer;
 	padding: 5px;
 	opacity: 0.8;
 }
@@ -645,7 +649,7 @@ table *, .prefbox {
 	border-right: 1px solid #999 !important;
 }
 
-.ptable .subdata {
+.ptable .sub_closed, .ptable .sub_opened {
     color: #870042;
 }
 

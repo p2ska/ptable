@@ -1,15 +1,20 @@
 <?php
 
 $this->fields		= [
-	[ "field"	=> "id",		"title" => "ID",       "searchable" => false, "sortable" => false ],
-	[ "field"	=> "nimi",		"title" => "Nimi",     "align" => "right", "nowrap" => true, "searchable" => true, "search_left" => true, "search_right" => true ],
-	[ "field"	=> "lisatud",	"title" => "Lisatud",  "searchable" => false ],
-	[ "field"	=> "olek",		"title" => "Olek",     "searchable" => false ]
+	[ "field"	=> "id",		"title" => "ID",       "hidden" => true, "sortable" => false ],
+	[ "field"	=> "nimi",		"title" => "Nimi",     "subdata" => "[id]", "align" => "right", "nowrap" => true, "searchable" => true ],
+	[ "field"	=> "lisatud",	"title" => "Lisatud" ],
+	[ "field"	=> "olek",		"title" => "Olek" ]
 ];
 
+$this->selection= [
+	0 => [ "title" => "Kuva kustutatuid", "checked" => false,	"disabled" => true, "where" => "status = 1" ]
+];
+
+$this->subcontent = "msg_content";
+
 $this->triggers		= [
-	"ROW"		=> [ "link"	=> "http://www.ttu.ee/#[nimi]" ],
-	"nimi"		=> [ "link" => "http://www.ttu.ee[id]", "title" => "[nimi]", "external" => true ]
+	"ROW"		=> [ "link"	=> "http://www.ttu.ee/#[nimi]" ]
 ];
 
 $this->autosearch = true;

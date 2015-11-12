@@ -165,8 +165,14 @@ class PTABLE {
 
         // kui on tegemist alamtabeliga
 
-        if (isset($init["subdata"]))
-            return $this->subtable();
+        if (isset($init["subdata"])) {
+			if (isset($this->subquery) && $this->subquery && isset($this->subvalues) && $this->subvalues)
+            	return $this->subtable();
+			elseif (isset($this->subcontent) && $this->subcontent)
+				return $this->subdata();
+			else
+				return false;
+		}
 
         // hangi ja töötle andmeid
 
@@ -230,7 +236,7 @@ class PTABLE {
 
         // kui on ka alamtabel, siis säti selle defaulte ka
 
-        if (isset($this->subquery) && isset($this->subfields)) {
+        if (isset($this->subquery) && $this->subquery && isset($this->subfields) && $this->subfields) {
             for ($a = 0; $a < count($this->subfields); $a++) {
                 // veerulaius
 
@@ -248,9 +254,6 @@ class PTABLE {
     // hangi alamtabeli andmed
 
     function subtable() {
-        if (!isset($this->subquery) || !isset($this->subvalues))
-            return false;
-
         $this->db->query($this->subquery, $this->subvalues);
 
 		$this->content .= "<table class=\"subtable\"><tr>";
@@ -265,6 +268,14 @@ class PTABLE {
 
 		$this->content .= "</table>";
     }
+
+	// hangi alamsisu
+
+	function subdata() {
+        if (method_exists($this, $this->subcontent)) {
+			$this->content .= $this->{ $this->subcontent }($this->subdata);
+        }
+	}
 
     // hangi tabeli andmed
 
@@ -485,7 +496,7 @@ class PTABLE {
 						elseif (!$field["left"] && $field["right"]) {
 						}
 						*/
-                        elseif (substr_count($field_value, $this->search)) { // täisotsing
+                        elseif (stripos($field_value, $this->search) !== false) { // täisotsing
                             $found = true;
                             break;
                         }
@@ -571,7 +582,7 @@ class PTABLE {
 						else
 							$checked = false;
 
-						$this->checkbox($key, $val["title"], $checked);
+						$this->checkbox($key, $val, $checked);
 					}
 
 					$this->content .= "</div>";
@@ -705,13 +716,17 @@ class PTABLE {
         }
     }
 
-	function checkbox($cid, $title, $checked) {
+	function checkbox($cid, $data, $checked) {
 		$id = $this->target. "_checkbox_". $cid;
+		$disabled = P_VOID;
 
-		$this->content .= "<span id=\"". $id. "\" class=\"check\" data-table=\"". $this->target. "\" data-cid=\"". $cid. "\">";
-		$this->content .= "<i class=\"check_off fa fa-square-o\"". ($checked ? " style='display:none'" : ""). "></i>";
-        $this->content .= "<i class=\"check_on fa fa-check-square-o\"". ($checked ? "" : " style='display:none'"). "></i>";
-		$this->content .= " ". $title. " ";
+		if (isset($data["disabled"]) && $data["disabled"])
+			$disabled = "disabled ";
+
+		$this->content .= "<span id=\"". $id. "\" class=\"check". $disabled. "\" data-table=\"". $this->target. "\" data-cid=\"". $cid. "\">";
+		$this->content .= "<i class=\"check_off ". $disabled. "fa fa-square-o\"". ($checked ? " style='display:none'" : ""). "></i>";
+        $this->content .= "<i class=\"check_on ". $disabled. "fa fa-check-square-o\"". ($checked ? "" : " style='display:none'"). "></i>";
+		$this->content .= " ". $data["title"]. " ";
         $this->content .= "<input type=\"hidden\" id=\"". $id. "_val\" value=\"". $checked. "\">";
 		$this->content .= "</span>";
 	}
@@ -734,21 +749,21 @@ class PTABLE {
         // nüüd vaata, kas väljale on defineeritud trigger või mitte, ja väljasta väärtus
 
         $count = 0;
-		$subtable = false;
+		$subcontent = false;
 
         // kui on põhiväli, siis kuva vajadusel alamtabeli trigger
 
         if ($type == "main") {
             foreach ($this->fields as $field) {
-                if (isset($field["subtable"]) && $field["subtable"])
-                    $subtable = true;
+                if ((isset($field["subtable"]) && $field["subtable"]) || (isset($field["subdata"]) && $field["subdata"]))
+                    $subcontent = true;
 
                 $this->output($field, $obj, $type, $count++);
             }
 
             // kui on alamtabel, siis kuva lisarida selle jaoks
 
-            if ($subtable) {
+            if ($subcontent) {
                 $this->content .= "<tr><td class=\"subrow\" id=\"subrow_". $obj->subrow_id. "\" colspan=100></td></tr>";
                 $this->content .= "<tr><td class=\"hide\" colspan=100></td></tr>";
             }
@@ -904,19 +919,36 @@ class PTABLE {
                 $this->content .= $colspan. $class. $style. ">";
 
                 if (isset($field["subtable"]) && $field["subtable"]) {
-                    $data->subrow_id = $this->replace_markup($field["subtable"], $field, $data);
+					$data->subrow_id = $this->replace_markup($field["subtable"], $field, $data);
 
-					$this->db->query($this->subquery, array($data->subrow_id));
+					if (isset($this->subquery) && $this->subquery) {
+						$this->db->query($this->subquery, array($data->subrow_id));
 
-                    if ($this->db->rows) {
-                        $this->content .= "<span class=\"subdata\" data-values=\"". $data->subrow_id. "\">";
-                        $this->content .= "<span class=\"sub_closed\">". $this->awesome("{{plus-square}}"). "</span>";
-                        $this->content .= "<span class=\"sub_opened\">". $this->awesome("{{minus-square}}"). "</span>";
-                        $this->content .= "</span> ";
-                    }
-                    else {
-						$this->content .= "<span class=\"subdata\">". $this->awesome("{{square-o}}"). "</span> ";
-                    }
+						if ($this->db->rows) {
+                        	$this->content .= "<span class=\"subdata\" data-values=\"". $data->subrow_id. "\">";
+                        	$this->content .= "<span class=\"sub_closed\">". $this->awesome("{{plus-square}}"). "</span>";
+                        	$this->content .= "<span class=\"sub_opened\">". $this->awesome("{{minus-square}}"). "</span>";
+                        	$this->content .= "</span> ";
+                    	}
+                    	else {
+							$this->content .= "<span class=\"subdata\">". $this->awesome("{{square-o}}"). "</span> ";
+                    	}
+					}
+                }
+                elseif (isset($field["subdata"]) && $field["subdata"]) {
+					$data->subrow_id = $this->replace_markup($field["subdata"], $field, $data);
+
+					if (isset($this->subcontent) && $this->subcontent) {
+						if (1) {
+                        	$this->content .= "<span class=\"subdata\" data-values=\"". $data->subrow_id. "\">";
+                        	$this->content .= "<span class=\"sub_closed\">". $this->awesome("{{plus-square}}"). "</span>";
+                        	$this->content .= "<span class=\"sub_opened\">". $this->awesome("{{minus-square}}"). "</span>";
+                        	$this->content .= "</span> ";
+                    	}
+                    	else {
+							$this->content .= "<span class=\"subdata\">". $this->awesome("{{square-o}}"). "</span> ";
+                    	}
+					}
                 }
 
                 $this->content .= $this->format_value($field, $data);
@@ -1207,7 +1239,7 @@ class PTABLE {
 
     function form_dropdown($values, $current_val, $element) {
         $pr = "<select id=\"". P_PREFIX. $this->target. "_". $element. "\" data-table=\"". $this->target. "\" class=\"". $element. "\"";
-        $pr.= ($current_val ? "" : " disabled"). ">";
+        $pr.= ($current_val ? "" : " disabled border"). ">";
 
         foreach ($values as $key => $val) {
             $pr .= "<option value=\"". $key. "\"";
