@@ -25,6 +25,10 @@ foreach ($example_data as $ex) {
 	$el->nimi = $b;
 	$el->lisatud = $c;
 	$el->olek = $d;
+    $el->deleted = 0;
+
+    if ($d == 2)
+        $el->deleted = 1;
 
 	$data[] = $el;
 }

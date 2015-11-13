@@ -51,7 +51,7 @@ $this->fields	= [
     "is"           => [ 0 => "-" ],// väärtuse teisenduste kirjeldused (kirjutab üle $this->is) P_NULL on tühi väärtus     [[<is>.. ]]: none
     "info"         => "kirjeldus", // kuva hoveri korral infoaken (vajab ka triggerit)                                     [<string>]: none
 	"translate"    => "pr_[prio]", // prinditakse välja väärtus sprintf'iga tõlke külge ($l->tõlkestring ja väärtus)       [none, <translation>] :none
-	"print"        => "#[value]#", // prindi väärtus antud stringi sisse                                                   [none, <string>] :none
+	"print"        => "[value]",   // prindi väärtus antud stringi sisse                                                   [none, <string>] :none
 	"extend"       => "autolink"   // määra väljale teisendusfunktsioon (ptable klassi extensioni all kirjeldatud)         [<method>, [ <method>, <method>.. ] ]: none
 	]
 ];

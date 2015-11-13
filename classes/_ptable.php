@@ -40,7 +40,7 @@ class PTABLE {
     $database, $host, $username, $password, $charset, $collation, $table, $query, $fields, $where, $values,
 	$search, $triggers, $joins, $order, $way, $limit, $records, $field_count, $field_search, $title, $style,
     $navigation, $nav_pre, $nav_post, $pages, $pagesize, $external_data, $external_pos, $col_width, $is,
-    $subdata, $subquery, $subvalues, $subfields, $selected, $selection,
+    $subdata, $subquery, $subvalues, $subfields, $subcontent, $selected, $selection,
     $debug			= false,	    // debug reziim
     $header			= true,			// kas kuvatakse tabeli päist üldse
     $header_sep		= false,		// tabeli ülemine eraldusäär
@@ -478,6 +478,7 @@ class PTABLE {
                 for ($a = 0; $a < $records; $a++) {
                     $found = false;
                     $record = $this->external_data[$a];
+
                     // kas otsitavas väljas sisaldub otsisõna?
 
                     foreach ($search_field as $field) {
@@ -512,6 +513,35 @@ class PTABLE {
             reset($this->external_data);
         }
 
+        // kas on vaja vastavalt kasutaja klikkimisele checkbox'idel tulemit kitsendada
+
+		if ($this->selection) {
+			if (!$this->selected) {
+				foreach ($this->selection as $key => $val)
+					$this->selected[$key] = $val["checked"];
+			}
+
+            $records = count($this->external_data);
+
+            if (is_array($this->selected)) {
+                for ($a = 0; $a < $records; $a++) {
+                    foreach ($this->selected as $selected_key => $selected_val) {
+                        if (isset($this->external_data[$a]) && isset($this->selection[$selected_key]["add"]))
+                            foreach ($this->selection[$selected_key]["add"] as $where_key => $where_val)
+                                if ($selected_val && $this->external_data[$a]->{ $where_key } == $where_val)
+                                    unset($this->external_data[$a]);
+
+                        if (isset($this->external_data[$a]) && isset($this->selection[$selected_key]["remove"]))
+                            foreach ($this->selection[$selected_key]["remove"] as $where_key => $where_val)
+                                if ($selected_val && $this->external_data[$a]->{ $where_key } != $where_val)
+                                    unset($this->external_data[$a]);
+					}
+                }
+            }
+		}
+
+        reset($this->external_data);
+
         // mitu kirjet kokku on? arvuta lehekülgede arv
 
         $this->records = count($this->external_data);
@@ -544,13 +574,18 @@ class PTABLE {
         $a = $a->{ $this->order };
         $b = $b->{ $this->order };
 
-        if ($a == $b)
+        if ($a === $b)
             return 0;
 
         if (!$this->way || $this->way == "asc")
-            return ($a < $b) ? -1 : 1;
+            $result = strcasecmp($a, $b);
         else
-            return ($b < $a) ? -1 : 1;
+            $result = strcasecmp($b, $a);
+
+        if ($result < 0)
+            return -1;
+        else
+            return 1;
     }
 
     // kuva tabel
@@ -1104,18 +1139,33 @@ class PTABLE {
             $current_field++;
             $no_order = false;
 
-            if ($this->order == $field["table"]. ".". $field["field"])
+            // kui tabelit pole kirjeldatud (väline massiiv), siis sorteerimiseks ainult paljas väljanimi
+
+            if (isset($field["table"]) && $field["table"])
+                $field_name = $field["table"]. ".". $field["field"];
+            else
+                $field_name = $field["field"];
+
+            // lisa aktiivsele sorteerimisväljale värvi
+
+            if ($this->order == $field_name)
                 $active = " active";
             else
                 $active = P_VOID;
+
+            // mis pidi siis sorteeritakse, kuva vastava ikoon
 
             if ($this->way == "asc")
                 $way = "up";
             else
                 $way = "down";
 
+            // kui väljale pole lisatud kirjelduses pealkirja, siis pane selleks välja enda nimi
+
             if (!isset($field["title"]))
                 $field["title"] = $field["field"];
+
+            // kui sorteerimine on keelatud selle välja järgi
 
             if (isset($field["sortable"]) && !$field["sortable"])
                 $no_order = "no_";
@@ -1129,12 +1179,14 @@ class PTABLE {
 			elseif (isset($field["width"]) && $field["width"]) // või on tabelikirjelduses paika pandud veergude laiused?
 				$this->content .= " style=\"width: ". $field["width"]. "\"";
 
-			// prindi veeru nimi
+			// prindi veeru kirjeldus
 
-            $this->content .= "data-field=\"". $field["table"]. ".". $field["field"]. "\">". $this->awesome($field["title"]);
+            $this->content .= "data-field=\"". $field_name. "\">". $this->awesome($field["title"]);
+
+            // kui on sorteeritav
 
             if (!$no_order)
-                $this->content .= "<i class=\"sort_icon". $active. " fa fa-". $this->order_icon. "-". ($this->order == $field["table"]. ".". $field["field"] ? $way : "down"). "\"></i>";
+                $this->content .= "<i class=\"sort_icon". $active. " fa fa-". $this->order_icon. "-". ($this->order == $field_name ? $way : "down"). "\"></i>";
 
 			// väljaotsing
 
@@ -1170,6 +1222,8 @@ class PTABLE {
         if ($this->header_sep)
             $this->content .= "<tr class=\"no_hover\"><td class=\"border_top\" colspan=100></td></tr>";
     }
+
+    // veeruotsing
 
 	function field_search($what) {
 		if (isset($this->field_search) && $this->field_search) {

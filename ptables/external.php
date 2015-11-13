@@ -1,6 +1,8 @@
 <?php
 
-$this->fields		= [
+$this->order = "nimi";
+
+$this->fields	= [
 	[ "field"	=> "id",		"title" => "ID",       "hidden" => true, "sortable" => false ],
 	[ "field"	=> "nimi",		"title" => "Nimi",     "subdata" => "[id]", "align" => "right", "nowrap" => true, "searchable" => true ],
 	[ "field"	=> "lisatud",	"title" => "Lisatud" ],
@@ -8,12 +10,15 @@ $this->fields		= [
 ];
 
 $this->selection= [
-	0 => [ "title" => "Kuva kustutatuid", "checked" => false,	"disabled" => true, "where" => "status = 1" ]
+	0 => [ "title" => "Kuva kustutatuid", "checked" => false,
+          "add" => [ "deleted" => 1 ],
+          "remove" => [ "deleted" => 0 ]
+    ]
 ];
 
 $this->subcontent = "msg_content";
 
-$this->triggers		= [
+$this->triggers	= [
 	"ROW"		=> [ "link"	=> "http://www.ttu.ee/#[nimi]" ]
 ];
 
