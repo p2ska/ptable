@@ -527,14 +527,20 @@ class PTABLE {
                 for ($a = 0; $a < $records; $a++) {
                     foreach ($this->selected as $selected_key => $selected_val) {
                         if (isset($this->external_data[$a]) && isset($this->selection[$selected_key]["add"]))
-                            foreach ($this->selection[$selected_key]["add"] as $where_key => $where_val)
-                                if ($selected_val && $this->external_data[$a]->{ $where_key } == $where_val)
+                            foreach ($this->selection[$selected_key]["add"] as $where_key => $where_val) {
+                                if (!$selected_val && $this->external_data[$a]->{ $where_key } == $where_val)
                                     unset($this->external_data[$a]);
+								elseif ($selected_val && $this->external_data[$a]->{ $where_key } != $where_val)
+									unset($this->external_data[$a]);
+							}
 
                         if (isset($this->external_data[$a]) && isset($this->selection[$selected_key]["remove"]))
-                            foreach ($this->selection[$selected_key]["remove"] as $where_key => $where_val)
-                                if ($selected_val && $this->external_data[$a]->{ $where_key } != $where_val)
+                            foreach ($this->selection[$selected_key]["remove"] as $where_key => $where_val) {
+                                if ($selected_val && $this->external_data[$a]->{ $where_key } == $where_val)
                                     unset($this->external_data[$a]);
+								//elseif (!$selected_val && $this->external_data[$a]->{ $where_key } != $where_val)
+									//unset($this->external_data[$a]);
+							}
 					}
                 }
             }

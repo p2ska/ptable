@@ -10,10 +10,7 @@ $this->fields	= [
 ];
 
 $this->selection= [
-	0 => [ "title" => "Kuva kustutatuid", "checked" => false,
-          "add" => [ "deleted" => 1 ],
-          "remove" => [ "deleted" => 0 ]
-    ]
+	0 => [ "title" => "Kuva kustutatuid", "checked" => false, "remove" => [ "deleted" => 1 ] ]
 ];
 
 $this->subcontent = "msg_content";
