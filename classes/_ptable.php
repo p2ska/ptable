@@ -104,6 +104,11 @@ class PTABLE {
         if (isset($init["subdata"]) && $init["subdata"])
             $this->subdata = explode(P_EX, $this->safe($init["subdata"]));
 
+		// valikute edastamine tabelikirjelduse jaoks
+
+		if (isset($init["selected"]) && $init["selected"])
+            $this->selected = $this->safe($init["selected"]);
+
         // kirjuta klassi default'id tabelikirjelduse omadega üle
 
         if (!$this->init())
@@ -258,8 +263,14 @@ class PTABLE {
 
 		$this->content .= "<table class=\"subtable\"><tr>";
 
-		foreach ($this->subfields as $subfield)
-			$this->content .= "<th class=\"no_order\">". $subfield["title"]. "</th>";
+		foreach ($this->subfields as $subfield) {
+			$this->content .= "<th class=\"no_order\"";
+
+			if (isset($subfield["width"]) && $subfield["width"])
+				$this->content .= " style=\"width: ". $subfield["width"]. "\"";
+
+			$this->content .= ">". $subfield["title"]. "</th>";
+		}
 
 		$this->content .= "</tr>";
 
