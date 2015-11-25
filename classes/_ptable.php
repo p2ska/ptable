@@ -1270,8 +1270,13 @@ class PTABLE {
         $this->content .= "<div id=\"". P_PREFIX. $this->target. "_prefbox\" class=\"prefbox\">";
         $this->content .= "<span class=\"close_btn\" title=\"". @$this->l->txt_close. "\">". $this->awesome("{{close}}"). "</span>";
         $this->content .= $this->awesome(@$this->l->txt_pref). "<br/><br/>";
-        $this->content .= $this->print_pref(@$this->l->txt_pagesize, $this->page_sizes, "dropdown", $this->page_size, "pagesize");
-        $this->content .= $this->print_pref(@$this->l->txt_autoupdate, $this->autoupdate, "autoupdate_check", $this->autoupdate, "autoupdate");
+
+        if ($this->page_sizes)
+            $this->content .= $this->print_pref(@$this->l->txt_pagesize, $this->page_sizes, "dropdown", $this->page_size, "pagesize");
+
+        if ($this->autoupdates)
+            $this->content .= $this->print_pref(@$this->l->txt_autoupdate, $this->autoupdate, "autoupdate_check", $this->autoupdate, "autoupdate");
+
         //$this->content .= "<br/><br/>";
         //$this->content .= "<span class=\"big_btn\">". @$this->l->txt_save. "</span>";
         //$this->content .= "<span class=\"big_btn\">". @$this->l->txt_close. "</span>";

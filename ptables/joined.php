@@ -45,6 +45,7 @@ $this->subtriggers	= [
 
 $this->resizable    = false;
 //$this->title        = $this->data["example"];
+$this->autoupdates  = false;
 $this->is           = [ P_NULL => "----", 0 => "000", "0000-00-00 00:00:00" => "-" ];
 $this->search_ph    = $l->txt_search_ph;
 
