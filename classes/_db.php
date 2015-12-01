@@ -6,6 +6,15 @@ class P_DATABASE {
 	var $connection, $host, $database, $charset, $collation, $query, $result, $error_msg, $error, $rows, $insert_id;
 
 	function connect($host = false, $database = false, $username = false, $password = false, $charset = false, $collation = false) {
+	    if (!$host) {
+	        $host       = DB_HOST;
+	        $database   = DB_NAME;
+	        $username   = DB_USER;
+	        $password   = DB_PASS;
+	        $charset    = DB_CHARSET;
+	        $collation  = DB_COLLATION;
+	    }
+
 		if (!$this->connection = @mysql_connect($host, $username, $password, false))
 			die("Connection to database server has failed.<br/>". @mysql_error($this->connection));
 
