@@ -403,6 +403,8 @@ var ptable_url = "ptable.php";
 
                     if (records)
                         badge.html(records);
+                    else
+                        badge.html("");
                 }
 
                 if (!no_store)

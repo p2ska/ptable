@@ -41,7 +41,7 @@ class PTABLE {
 	$search, $triggers, $joins, $order, $way, $limit, $records, $field_count, $field_search, $title, $style,
     $navigation, $nav_pre, $nav_post, $pages, $pagesize, $external_data, $external_pos, $col_width, $is,
     $subdata, $subquery, $subvalues, $subfields, $subcontent, $selected, $selection,
-    $debug			= false,	    // debug reziim
+    $debug			= true,         // debug reziim
     $header			= true,			// kas kuvatakse tabeli päist üldse
     $header_sep		= false,		// tabeli ülemine eraldusäär
     $footer_sep		= false,		// tabeli alumine eraldusäär
@@ -298,27 +298,55 @@ class PTABLE {
         if ($this->where)
             $this->where = P_WHERE. $this->where;
 
+        // kas on valitud tingimused (checkbox'id)
+
 		if ($this->selection) {
-			$where_sel = [];
+			$selection = [];
+
+            // kui ei ole ühtegi valitud, siis vali kõik (?)
 
 			if (!$this->selected) {
 				foreach ($this->selection as $key => $val)
 					$this->selected[$key] = $val["checked"];
 			}
 
+            // kui on valikud olemas, siis lisa need tingimused
+
             if (is_array($this->selected)) {
                 foreach ($this->selected as $key => $val)
-                    if ($val)
-                        $where_sel[] = $this->selection[$key]["where"];
+                    if ($val) {
+                        $selection["where"][] = $this->selection[$key]["where"];
+
+                        // kui ei ole määratud kuidas valikuid ühendada, siis kasuta OR'i
+
+                        if (isset($this->selection[$key]["method"]))
+                            $selection["method"][] = " ". trim($this->selection[$key]["method"]). " ";
+                        else
+                            $selection["method"][] = " || ";
+
+                        // lisa valikute väärtused otsingu põhi-väärtustele
+
+                        if (isset($this->selection[$key]["values"]) && $this->selection[$key]["values"])
+                            $this->values = array_merge($this->values, $this->selection[$key]["values"]);
+                    }
             }
 
-			if ($where_sel) {
-				if ($this->where)
-					$this->where .= " && ";
-				else
-					$this->where = P_WHERE;
+            // lisa põhi-tingimustele valiku-tingimused
 
-				$this->where .= "(". implode(" || ", $where_sel). ")";
+			if (isset($selection["where"])) {
+                $add_where = "";
+
+                for ($a = 0; $a < count($selection["where"]); $a++) {
+                    if ($a > 0)
+                        $add_where .= $selection["method"][$a];
+
+                    $add_where .= $selection["where"][$a];
+                }
+
+				if ($this->where)
+					$this->where .= " && (". $add_where. ")";
+				else
+					$this->where = P_WHERE. "(". $add_where. ")";
 			}
 		}
 
@@ -368,7 +396,7 @@ class PTABLE {
                 $this->where = P_WHERE. $search;
 		}
 
-		// pane päring kokku
+        // pane päring kokku
 
         $this->query = $this->build_query();
 
@@ -742,8 +770,9 @@ class PTABLE {
                     $this->print_row($obj);
             }
         }
-        else
+        else {
             $this->content .= "<tr><td colspan=100>". @$this->l->txt_notfound. "</td></tr>";
+        }
 
         // footer
 

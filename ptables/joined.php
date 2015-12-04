@@ -1,15 +1,15 @@
 <?php
 
 $this->table    = "request";
-$this->where    = "";
-$this->values   = "";
+$this->where    = "requester = ?";
+$this->values   = [ "Andres.Pasoke" ];
 $this->order	= "request.regdate";
 $this->way		= "desc";
 
 $this->selection= [
-	0 => [ "title" => "Esitatud",		"checked" => true,	"where" => "status = 0" ],
-    1 => [ "title" => "Lahendamisel",	"checked" => false,	"where" => "status = 1" ],
-    2 => [ "title" => "Lõpetatud",		"checked" => false, "where" => "status = 2" ]
+	0 => [ "title" => "Esitatud",		"checked" => true,	"method" => "and", "where" => "status = ? || status = ?", "values" => [ 1 ] ],
+    1 => [ "title" => "Lahendamisel",	"checked" => false,	"method" => "and", "where" => "status = ?", "values" => [ 2 ] ],
+    2 => [ "title" => "Lõpetatud",		"checked" => false, "method" => "and", "where" => "status = ?", "values" => [ 3 ] ]
 ];
 
 $this->fields = [
