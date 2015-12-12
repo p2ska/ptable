@@ -38,9 +38,9 @@ class PTABLE {
     var
     $content, $db, $l, $mode, $target, $template, $url, $class, $data, $translations, $autoupdate, $refresh,
     $database, $host, $username, $password, $charset, $collation, $table, $query, $fields, $where, $values,
-	$search, $triggers, $joins, $order, $way, $limit, $records, $field_count, $field_search, $title, $style,
-    $navigation, $nav_pre, $nav_post, $pages, $pagesize, $external_data, $external_pos, $col_width, $is,
-    $subdata, $subquery, $subvalues, $subfields, $subcontent, $selected, $selection,
+	$search, $triggers, $joins, $group, $order, $way, $limit, $records, $field_count, $field_search, $title,
+    $style, $navigation, $nav_pre, $nav_post, $pages, $pagesize, $external_data, $external_pos, $col_width,
+    $is, $subdata, $subquery, $subvalues, $subfields, $subcontent, $selected, $selection,
     $debug			= true,         // debug reziim
     $header			= true,			// kas kuvatakse tabeli päist üldse
     $header_sep		= false,		// tabeli ülemine eraldusäär
@@ -452,7 +452,7 @@ class PTABLE {
 	// ehita päring tabelikirjeldusest
 
     function build_query() {
-        $join_tables = false;
+        $join_tables = $group_by = false;
         $fields = $joins = [];
 
 		// käi väljad läbi
@@ -481,7 +481,12 @@ class PTABLE {
             	$join_tables = " ". implode(", ", $joins);
 		}
 
-        return P_SELECT. implode(", ", $fields). P_FROM. $this->table. $join_tables. $this->where;
+        // kui on vaja grupeerida
+
+        if ($this->group)
+            $group_by = " group by ". $this->group;
+
+        return P_SELECT. implode(", ", $fields). P_FROM. $this->table. $join_tables. $this->where. $group_by;
     }
 
     function prepare_external() {

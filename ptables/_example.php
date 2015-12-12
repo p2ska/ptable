@@ -5,6 +5,7 @@
 $this->table		= "task";				// põhitabel																	[<table>]: string
 $this->where		= "task.status = ?";	// where tingimused vabas vormis												["where"]: string
 $this->values		= [ TASK_CLOSED ];		// väärtused																	[ [<val>, <val>..] ] :array
+$this->group        = "task.id";            // grupeeri välja järgi                                                         []
 $this->order		= "task.created";		// esmaselt on tabel sorditud selle välja järgi									[<field>]: string
 $this->way			= "desc";				// mis suunas järjestatakse tulemused											["asc", "desc"] :"asc"
 
