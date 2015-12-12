@@ -474,8 +474,8 @@ class PTABLE {
 		// kas on joine?
 
 		if ($this->joins) {
-        	foreach ($this->joins as $j_table => $join)
-            	$joins[] = $join["method"]. " ". $j_table. " on ". $join["on"];
+        	foreach ($this->joins as $join)
+            	$joins[] = $join["method"]. " ". $join["table"]. " on ". $join["on"];
 
         	if (count($joins))
             	$join_tables = " ". implode(", ", $joins);
