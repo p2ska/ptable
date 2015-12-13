@@ -13,11 +13,11 @@ $this->selection= [
 ];
 
 $this->fields = [
+    [ "field" => "status",     "title" => "status",    "hidden"     => true, "process" => "timeline" ],
 	[ "field" => "id",         "title" => "id",        "subtable"   => "[id]", "searchable" => true, "align" => "left", "fetch" => [ "unread_messages" => "[id]" ], "print" => "{%unread_messages%}" ],
-	[ "field" => "prio",	   "title" => "prio",      "hidden"     => "width<700", "translate"	=> "txt_prio_[prio]" ],
+	[ "field" => "prio2",	   "title" => "prio",      "fakefield"  => true, "print" => "[prio2]" ],
 	[ "field" => "requester",  "info"  => "{%person%}","align"		=> "left", "nowrap"     => "true", "fetch"      => [ "person" => "[requester]" ], "print" => "{{amazon}}[id]{%person%}", "title" => "{{amazon}} requester", "extend" => "autolink", "searchable"	=> true, "field_search" => true, "placeholder" => "ahaa" ],
 	[ "field" => "subject",    "title" => "subject",   "align"      => "left", "searchable"	=> true, "width" => "*", "extend" => "break_long" ],
-    [ "field" => "status",     "title" => "status",    "translate"  => "txt_status_[status]" ],
     [ "field" => "duedate",    "title" => "duedate",   "print"	    => "-[duedate]-",	"extend" => "convert_date" ],
 	[ "field" => "regdate",    "title" => "regdate",   "nowrap"     => true, "extend"	=> "convert_date" ]
 ];

@@ -8,6 +8,14 @@ require_once("_ptable.php");
 // põhiklassi extension, võimaldamaks päringust saadud väärtusi edasi töödelda
 
 class PTABLE_EXT extends PTABLE {
+    // proovime
+
+    function timeline(&$data) {
+        //$value["timeline"] = "kana";
+        $data->prio2 = 3;
+        //return $value;
+    }
+
     // hangi kasutajainfo
 
     function person($string) {

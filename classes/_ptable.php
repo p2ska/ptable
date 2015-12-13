@@ -201,9 +201,16 @@ class PTABLE {
 
         $l = &$this->l;
 
-        // tabeli kirjelduse fail
+        // juhul kui on kasutaja poolt lisatud "data-template", siis see override'b "id" template sihtmärgina
 
-        $this->template = P_TABLES. P_SL. $this->target. ".php";
+        if (isset($this->data["template"]) && $this->data["template"])
+            $template = $this->data["template"];
+        else
+            $template = $this->target;
+
+        // tabeli kirjelduse template
+
+        $this->template = P_TABLES. P_SL. $template. ".php";
 
         // lae tabeli info
 
@@ -465,10 +472,12 @@ class PTABLE {
 
 			// kui tabel on eraldi märgitud (liidetud tabel), siis kasuta seda; vastasel juhul arvesta, et tegu on põhitabeli väljaga (default)
 
-            if (isset($field["table"]) && $field["table"])
-                $fields[] = $field["table"]. ".". $field["field"]. $alias;
-            else
-                $fields[] = $this->table. ".". $field["field"]. $alias;
+            if (!isset($field["fakefield"]) || !$field["fakefield"]) {
+                if (isset($field["table"]) && $field["table"])
+                    $fields[] = $field["table"]. ".". $field["field"]. $alias;
+                else
+                    $fields[] = $this->table. ".". $field["field"]. $alias;
+            }
         }
 
 		// kas on joine?
@@ -892,7 +901,12 @@ class PTABLE {
         $trigger = $link = $title = $class = $style = $colspan = $subcount = P_VOID;
         $styles = array();
 
-		if (isset($field["hidden"]) && $this->hide_column($field["hidden"]))
+        // protsessi muutujaid
+
+        if (isset($field["process"]) && method_exists($this, $field["process"]))
+            $this->{ $field["process"] }($data);
+
+        if (isset($field["hidden"]) && $this->hide_column($field["hidden"]))
             return true;
 
         if ($type == "main" && isset($this->triggers[$field["field"]]))
@@ -1079,12 +1093,15 @@ class PTABLE {
 		if (isset($field["fetch"]))
 			$this->fetch_external($field, $data);
 
-		// kas on väljale laiendus?
+        // kas on väljale laiendus?
 
         if (isset($field["extend"]))
 			$this->extend($field, $data->{ $field_type });
 
-        $value = $data->{ $field_type };
+        if (isset($data->{ $field_type }))
+            $value = $data->{ $field_type };
+        else
+            $value = P_VOID;
 
         // kas on vaja kuvada hoopis vastavat tõlget?
 
@@ -1218,7 +1235,7 @@ class PTABLE {
 
             // kui sorteerimine on keelatud selle välja järgi
 
-            if (isset($field["sortable"]) && !$field["sortable"])
+            if ((isset($field["sortable"]) && !$field["sortable"]) || (isset($field["fakefield"]) && $field["fakefield"]))
                 $no_order = "no_";
 
             $this->content .= "<th class=\"". $no_order. "order". $active. " \" ";
