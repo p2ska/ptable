@@ -1,6 +1,10 @@
 var ptable_url = "ptable.php";
 //var ptable_url = "/api/query:srm:ptable:" + $("#_lang").prop("class");
 
+$("#btn").click(function() {
+	$("#ptable_joined1").update();
+});
+
 (function($) {
     $.fn.ptable = function(targets) {
         var prefix      = "#ptable_",
@@ -10,22 +14,24 @@ var ptable_url = "ptable.php";
             last_resize = false,
             log_block   = false,
             bubble      = false,
+			mobile		= window.innerWidth <= 768 ? 1 : 0,
             settings    = [];
 
         if (targets === undefined)
             targets = ".ptable";
 
-        $(targets).each(function() {
+		$(targets).each(function() {
             var ptable = $(this).prop("id");
 
             settings[ptable] = {
-                target: $(this).prop("id"),
-                class:  $(this).prop("class"),
-                data:   user_data($(this).data()),
-                mode:   "init",
-                url:    ptable_url,
-				selected: {},
-                search_from: 3
+                target:		$(this).prop("id"),
+                class:		$(this).prop("class"),
+                data:		user_data($(this).data()),
+                mode:		"init",
+				mobile:		mobile,
+                url:		ptable_url,
+				selected:	{},
+                search_from:3
             }
 
             // kas on juba olemas salvestatud seaded selle tabeli jaoks?
@@ -358,17 +364,17 @@ var ptable_url = "ptable.php";
             if (settings[ptable].mode === "update" && $("#" + settings[ptable].target).is(":hidden"))
                 return false;
 
-            // leia veergude laiused
+			// leia veergude laiused
 
             if (settings[ptable].mode === "update")
                 settings[ptable].col_width = col_widths(ptable);
 
-            //settings[ptable].tbl_width = $(prefix + settings[ptable].target).width();
+			//settings[ptable].tbl_width = $(prefix + settings[ptable].target).width();
             //console.log(settings[ptable].tbl_width);
 
             // uuenda tabelit
 
-            $.ajax({url: settings[ptable].url, data: { ptable: settings[ptable] } }).done(function(content) {
+            $.ajax({ url: settings[ptable].url, data: { ptable: settings[ptable] } }).done(function(content) {
                 if (settings[ptable].mode === "init")
                     $("#" + settings[ptable].target).html(content);
                 else

@@ -34,6 +34,7 @@ $c_lang[$lang] = " current_lang";
     <span id="tasks_badge" class="badge"></span>
     <span id="navi_badge" class="badge"></span>
 </div>
+<button id="btn">haha</button>
 <div id="joined1" class="ptable no_border" data-template="joined" data-example="midagi"></div><hr/>
 <div id="joined2" class="ptable no_border" data-template="joined" data-example="midagi"></div><hr/>
 <div id="requests" class="ptable no_border" data-user="andres"></div><hr/>

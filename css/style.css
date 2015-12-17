@@ -363,8 +363,8 @@ table *, .prefbox {
 
 .ptable .prefbox {
     position: absolute;
-    top: 0px;
-    right: 240px;
+    top: 36px;
+    right: 0px;
     width: 300px;
     padding: 12px;
     text-align: left;
@@ -510,6 +510,15 @@ table *, .prefbox {
 	border: 1px solid #ccc;
 }
 
+.ptable .mobile_sep {
+	background-color: #870042 !important;
+}
+
+.ptable .mobile {
+	text-align: center;
+	/*border-right: 2px solid #eee;*/
+}
+
 .bubble {
     position: absolute;
     width: 400px;
@@ -653,7 +662,7 @@ table *, .prefbox {
     color: #870042;
 }
 
-@media all and (min-width: 768px) and (max-width: 959px) {
+/*@media all and (min-width: 768px) and (max-width: 959px) {
     .ptable {
         display: none;
         width: 0px;
@@ -661,7 +670,7 @@ table *, .prefbox {
         opacity: 0;
         visibility: collapse;
     }
-}
+}*/
 
 /* tekstikastide placeholderid */
 

@@ -40,7 +40,7 @@ class PTABLE {
     $database, $host, $username, $password, $charset, $collation, $table, $query, $fields, $where, $values,
 	$search, $triggers, $joins, $group, $order, $way, $limit, $records, $field_count, $field_search, $title,
     $style, $navigation, $nav_pre, $nav_post, $pages, $pagesize, $external_data, $external_pos, $col_width,
-    $is, $subdata, $subquery, $subvalues, $subfields, $subcontent, $selected, $selection,
+    $is, $subdata, $subquery, $subvalues, $subfields, $subcontent, $selected, $selection, $mobile,
     $debug			= true,         // debug reziim
     $header			= true,			// kas kuvatakse tabeli päist üldse
     $header_sep		= false,		// tabeli ülemine eraldusäär
@@ -76,10 +76,10 @@ class PTABLE {
     function ptable($init, $source = false, $lang = false) {
         // kas target on ikka olemas
 
-        if (!isset($init["target"]))
+		if (!isset($init["target"]))
             return false;
 
-        // tabeli id
+		// tabeli id
 
         $this->target = $this->safe($init["target"]);
 
@@ -268,18 +268,22 @@ class PTABLE {
     function subtable() {
         $this->db->query($this->subquery, $this->subvalues);
 
-		$this->content .= "<table class=\"subtable\"><tr>";
+		$this->content .= "<table class=\"subtable\">";
 
-		foreach ($this->subfields as $subfield) {
-			$this->content .= "<th class=\"no_order\"";
+		if (!1) {
+			$this->content .= "<tr>";
 
-			if (isset($subfield["width"]) && $subfield["width"])
-				$this->content .= " style=\"width: ". $subfield["width"]. "\"";
+			foreach ($this->subfields as $subfield) {
+				$this->content .= "<th class=\"no_order\"";
 
-			$this->content .= ">". $subfield["title"]. "</th>";
+				if (isset($subfield["width"]) && $subfield["width"])
+					$this->content .= " style=\"width: ". $subfield["width"]. "\"";
+
+				$this->content .= ">". $subfield["title"]. "</th>";
+			}
+
+			$this->content .= "</tr>";
 		}
-
-		$this->content .= "</tr>";
 
         while ($obj = $this->db->get_obj())
             $this->print_row($obj, "sub");
@@ -767,7 +771,7 @@ class PTABLE {
 
         // väljade kirjeldused
 
-        if ($this->fields_descr)
+		if (!$this->mobile && $this->fields_descr)
             $this->fields_descr();
 
         $this->content .= "</thead><tbody>";
@@ -777,7 +781,7 @@ class PTABLE {
         if ($this->records) {
             if ($this->db) {
 				foreach ($this->db->get_all() as $obj)
-                    $this->print_row($obj);
+                   	$this->print_row($obj);
             }
             else {
                 foreach ($this->external_data as $obj)
@@ -869,9 +873,12 @@ class PTABLE {
         }
 
         $this->content .= "</tr>";
+
+		if ($this->mobile)
+			$this->content .= "<tr class=\"mobile_sep\"><td colspan=100></td></tr>";
     }
 
-    // hangi väline info tabeli jaoks
+	// hangi väline info tabeli jaoks
 
     function fetch_external(&$field, $data) {
         foreach ($field["fetch"] as $method => $value)
@@ -999,6 +1006,9 @@ class PTABLE {
             if ($field["field"] == "ROW")
                 $this->content .= "<tr>";
             else {
+				if ($this->mobile)
+					$this->content .= $this->field_descr($field);
+
                 $this->content .= "<td ";
 
                 if (isset($field["colspan"]) && $field["colspan"])
@@ -1007,7 +1017,7 @@ class PTABLE {
                 if (isset($field["class"]) && $field["class"])
                     $class = " class=\"". $field["class"]. "\"";
 
-                if (isset($field["align"]) && $field["align"])
+				if (!$this->mobile && isset($field["align"]) && $field["align"])
                     $styles[] = "text-align: ". $field["align"];
 
                 if (isset($field["nowrap"]) && $field["nowrap"])
@@ -1039,15 +1049,10 @@ class PTABLE {
 					$data->subrow_id = $this->replace_markup($field["subdata"], $field, $data);
 
 					if (isset($this->subcontent) && $this->subcontent) {
-						if (1) {
-                        	$this->content .= "<span class=\"subdata\" data-values=\"". $data->subrow_id. "\">";
-                        	$this->content .= "<span class=\"sub_closed\">". $this->awesome("{{plus-square}}"). "</span>";
-                        	$this->content .= "<span class=\"sub_opened\">". $this->awesome("{{minus-square}}"). "</span>";
-                        	$this->content .= "</span> ";
-                    	}
-                    	else {
-							$this->content .= "<span class=\"subdata\">". $this->awesome("{{square-o}}"). "</span> ";
-                    	}
+                       	$this->content .= "<span class=\"subdata\" data-values=\"". $data->subrow_id. "\">";
+                       	$this->content .= "<span class=\"sub_closed\">". $this->awesome("{{plus-square}}"). "</span>";
+                       	$this->content .= "<span class=\"sub_opened\">". $this->awesome("{{minus-square}}"). "</span>";
+                       	$this->content .= "</span> ";
 					}
                 }
 
@@ -1066,6 +1071,9 @@ class PTABLE {
 				}
 
                 $this->content .= "</td>";
+
+				if ($this->mobile)
+					$this->content .= "</tr>";
 
                 if ($type == "main")
                     $last = $this->field_count - 1;
@@ -1190,6 +1198,61 @@ class PTABLE {
         //var_dump($this->col_width);
     }
 
+	// väljakirjeldus (mobiilivaate jaoks)
+
+    function field_descr($field) {
+		// kas on vaja välja peita?
+
+		if (isset($field["hidden"]) && $this->hide_column($field["hidden"]))
+			continue;
+
+        $no_order = false;
+
+		// kui tabelit pole kirjeldatud (väline massiiv), siis sorteerimiseks ainult paljas väljanimi
+
+        if (isset($field["table"]) && $field["table"])
+            $field_name = $field["table"]. ".". $field["field"];
+        else
+            $field_name = $field["field"];
+
+        // lisa aktiivsele sorteerimisväljale värvi
+
+		if ($this->order == $field_name)
+            $active = " active";
+        else
+            $active = P_VOID;
+
+        // mis pidi siis sorteeritakse, kuva vastava ikoon
+
+        if ($this->way == "asc")
+            $way = "up";
+        else
+            $way = "down";
+
+        // kui väljale pole lisatud kirjelduses pealkirja, siis pane selleks välja enda nimi
+
+        if (!isset($field["title"]))
+            $field["title"] = $field["field"];
+
+        // kui sorteerimine on keelatud selle välja järgi
+
+        if ((isset($field["sortable"]) && !$field["sortable"]) || (isset($field["fakefield"]) && $field["fakefield"]))
+            $no_order = "no_";
+
+        $this->content .= "<td class=\"". $no_order. "order". $active. " mobile\" data-field=\"". $field_name. "\">";
+
+		// prindi veeru kirjeldus
+
+        $this->content .= $this->awesome($field["title"]);
+
+        // kui on sorteeritav
+
+        if (!$no_order)
+            $this->content .= "<i class=\"sort_icon". $active. " fa fa-". $this->order_icon. "-". ($this->order == $field_name ? $way : "down"). "\"></i>";
+
+		$this->content .= "</td>";
+    }
+
 	// tabeli väljade kirjeldused
 
     function fields_descr() {
@@ -1291,7 +1354,7 @@ class PTABLE {
             $this->content .= "<tr class=\"no_hover\"><td class=\"border_top\" colspan=100></td></tr>";
     }
 
-    // veeruotsing
+	// veeruotsing
 
 	function field_search($what) {
 		if (isset($this->field_search) && $this->field_search) {
