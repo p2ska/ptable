@@ -1,10 +1,6 @@
 var ptable_url = "ptable.php";
 //var ptable_url = "/api/query:srm:ptable:" + $("#_lang").prop("class");
 
-$("#btn").click(function() {
-	$("#ptable_joined1").update();
-});
-
 (function($) {
     $.fn.ptable = function(targets) {
         var prefix      = "#ptable_",
@@ -14,7 +10,7 @@ $("#btn").click(function() {
             last_resize = false,
             log_block   = false,
             bubble      = false,
-			mobile		= window.innerWidth <= 768 ? 1 : 0,
+			//mobile	= window.innerWidth <= 768 ? 1 : 0,
             settings    = [];
 
         if (targets === undefined)
@@ -28,7 +24,7 @@ $("#btn").click(function() {
                 class:		$(this).prop("class"),
                 data:		user_data($(this).data()),
                 mode:		"init",
-				mobile:		mobile,
+				//mobile:	mobile,
                 url:		ptable_url,
 				selected:	{},
                 search_from:3

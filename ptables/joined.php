@@ -18,7 +18,7 @@ $this->fields = [
 	[ "field" => "prio2",	   "title" => "prio",      "fakefield"  => true, "print" => "[prio2]" ],
 	[ "field" => "requester",  "info"  => "{%person%}","align"		=> "left", "nowrap"     => "true", "fetch"      => [ "person" => "[requester]" ], "print" => "{{amazon}}[id]{%person%}", "title" => "{{amazon}} requester", "extend" => "autolink", "searchable"	=> true, "field_search" => true, "placeholder" => "ahaa" ],
 	[ "field" => "subject",    "title" => "subject",   "align"      => "left", "searchable"	=> true, "width" => "*", "extend" => "break_long" ],
-    [ "field" => "duedate",    "title" => "duedate",   "print"	    => "-[duedate]-",	"extend" => "convert_date" ],
+    [ "field" => "duedate",    "title" => "duedate",   "print"	    => "-[duedate]-",	"extend" => "convert_date", "class" => "red" ],
 	[ "field" => "regdate",    "title" => "regdate",   "nowrap"     => true, "extend"	=> "convert_date" ]
 ];
 

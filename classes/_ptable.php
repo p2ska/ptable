@@ -451,7 +451,7 @@ class PTABLE {
             //dump($this->db->get_all(), true);
 
             if ($this->debug)
-                $this->content .= "[ ". $this->query. " ]". P_BR. "< ". ($this->values ? implode(", ", $this->values) : ""). " >". P_2BR;
+                $this->content .= date("H:i:s"). " [ ". $this->query. " ]". P_BR. "< ". ($this->values ? implode(", ", $this->values) : ""). " >". P_2BR;
 
             // mingi sql päringu viga
 
