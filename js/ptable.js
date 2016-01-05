@@ -283,9 +283,9 @@ var ptable_url = "ptable.php";
                 $(this).html("").hide();
             });
 
-            // et väljaotsingukastil endal klikkimine ei vallandaks sorteerimistriggerit
+            // et väljaotsingukastil klikkimine või teksti selekteerimine avatud alamtabelil ei vallandaks triggerit
 
-            $("#" + settings[ptable].target).on("click", ".field_search", function(e) {
+            $("#" + settings[ptable].target).on("click", ".field_search, .subrow", function(e) {
                 e.stopImmediatePropagation();
             });
 
