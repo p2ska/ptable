@@ -133,13 +133,16 @@ var ptable_url = "ptable.php";
             // peida valikutekasti kast, kui fookus läheb ära
 
             $(document).click(function(e) {
-                $(".bubble, .sub_opened, .subrow").hide();
-                $(".sub_closed").show();
-                bubble = false;
+                if (e.which == 1) { // ainult vasaku kliki puhul
+                    $(".bubble, .sub_opened, .subrow").hide();
+                    $(".sub_closed").show();
 
-                if ($(e.target).hasClass("fa-close") || (!$(e.target).closest(".prefbox").length && !$(e.target).closest(".pref_btn").length)) {
-                    $(".prefbox").hide();
-                    $(".pref_btn").removeClass("active");
+                    bubble = false;
+
+                    if ($(e.target).hasClass("fa-close") || (!$(e.target).closest(".prefbox").length && !$(e.target).closest(".pref_btn").length)) {
+                        $(".prefbox").hide();
+                        $(".pref_btn").removeClass("active");
+                    }
                 }
             });
 
