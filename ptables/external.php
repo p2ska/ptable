@@ -3,10 +3,10 @@
 $this->order = "nimi";
 
 $this->fields	= [
-	[ "field"	=> "id",		"title" => "ID",       "hidden" => true, "sortable" => false ],
-	[ "field"	=> "nimi",		"title" => "Nimi",     "subdata" => "[id]", "align" => "right", "nowrap" => true, "searchable" => true ],
+	[ "field"	=> "id",		"title" => "ID",     "hidden" => true, "sortable" => false ],
+	[ "field"	=> "nimi",		"title" => "Nimi",   "subdata" => "[id]", "align" => "right", "nowrap" => true, "searchable" => true ],
 	[ "field"	=> "lisatud",	"title" => "Lisatud" ],
-	[ "field"	=> "olek",		"title" => "Olek" ]
+	[ "field"	=> "olek",		"title" => "Olek",   "extend" => "convert_date" ]
 ];
 
 $this->selection= [
