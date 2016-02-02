@@ -609,6 +609,11 @@ class PTABLE {
 
         $this->records = count($this->external_data);
 
+        // kui midagi alles jäi, siis sorteeri kuidas vaja
+
+        if ($this->records)
+            usort($this->external_data, array($this, "sort_em"));
+
         if ($this->page_size == P_ALL)
             $this->pages = 1;
         else { // kui on rohkem kui üks lehekülg (potensiaalselt), siis lõika massiivist õige tükk
@@ -621,11 +626,6 @@ class PTABLE {
 
             $this->external_data = array_slice($this->external_data, ($this->page - 1) * $this->page_size, $this->page_size);
         }
-
-        // kui midagi alles jäi, siis sorteeri kuidas vaja
-
-        if ($this->records)
-            usort($this->external_data, array($this, "sort_em"));
     }
 
     // massiivi sorteerimine vastavalt väljale ja suunale
