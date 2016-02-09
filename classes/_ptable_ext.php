@@ -25,7 +25,7 @@ class PTABLE_EXT extends PTABLE {
 	// hangi sõnumi sisu
 
 	function msg_content($uid) {
-		return "hahah";
+		return "hahaeh";
 	}
 
     // hangi lugemata kirjade arv
