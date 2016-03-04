@@ -1,7 +1,7 @@
-var ptable_url = "ptable.php";
-//var ptable_url = "/api/query:srm:ptable:" + $("#_lang").prop("class");
-
 (function($) {
+    var ptable_url = "ptable.php";
+    //var ptable_url = "/api/get:ptable:" + portal_module + ":" + portal_focus + ":" + portal_lang;
+
     $.fn.ptable = function(targets) {
         var prefix      = "#ptable_",
             debug       = false,
@@ -20,14 +20,13 @@ var ptable_url = "ptable.php";
             var ptable = $(this).prop("id");
 
             settings[ptable] = {
-                target:		$(this).prop("id"),
-                class:		$(this).prop("class"),
-                data:		user_data($(this).data()),
-                mode:		"init",
-				//mobile:	mobile,
-                url:		ptable_url,
-				selected:	{},
-                search_from:3
+                target:         $(this).prop("id"),
+                class:		    $(this).prop("class"),
+                data:           user_data($(this).data()),
+                mode:           "init",
+    			selected:       {},
+                search_from:    3
+				//mobile:       mobile
             }
 
             // kas on juba olemas salvestatud seaded selle tabeli jaoks?
@@ -78,7 +77,7 @@ var ptable_url = "ptable.php";
 				var subrow = $("#subrow_" + $(this).data("values"));
 
                 if (subrow.is(":hidden")) {
-					$.ajax({ url: settings[ptable].url, data: { ptable: settings[ptable], subdata: $(this).data("values") } }).done(function(content) {
+					$.ajax({ url: ptable_url, data: { ptable: settings[ptable], subdata: $(this).data("values") } }).done(function(content) {
 						subrow.html(content);
 						subrow.show();
 						subdata.find(".sub_closed").hide();
@@ -373,7 +372,7 @@ var ptable_url = "ptable.php";
 
             // uuenda tabelit
 
-            $.ajax({ url: settings[ptable].url, data: { ptable: settings[ptable] } }).done(function(content) {
+            $.ajax({ url: ptable_url, data: { ptable: settings[ptable] } }).done(function(content) {
                 if (settings[ptable].mode === "init")
                     $("#" + settings[ptable].target).html(content);
                 else

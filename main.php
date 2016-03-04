@@ -34,12 +34,14 @@ $c_lang[$lang] = " current_lang";
     <span id="tasks_badge" class="badge"></span>
     <span id="navi_badge" class="badge"></span>
 </div>
-<!--<div id="joined1" class="ptable no_border" data-template="joined" data-example="midagi"></div><hr/>
+<!--
+<div id="joined1" class="ptable no_border" data-template="joined" data-example="midagi"></div><hr/>
 <div id="joined2" class="ptable no_border" data-template="joined" data-example="midagi"></div><hr/>
 <div id="requests" class="ptable no_border" data-user="andres"></div><hr/>
 <div id="tasks" class="ptable no_border"></div><hr/>
-<div id="navi" class="ptable"></div><hr/>-->
-<div id="external" class="ptable no_border"></div>
+-->
+<div id="navi" class="ptable"></div><hr/>
+<!--<div id="external" class="ptable no_border"></div>-->
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/store.min.js"></script>
 <script type="text/javascript" src="js/ptable.js"></script>
