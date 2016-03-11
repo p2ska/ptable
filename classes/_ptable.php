@@ -41,7 +41,7 @@ class PTABLE {
 	$search, $triggers, $joins, $group, $order, $way, $limit, $records, $field_count, $field_search, $title,
     $style, $navigation, $nav_pre, $nav_post, $pages, $pagesize, $external_data, $external_pos, $col_width,
     $is, $subdata, $subquery, $subvalues, $subfields, $subcontent, $selected, $selection, $mobile,
-    $debug			= true,         // debug reziim
+    $debug			= false,        // debug reziim
     $header			= true,			// kas kuvatakse tabeli päist üldse
     $header_sep		= false,		// tabeli ülemine eraldusäär
     $footer_sep		= false,		// tabeli alumine eraldusäär

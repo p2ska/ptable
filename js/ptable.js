@@ -1,8 +1,7 @@
-(function($) {
-    var ptable_url = "ptable.php";
-    //var ptable_url = "/api/get:ptable:" + portal_module + ":" + portal_focus + ":" + portal_lang;
+var ptable_url = "ptable.php";
 
-    $.fn.ptable = function(targets) {
+(function ($) {
+    $.fn.ptable = function (targets) {
         var prefix      = "#ptable_",
             debug       = false,
             need_worker = false,
@@ -10,23 +9,24 @@
             last_resize = false,
             log_block   = false,
             bubble      = false,
-			//mobile	= window.innerWidth <= 768 ? 1 : 0,
+            //mobile = window.innerWidth <= 768 ? 1 : 0,
             settings    = [];
 
         if (targets === undefined)
             targets = ".ptable";
 
-		$(targets).each(function() {
+        $(targets).each(function () {
             var ptable = $(this).prop("id");
 
             settings[ptable] = {
-                target:         $(this).prop("id"),
-                class:		    $(this).prop("class"),
-                data:           user_data($(this).data()),
-                mode:           "init",
-    			selected:       {},
-                search_from:    3
-				//mobile:       mobile
+                target:     $(this).prop("id"),
+                class:      $(this).prop("class"),
+                data:       user_data($(this).data()),
+                mode:       "init",
+                //mobile:   mobile,
+                no_update:  false,
+                selected:   {},
+                search_from: 3
             }
 
             // kas on juba olemas salvestatud seaded selle tabeli jaoks?
@@ -37,26 +37,26 @@
 
             update(ptable);
 
-			$("#" + settings[ptable].target).on("click", ".check", function() {
-				var chk = $(this).prop("id");
-				var cid = $(this).data("cid");
-				var tbl = $(this).data("table");
+            $("#" + settings[ptable].target).on("click", ".check", function () {
+                var chk = $(this).prop("id");
+                var cid = $(this).data("cid");
+                var tbl = $(this).data("table");
 
-            	$("#" + chk + " > .check_off, #" + chk + " > .check_on").toggle();
+                $("#" + chk + " > .check_off, #" + chk + " > .check_on").toggle();
 
-            	if ($("#" + chk + " > .check_on").is(":visible"))
-                	$("#" + chk + "_val").val(1);
-            	else
-                	$("#" + chk + "_val").val(0);
+                if ($("#" + chk + " > .check_on").is(":visible"))
+                    $("#" + chk + "_val").val(1);
+                else
+                    $("#" + chk + "_val").val(0);
 
                 settings[tbl].selected[cid] = parseInt($("#" + chk + "_val").val());
-				update(tbl);
-			});
+                update(tbl);
+            });
 
-            $("#" + settings[ptable].target).on("click", ".infobox", function(e) {
-				e.stopImmediatePropagation();
+            $("#" + settings[ptable].target).on("click", ".infobox", function (e) {
+                e.stopImmediatePropagation();
 
-                $(this).find(".bubble").each(function() {
+                $(this).find(".bubble").each(function () {
                     $(".bubble").hide();
 
                     if (!$(this).is(bubble) || !bubble) {
@@ -70,30 +70,44 @@
                 });
             });
 
-            $("#" + settings[ptable].target).on("click", ".subdata", function(e) {
+            $("#" + settings[ptable].target).on("click", ".subdata", function (e) {
                 e.stopImmediatePropagation();
 
-				var subdata = $(this);
-				var subrow = $("#subrow_" + $(this).data("values"));
+                var subdata = $(this);
+                var subrow = $("#subrow_" + $(this).data("values"));
 
                 if (subrow.is(":hidden")) {
-					$.ajax({ url: ptable_url, data: { ptable: settings[ptable], subdata: $(this).data("values") } }).done(function(content) {
-						subrow.html(content);
-						subrow.show();
-						subdata.find(".sub_closed").hide();
-						subdata.find(".sub_opened").show();
-                	});
-				}
-				else {
-					subrow.hide();
-					subdata.find(".sub_opened").hide();
-					subdata.find(".sub_closed").show();
-				}
+                    $.ajax({
+                        url: ptable_url,
+                        data: {
+                            ptable: settings[ptable],
+                            subdata: $(this).data("values")
+                        },
+                        error: function(xhr, ajaxOptions, thrownError) {
+                            if (xhr.status != 200)
+                                location.reload();
+                        }
+                    }).done(function(content) {
+                        subrow.html(content);
+                        subrow.show();
+                        subdata.find(".sub_closed").hide();
+                        subdata.find(".sub_opened").show();
+
+                        settings[ptable].no_update = true;
+                    });
+                }
+                else {
+                    subrow.hide();
+                    subdata.find(".sub_opened").hide();
+                    subdata.find(".sub_closed").show();
+
+                    settings[ptable].no_update = false;
+                }
             });
 
             // valikutekasti kuvamine/peitmine
 
-            $("#" + settings[ptable].target).on("click", ".pref_btn", function() {
+            $("#" + settings[ptable].target).on("click", ".pref_btn", function () {
                 var prefbox = $("#" + $(this).data("parent") + "_prefbox");
 
                 $(prefbox).toggle();
@@ -106,7 +120,7 @@
                     $(this).removeClass("active");
             });
 
-            $("#" + settings[ptable].target).on("click", ".minimize_btn", function() {
+            $("#" + settings[ptable].target).on("click", ".minimize_btn", function () {
                 var target = $("#" + $(this).data("parent") + "_container");
 
                 if (target.is(":visible")) {
@@ -131,7 +145,7 @@
 
             // peida valikutekasti kast, kui fookus läheb ära
 
-            $(document).click(function(e) {
+            $(document).click(function (e) {
                 if (e.which == 1) { // ainult vasaku kliki puhul
                     $(".bubble, .sub_opened, .subrow").hide();
                     $(".sub_closed").show();
@@ -147,7 +161,7 @@
 
             // klaviatuuriga tabeli juhtimine
 
-            $(document).on("keyup", function(e) {
+            $(document).on("keyup", function (e) {
                 // TODO: "keydown" actioniga pgup/pgdown ja nooltega ka üles/alla liikumine tabelis (ainult kui tabel on fookuses)
 
                 //e.preventDefault();
@@ -155,7 +169,7 @@
 
                 // kui mingi tabel omab fookust (mouseover) ja navigeerimine on lubatud (vasakule-paremale nooled)
 
-                $(".ptable").each(function() {
+                $(".ptable").each(function () {
                     var ct = $(this).prop("id");
 
                     if ($(this).is(":hover") && $(prefix + settings[ct].target).data("navigation")) {
@@ -176,7 +190,7 @@
             // triggerite käivitamine (ainult lingid)
             // ('data'-välja puhul välise skripti asi kontrollida, mis juhtub kui real klikitakse)
 
-            $("#" + settings[ptable].target).on("click", ".trigger", function(e) {
+            $("#" + settings[ptable].target).on("click", ".trigger", function (e) {
                 var ct = Date.now();
 
                 //$(".bubble").hide();
@@ -202,22 +216,23 @@
             // tee midagi triggeriga rea või välja peal klikkimise peale (mitte lingi puhul siis)
 
             function trigger(target) {
-                //alert("triggered: " + target.data("href"));
+                $("#content-wrapper").load(target.data("href"), function(content, status, xhr) {
+                    if (xhr.status != 200) // kui sessioon ei ole enam valiidne, suuna logima
+                        location.reload();
 
-                $("#content-wrapper").load(target.data("href"), function() {
                     $.getScript("/lemon/plugins/srm/main.js");
                 });
             }
 
             // kui klikitakse tabelis oleva lingi peal, siis keela välja/rea võimalike triggerite käivitamine
 
-            $("#" + settings[ptable].target).on("click", ".trigger a", function(e) {
+            $("#" + settings[ptable].target).on("click", ".trigger a", function (e) {
                 e.stopPropagation();
             });
 
             // tabeli kirjete arvu muutmine ja vastavale uuele leheküljele viimine
 
-            $("#" + settings[ptable].target).on("change", prefix + settings[ptable].target + "_pagesize", function() {
+            $("#" + settings[ptable].target).on("change", prefix + settings[ptable].target + "_pagesize", function () {
                 var old_pagesize = $(prefix + settings[ptable].target).data("page_size");
                 var old_page = $(prefix + settings[ptable].target).data("page") - 1;
                 var landing_page = 1;
@@ -235,13 +250,13 @@
 
             // otsingukasti sisu puhul enter triggerdab otsingunuppu
 
-            $("#" + settings[ptable].target).on("change", prefix + settings[ptable].target + "_search", function() {
+            $("#" + settings[ptable].target).on("change", prefix + settings[ptable].target + "_search", function () {
                 $(prefix + settings[ptable].target + "_commit_search").trigger("click");
             });
 
             // automaatne otsing (kui lubatud)
 
-            $("#" + settings[ptable].target).on("keyup", "input", function(e) { // prefix + settings[ptable].target + "_search"
+            $("#" + settings[ptable].target).on("keyup", "input", function (e) { // prefix + settings[ptable].target + "_search"
                 // kui ei ole reaalsed tähemärgid ja ei ole del, backspace, tühik, enter
 
                 if (e.keyCode < 46 && e.keyCode !== 32 && e.keyCode !== 8 && e.keyCode !== 13)
@@ -281,19 +296,19 @@
 
             // peida ja tühjenda väljaotsingu kastid fookuse kadumise korral
 
-            $("#" + settings[ptable].target).on("focusout", ".field_search_input", function() {
+            $("#" + settings[ptable].target).on("focusout", ".field_search_input", function () {
                 $(this).html("").hide();
             });
 
             // et väljaotsingukastil klikkimine või teksti selekteerimine avatud alamtabelil ei vallandaks triggerit
 
-            $("#" + settings[ptable].target).on("click", ".field_search, .subrow", function(e) {
+            $("#" + settings[ptable].target).on("click", ".field_search, .subrow", function (e) {
                 e.stopImmediatePropagation();
             });
 
             // väljaotsingu kasti kuvamine
 
-            $("#" + settings[ptable].target).on("click", ".field_search_btn", function(e) {
+            $("#" + settings[ptable].target).on("click", ".field_search_btn", function (e) {
                 e.stopImmediatePropagation();
 
                 var fieldsearchbox = $("#" + $(this).prop("id") + "box");
@@ -302,7 +317,7 @@
                 fieldsearchbox[0].setSelectionRange(100, 100);
             });
 
-            $("#" + settings[ptable].target).on("click", ".nav, .order, .search_btn", function(e) {
+            $("#" + settings[ptable].target).on("click", ".nav, .order, .search_btn", function (e) {
                 if ($(this).hasClass("order")) { // tabeli välja peal klikkimise puhul sorteeri selle järgi
                     if (settings[ptable].order === undefined) {
                         settings[ptable].order = $(prefix + settings[ptable].target).data("order");
@@ -344,7 +359,7 @@
             var udata = {};
 
             if (data) {
-                $.each(data, function(key, val) {
+                $.each(data, function (key, val) {
                     udata[key] = val;
                 });
             }
@@ -362,23 +377,32 @@
             if (settings[ptable].mode === "update" && $("#" + settings[ptable].target).is(":hidden"))
                 return false;
 
-			// leia veergude laiused
+            // leia veergude laiused
 
             if (settings[ptable].mode === "update")
                 settings[ptable].col_width = col_widths(ptable);
 
-			//settings[ptable].tbl_width = $(prefix + settings[ptable].target).width();
+            //settings[ptable].tbl_width = $(prefix + settings[ptable].target).width();
             //console.log(settings[ptable].tbl_width);
 
             // uuenda tabelit
 
-            $.ajax({ url: ptable_url, data: { ptable: settings[ptable] } }).done(function(content) {
+            $.ajax({
+                url: ptable_url,
+                data: {
+                    ptable: settings[ptable]
+                },
+                error: function(xhr, ajaxOptions, thrownError) {
+                    if (xhr.status != 200)
+                        location.reload();
+                }
+            }).done(function(content) {
                 if (settings[ptable].mode === "init")
                     $("#" + settings[ptable].target).html(content);
                 else
                     $(prefix + settings[ptable].target + "_container").html(content);
 
-				settings[ptable].page = $(prefix + settings[ptable].target).data("page");
+                settings[ptable].page = $(prefix + settings[ptable].target).data("page");
                 settings[ptable].page_size = $(prefix + settings[ptable].target).data("page_size");
                 settings[ptable].order = $(prefix + settings[ptable].target).data("order");
                 settings[ptable].way = $(prefix + settings[ptable].target).data("way");
@@ -389,7 +413,7 @@
                 settings[ptable].mode = "update";
 
                 clog(ptable,
-                        "page       = " + settings[ptable].page, "updated");
+                     "page       = " + settings[ptable].page, "updated");
                 clog("page_size  = " + settings[ptable].page_size);
                 clog("order      = " + settings[ptable].order);
                 clog("way        = " + settings[ptable].way);
@@ -450,7 +474,7 @@
             store.set(ptable + "_page_size", settings[ptable].page_size);
             store.set(ptable + "_order", settings[ptable].order);
             store.set(ptable + "_way", settings[ptable].way);
-			store.set(ptable + "_selected", settings[ptable].selected);
+            store.set(ptable + "_selected", settings[ptable].selected);
             //store.set(ptable + "_page",		settings[ptable].page);
             //store.set(ptable + "_minimized",	settings[ptable].minimized);
             //store.set(ptable + "_search",		settings[ptable].search);
@@ -467,7 +491,7 @@
         function col_widths(ptable) {
             var widths = "";
 
-            $(prefix + settings[ptable].target + " th:not(.resize)").each(function() {
+            $(prefix + settings[ptable].target + " th:not(.resize)").each(function () {
                 widths += $(this).width() + "-";
             });
 
@@ -481,7 +505,7 @@
             var el = undefined;
             var el_x, el_width;
 
-            $(".resize").mousedown(function(e) {
+            $(".resize").mousedown(function (e) {
                 resizing = $(this).closest("table").prop("id").substr(prefix.length - 1); // hangi tabeli id
                 el = $(prefix + resizing).find("th").eq(this.cellIndex - 1); // õige th (nii td kui th muutmisel)
                 el_x = e.pageX;
@@ -489,12 +513,12 @@
                 $(el).addClass("resizing");
             });
 
-            $(document).mousemove(function(e) {
+            $(document).mousemove(function (e) {
                 if (resizing)
                     $(el).width(el_width + (e.pageX - el_x));
             });
 
-            $(document).mouseup(function() {
+            $(document).mouseup(function () {
                 if (resizing) {
                     store.set(resizing + "_col_width", col_widths(resizing));
                     $(el).removeClass("resizing");
@@ -535,12 +559,10 @@
 
             clog("worker", "i'm alive!");
 
-            // $.ajax({url: "update_sql.php"});
-
             // uuenda vajalikku tabelit, kui viimasest uuendusest on vajalik aeg möödunud
 
             for (pt in settings)
-                if (settings[pt].autoupdate !== 0 && timestamp > (settings[pt].last_update + settings[pt].autoupdate))
+                if (!settings[pt].no_update && settings[pt].autoupdate !== 0 && timestamp > (settings[pt].last_update + settings[pt].autoupdate))
                     update(pt, true); // ära salvesta tabeli seadeid, kui on autoupdate
         }
 
@@ -594,7 +616,7 @@
 
         // autoupdate checkboxi ja valikukasti aktiveerimine
 
-        $(".ptable").on("click", ".autoupdate_check", function() {
+        $(".ptable").on("click", ".autoupdate_check", function () {
             var tbl = $(this).data("table");
 
             $(prefix + tbl + "_autoupdate_off, " + prefix + tbl + "_autoupdate_on").toggle();
@@ -614,7 +636,7 @@
 
         // kui muudetakse autoupdate aega
 
-        $(".ptable").on("change", ".autoupdate_select", function() {
+        $(".ptable").on("change", ".autoupdate_select", function () {
             var tbl = $(this).data("table");
 
             settings[tbl].autoupdate = parseInt($(this).val());
@@ -625,7 +647,7 @@
 
         // keeleuuendus (ainult demo jaoks)
 
-        $(".lang").click(function() {
+        $(".lang").click(function () {
             if ($(this).hasClass("current"))
                 return false;
 
