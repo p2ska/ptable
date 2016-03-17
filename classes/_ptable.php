@@ -55,6 +55,7 @@ class PTABLE {
     $searchable		= true,			// kas kuvatakse otsingukasti
     $sizeable		= true,			// kas lastakse kasutajal muuta kirjete arvu ühel lehel
 	$resizable		= true,   		// kas saab veergude laiust muuta
+    $exportable     = true,         // kas saab exportide tabeli sisu
     $minimize		= false,		// kas saab tabelit minimiseerida
 	$minimized		= false,		// kas tabel on algselt minimiseeritud
     $maximize		= false,		// TODO: kas saab tabelit maximiseerida
@@ -185,6 +186,11 @@ class PTABLE {
             $this->prepare_external();
         else
             $this->fetch_data();
+
+        // kas on vaja andmed eksportida csv-faili?
+
+        if (isset($init["export"]))
+            return $this->export_csv($init["export"]);
 
         // moodusta tabel
 
@@ -1086,7 +1092,13 @@ class PTABLE {
         }
     }
 
-	// tee rida väärtuse muutmisi
+    // ekspordi andmed
+
+    function export_csv($range) {
+        echo "helpdesk-test11";
+    }
+
+    // tee rida väärtuse muutmisi
 
 	function format_value(&$field, $data) {
 		// kas väljatüüp on alias või tavaline väli
@@ -1391,6 +1403,9 @@ class PTABLE {
         if ($this->autoupdates)
             $this->content .= $this->print_pref(@$this->l->txt_autoupdate, $this->autoupdate, "autoupdate_check", $this->autoupdate, "autoupdate");
 
+        if ($this->exportable)
+            $this->content .= $this->print_pref(@$this->l->txt_export, $this->exportable, "export_links", $this->exportable, "export");
+
         //$this->content .= "<br/><br/>";
         //$this->content .= "<span class=\"big_btn\">". @$this->l->txt_save. "</span>";
         //$this->content .= "<span class=\"big_btn\">". @$this->l->txt_close. "</span>";
@@ -1462,6 +1477,21 @@ class PTABLE {
 
         $pr .= "<div style=\"float: right\">";
         $pr .= $this->form_dropdown($this->autoupdates, $current_val, "autoupdate_select");
+        $pr .= "</div>";
+
+        return $pr;
+    }
+
+    // exportimise lingid
+
+    function form_export_links($values, $current_val, $element) {
+        // kas autoupdate on aktiivne
+
+        $id = P_PREFIX. $this->target;
+
+        $pr  = "<div style=\"float: left\">";
+        $pr .= "<button class=\"export\" data-range=\"current_page\">". $this->l->txt_current_page. "</button>";
+        $pr .= "<button class=\"export\" data-range=\"all_pages\">". $this->l->txt_all_pages. "</button>";
         $pr .= "</div>";
 
         return $pr;

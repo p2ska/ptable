@@ -1,10 +1,34 @@
 <?php
 
+if (isset($_GET["export"])) {
+    // puhasta input
+
+    $uid = preg_replace("/\.+/", ".", preg_replace("/[^\p{L}\p{N}\s\.@_-]/u", "", trim($_GET["export"])));
+
+    if (substr_count($uid, "-"))
+        list($title) = explode("-", $uid);
+    else
+        $title = "ptable";
+
+    $csv_file = "c:/xampp/tmp/ptable-". $uid. ".csv";
+    $user_file = $title. ".csv";
+
+    if (file_exists($csv_file)) {
+        header("Content-type: text/csv");
+        header("Content-Disposition: attachment; filename='". $user_file. "'");
+        header("Pragma: no-cache");
+        header("Expires: 0");
+
+        echo file_get_contents($csv_file);
+    }
+
+    return;
+}
+elseif (!isset($_POST["ptable"]))
+    return false;
+
 session_name("ptable");
 session_start();
-
-if (!isset($_POST["ptable"]))
-    return false;
 
 require_once("c:/xampp/security/ptable/_connector.php");
 require_once("classes/_translations.php");
@@ -48,6 +72,9 @@ foreach ($example_data as $ex) {
 
 if (isset($_POST["subdata"]))
     $_POST["ptable"]["subdata"] = $_POST["subdata"];
+
+if (isset($_POST["export"]))
+    $_POST["ptable"]["export"] = $_POST["export"];
 
 $pt = new PTABLE_EXT($_POST["ptable"], $data);
 

@@ -70,6 +70,29 @@ var ptable_url = "ptable.php";
                 });
             });
 
+            // csv export
+
+            $("#" + settings[ptable].target).on("click", ".export", function() {
+                $.ajax({
+                    url: ptable_url,
+                    method: "POST",
+                    data: {
+                        ptable: settings[ptable],
+                        export: $(this).data("range")
+                    },
+                    error: function(xhr, ajaxOptions, thrownError) {
+                        if (xhr.status != 200)
+                            location.reload();
+                    }
+                }).done(function(content) {
+                    if (content) {
+                        document.location.href = ptable_url + "?export=" + content;
+                    }
+                });
+            });
+
+            // alamtabeli kuvamine
+
             $("#" + settings[ptable].target).on("click", ".subdata", function (e) {
                 e.stopImmediatePropagation();
 
