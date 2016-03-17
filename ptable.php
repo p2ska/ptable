@@ -3,7 +3,7 @@
 session_name("ptable");
 session_start();
 
-if (!isset($_GET["ptable"]))
+if (!isset($_POST["ptable"]))
     return false;
 
 require_once("c:/xampp/security/ptable/_connector.php");
@@ -46,10 +46,10 @@ foreach ($example_data as $ex) {
     $data[] = $el;
 }
 
-if (isset($_GET["subdata"]))
-    $_GET["ptable"]["subdata"] = $_GET["subdata"];
+if (isset($_POST["subdata"]))
+    $_POST["ptable"]["subdata"] = $_POST["subdata"];
 
-$pt = new PTABLE_EXT($_GET["ptable"], $data);
+$pt = new PTABLE_EXT($_POST["ptable"], $data);
 
 echo $pt->content;
 

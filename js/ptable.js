@@ -79,6 +79,7 @@ var ptable_url = "ptable.php";
                 if (subrow.is(":hidden")) {
                     $.ajax({
                         url: ptable_url,
+                        method: "POST",
                         data: {
                             ptable: settings[ptable],
                             subdata: $(this).data("values")
@@ -389,6 +390,7 @@ var ptable_url = "ptable.php";
 
             $.ajax({
                 url: ptable_url,
+                method: "POST",
                 data: {
                     ptable: settings[ptable]
                 },
