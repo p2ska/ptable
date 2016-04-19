@@ -445,19 +445,17 @@ class PTABLE {
 
         // põhipäring
 
+        // lisa päringule sorteerimine ja limiit (õige lehekülg)
+
+        $this->query .= ($this->order ? P_ORDER. $this->order. " ". $this->way : P_VOID). $this->limit;
+
+        if ($this->debug)
+            $this->content .= date("H:i:s"). " [ ". $this->query. " ]". P_BR. "< ". ($this->values ? implode(", ", $this->values) : ""). " >". P_2BR;
+
         if ($this->records) {
-            // lisa päringule sorteerimine ja limiit (õige lehekülg)
-
-            $this->query .= ($this->order ? P_ORDER. $this->order. " ". $this->way : P_VOID). $this->limit;
-
             // teosta päring
 
             $this->db->query($this->query, $this->values);
-
-            //dump($this->db->get_all(), true);
-
-            if ($this->debug)
-                $this->content .= date("H:i:s"). " [ ". $this->query. " ]". P_BR. "< ". ($this->values ? implode(", ", $this->values) : ""). " >". P_2BR;
 
             // mingi sql päringu viga
 
