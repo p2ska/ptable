@@ -36,7 +36,7 @@ class PTABLE {
     // kõik parameetrid (nb! need default'id kirjutatakse üle tabeli kirjeldusfaili ja ka ptable.js poolt tulevate väärtustega üle)
 
     var
-    $content, $db, $l, $mode, $target, $template, $url, $class, $data, $translations, $autoupdate, $refresh,
+    $content, $db, $l, $lang, $mode, $target, $template, $url, $class, $data, $translations, $autoupdate, $refresh,
     $database, $host, $username, $password, $charset, $collation, $table, $query, $fields, $where, $values,
 	$search, $triggers, $joins, $group, $order, $way, $limit, $records, $field_count, $field_search, $title,
     $style, $navigation, $nav_pre, $nav_post, $pages, $pagesize, $external_data, $external_pos, $col_width,
@@ -449,8 +449,15 @@ class PTABLE {
 
         $this->query .= ($this->order ? P_ORDER. $this->order. " ". $this->way : P_VOID). $this->limit;
 
-        if ($this->debug)
-            $this->content .= date("H:i:s"). " [ ". $this->query. " ]". P_BR. "< ". ($this->values ? implode(", ", $this->values) : ""). " >". P_2BR;
+        // kuva debug infot tabeli päises, ja dump'i päring välisesse faili
+
+        if ($this->debug) {
+			$debug_query = date("H:i:s"). " [ ". $this->query. " ]". P_BR. "< ". ($this->values ? implode(", ", $this->values) : ""). " >". P_2BR;
+
+            $this->content .= $debug_query;
+
+			p_log("ptable_debug.txt", $debug_query);
+		}
 
         if ($this->records) {
             // teosta päring

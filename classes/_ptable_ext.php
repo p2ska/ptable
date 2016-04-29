@@ -1,6 +1,6 @@
 <?php
 
-define("P_TABLES",	"c:/xampp/htdocs/ptable/ptables");
+define("P_TABLES",	"c:/xampp/htdocs/ptable/tables");
 
 require_once("_db.php");
 require_once("_ptable.php");

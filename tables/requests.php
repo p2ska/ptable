@@ -17,7 +17,7 @@ $this->fields	= [
 ];
 
 //$this->joins		= [
-//		[ "table"	=> "task", "method" => "left join", "on" => "parent_id = request.id" ], 
+//		[ "table"	=> "task", "method" => "left join", "on" => "parent_id = request.id" ],
 //		[ "field"	=> "task.owner_id", "alias" => "hybrid" ]
 //];
 

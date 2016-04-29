@@ -659,6 +659,10 @@ table *, .prefbox {
     color: #870042;
 }
 
+.ptable .btn-primary {
+    color: #fff;
+}
+
 /*@media all and (min-width: 768px) and (max-width: 959px) {
     .ptable {
         display: none;

@@ -1,5 +1,3 @@
-var ptable_url = "ptable.php";
-
 (function ($) {
     $.fn.ptable = function (targets) {
         var prefix      = "#ptable_",
@@ -246,6 +244,8 @@ var ptable_url = "ptable.php";
 
                     $.getScript("/lemon/plugins/srm/main.js");
                 });
+
+                load_content(target.data("href"));
             }
 
             // kui klikitakse tabelis oleva lingi peal, siis keela välja/rea võimalike triggerite käivitamine

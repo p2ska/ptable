@@ -42,6 +42,12 @@ $c_lang[$lang] = " current_lang";
 -->
 <div id="navi" class="ptable"></div><hr/>
 <!--<div id="external" class="ptable no_border"></div>-->
+
+<!-- arenduse ptable url -->
+<script>
+    ptable_url = "ptable.php";
+</script>
+<!-- js -->
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/store.min.js"></script>
 <script type="text/javascript" src="js/ptable.js"></script>
