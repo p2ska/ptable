@@ -77,7 +77,7 @@ class PTABLE {
     function ptable($init, $source = false, $lang = false) {
         // kas target on ikka olemas
 
-		if (!isset($init["target"]))
+        if (!isset($init["target"]))
             return false;
 
 		// tabeli id
@@ -189,8 +189,9 @@ class PTABLE {
 
         // kas on vaja andmed eksportida csv-faili?
 
-        if (isset($init["export"]))
+        if (isset($init["export"])) {
             return $this->export_csv($init["export"]);
+        }
 
         // moodusta tabel
 
@@ -456,7 +457,7 @@ class PTABLE {
 
             $this->content .= $debug_query;
 
-			p_log("ptable_debug.txt", $debug_query);
+			p_log("ptable_debug.txt", $debug_query, true);
 		}
 
         if ($this->records) {
@@ -1100,7 +1101,14 @@ class PTABLE {
     // ekspordi andmed
 
     function export_csv($range) {
-        echo "helpdesk-test11";
+        $file_id = uniqid();
+
+        if ($fp = fopen("c:/xampp/htdocs/ptable/_temp/ptable-export-". $file_id. ".csv", "w")) {
+            fputs($fp, "kjlkjljl");
+            fclose($fp);
+
+            echo $file_id;
+        }
     }
 
     // tee rida väärtuse muutmisi

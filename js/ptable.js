@@ -83,7 +83,7 @@
                             location.reload();
                     }
                 }).done(function(content) {
-                    if (content) {
+                    if (content && content.length == 13) {
                         document.location.href = ptable_url + "?export=" + content;
                     }
                 });

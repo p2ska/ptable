@@ -45,7 +45,7 @@ $c_lang[$lang] = " current_lang";
 
 <!-- arenduse ptable url -->
 <script>
-    ptable_url = "ptable.php";
+var ptable_url = "ptable.php";
 </script>
 <!-- js -->
 <script type="text/javascript" src="js/jquery.js"></script>
