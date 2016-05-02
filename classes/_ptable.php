@@ -180,6 +180,11 @@ class PTABLE {
 				return false;
 		}
 
+        // säti csv ekspordiks
+
+        if (isset($init["export"]) && $init["export"] == "all_pages")
+            $this->page_size = P_ALL;
+
         // hangi ja töötle andmeid
 
         if ($this->external_data)
@@ -189,9 +194,8 @@ class PTABLE {
 
         // kas on vaja andmed eksportida csv-faili?
 
-        if (isset($init["export"])) {
+        if (isset($init["export"]))
             return $this->export_csv($init["export"]);
-        }
 
         // moodusta tabel
 
@@ -1103,12 +1107,49 @@ class PTABLE {
     function export_csv($range) {
         $file_id = uniqid();
 
-        if ($fp = fopen("c:/xampp/htdocs/ptable/_temp/ptable-export-". $file_id. ".csv", "w")) {
-            fputs($fp, "kjlkjljl");
+        if ($fp = fopen(PTABLE_TMP. "/ptable-export-". $file_id. ".csv", "w")) {
+            // prindime tulemused .csv faili
+
+            if ($this->records) {
+                // moodusta massiiv väljadest, mida on üldse vaja printida
+
+                $fields = $titles = [];
+
+                foreach ($this->fields as $field)
+                    if (!isset($field["hidden"])) {
+                        $fields[] = $field["field"];
+                        $titles[] = $field["title"];
+                    }
+
+                fputs($fp, implode(";", $titles). "\n");
+
+                if ($this->db) {
+                    while ($obj = $this->db->get_obj())
+                        if ($obj)
+                            $this->print_csv($fp, $fields, $obj);
+                }
+                else {
+                    foreach ($this->external_data as $obj)
+                        $this->print_csv($fp, $fields, $obj);
+                }
+            }
+
             fclose($fp);
 
             echo $file_id;
         }
+    }
+
+    // prindi csv rida
+
+    function print_csv($fp, $fields, $obj) {
+        $line = P_VOID;
+
+        foreach ($fields as $field)
+            if (isset($obj->{ $field }))
+                $line .= $obj->{ $field }. ";";
+
+        fputs($fp, substr($line, 0, -1). "\n");
     }
 
     // tee rida väärtuse muutmisi

@@ -1,0 +1,104 @@
+Array
+(
+    [0] => stdClass Object
+        (
+            [eesnimi] => Yumi
+            [perenimi] => Nakata
+            [struktuur] => Majandusteaduskond:Rahvusvaheliste suhete instituut:Kommunikatsiooni ja kultuuri õppetool
+            [amet] => õpetaja
+            [aadress] => Akadeemia tee 3
+            [epost] => yumi.nakata@ttu.ee
+        )
+
+    [1] => stdClass Object
+        (
+            [eesnimi] => Yrjö
+            [perenimi] => Saarinen
+            [struktuur] => TTÜ Eesti Mereakadeemia:Merenduskeskus
+            [amet] => lektor
+            [aadress] => Kopli 101
+            [epost] => yrjo.saarinen@ttu.ee
+        )
+
+    [2] => stdClass Object
+        (
+            [eesnimi] => Yevgen
+            [perenimi] => Karpichev
+            [struktuur] => Matemaatika-loodusteaduskond:Keemiainstituut:Rohelise keemia õppetool
+            [amet] => vanemteadur
+            [aadress] => 
+            [epost] => 
+        )
+
+    [3] => stdClass Object
+        (
+            [eesnimi] => Yannick
+            [perenimi] => Le Moullec
+            [struktuur] => Infotehnoloogia teaduskond:Thomas Johann Seebecki elektroonikainstituut:Siduselektroonika teaduslaboratoorium
+            [amet] => vanemteadur
+            [aadress] => Ehitajate tee 5
+            [epost] => yannick@elin.ttu.ee
+        )
+
+    [4] => stdClass Object
+        (
+            [eesnimi] => Xiaosong
+            [perenimi] => Zheng
+            [struktuur] => Majandusteaduskond:Majandusarvestuse instituut:Juhtimisarvestuse õppetool
+            [amet] => dotsent
+            [aadress] => Akadeemia tee 3
+            [epost] => Xiaosong.Zheng@ttu.ee
+        )
+
+    [5] => stdClass Object
+        (
+            [eesnimi] => Ülve
+            [perenimi] => Luige
+            [struktuur] => TTÜ Eesti Mereakadeemia:Laevanduskeskus;TTÜ Eesti Mereakadeemia:Laevanduskeskus
+            [amet] => assistent;juhataja
+            [aadress] => Kopli 101;Kopli 101
+            [epost] => ulve.tammiksaar@ttu.ee
+        )
+
+    [6] => stdClass Object
+        (
+            [eesnimi] => Ülo
+            [perenimi] => Lille
+            [struktuur] => Emeeritus
+            [amet] => emeriitprofessor
+            [aadress] => Akadeemia tee 15
+            [epost] => ulo.lille@ttu.ee
+        )
+
+    [7] => stdClass Object
+        (
+            [eesnimi] => Ülo
+            [perenimi] => Kristjuhan
+            [struktuur] => Emeeritus
+            [amet] => emeriitdotsent
+            [aadress] => Akadeemia tee 3
+            [epost] => ulo.kristjuhan@tseba.ttu.ee
+        )
+
+    [8] => stdClass Object
+        (
+            [eesnimi] => Ülo
+            [perenimi] => Nurges
+            [struktuur] => TTÜ Küberneetika Instituut:Juhtimissüsteemide laboratoorium
+            [amet] => vanemteadur
+            [aadress] => Akadeemia tee 21B
+            [epost] => ulo.nurges@ttu.ee
+        )
+
+    [9] => stdClass Object
+        (
+            [eesnimi] => Ülo
+            [perenimi] => Palmiste
+            [struktuur] => Mehaanikateaduskond:Materjalitehnika instituut
+            [amet] => insener
+            [aadress] => Ehitajate tee 5
+            [epost] => 
+        )
+
+)
+

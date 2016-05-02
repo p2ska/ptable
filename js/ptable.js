@@ -84,7 +84,7 @@
                     }
                 }).done(function(content) {
                     if (content && content.length == 13) {
-                        document.location.href = ptable_url + "?export=" + content;
+                        document.location.href = ptable_url + "?export=" + settings[ptable].target + "-" + content;
                     }
                 });
             });
