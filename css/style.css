@@ -368,7 +368,7 @@ table *, .prefbox {
     position: absolute;
     top: 36px;
     right: 0px;
-    width: 300px;
+    width: 320px;
     padding: 12px;
     text-align: left;
     display: none;
@@ -385,17 +385,24 @@ table *, .prefbox {
 
 .ptable .pref_key {
     float: left;
-    width: 180px;
+    width: 160px;
 }
 
 .ptable .pref_val {
-    width: 120px;
+    width: 160px;
     float: right;
     text-align: right;
 }
 
+.ptable .export {
+    cursor: pointer;
+    position: relative;
+    top: -5px;
+    margin-right: 8px;
+}
+
 .ptable .autoupdate_check {
-    margin-left: 5px;
+    margin-left: 60px;
     font-size: 20px;
     color: #870042;
     line-height: 44px;

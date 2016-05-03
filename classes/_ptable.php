@@ -180,7 +180,7 @@ class PTABLE {
 				return false;
 		}
 
-        // säti csv ekspordiks
+        // kui eksporditakse kõik kirjed
 
         if (isset($init["export"]) && $init["export"] == "all_pages")
             $this->page_size = P_ALL;
@@ -1543,10 +1543,8 @@ class PTABLE {
 
         $id = P_PREFIX. $this->target;
 
-        $pr  = "<div style=\"float: left\">";
-        $pr .= "<button class=\"export\" data-range=\"current_page\">". $this->l->txt_current_page. "</button>";
-        $pr .= "<button class=\"export\" data-range=\"all_pages\">". $this->l->txt_all_pages. "</button>";
-        $pr .= "</div>";
+        $pr = "<button class=\"export\" data-range=\"current_page\">". $this->awesome("{{file-o}}", "#870042"). " ". $this->l->txt_current_page. "</button>&nbsp;";
+        $pr.= "<button class=\"export\" data-range=\"all_pages\">". $this->awesome("{{files-o}}", "#870042"). " ". $this->l->txt_all_pages. "</button>";
 
         return $pr;
     }
