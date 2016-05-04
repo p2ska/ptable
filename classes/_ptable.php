@@ -49,7 +49,6 @@ class PTABLE {
     $search_ph      = false,        // otsingukasti placeholder
     $prefs			= true,			// tabeli seadeid saab muuta
     $store_prefs	= true,			// kas salvestatakse muudatused (sorteerimisväli, suund, uuendused, lehe pikkus)
-    $download		= true,			// TODO: tabeli sisu allalaadimise võimaldamine
     $badge          = false,        // kuva badge
     $autosearch		= true,			// automaatne otsing
     $searchable		= true,			// kas kuvatakse otsingukasti
