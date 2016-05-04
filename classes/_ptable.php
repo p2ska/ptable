@@ -2,7 +2,7 @@
 
 // [ptable]; Andres Päsoke
 
-define("P_ALLOWED",		"/[^\p{L}\p{N}\s\.@_-]/u");	// millised sümbolid on lubatud, sisendina
+define("P_ALLOWED",		"/[^\p{L}\p{N}\s\.@_-]/u");	// millised sümbolid on lubatud sisendina
 define("P_DOTS",		"/\.+/");
 define("P_ALL",			"*");
 define("P_ANY",			"%");
@@ -75,9 +75,14 @@ class PTABLE {
     // initsialiseeri kõik js poolt määratud muutujad
 
     function ptable($init, $source = false, $lang = false) {
+        // kas on vaja teha failieksport?
+
+        if (isset($_GET["export"]))
+            $this->download_csv($_GET["export"]);
+
         // kas target on ikka olemas
 
-        if (!isset($init["target"]))
+        if (!$init || !isset($init["target"]))
             return false;
 
 		// tabeli id
@@ -90,7 +95,7 @@ class PTABLE {
         if (!$lang && class_exists("TRANSLATIONS")) {
             $this->translations = new TRANSLATIONS();
 
-            $this->l = $this->translations->import("lang/ptable.lang");
+            $this->l = $this->translations->import(P_TRANSLATIONS);
         }
         else
             $this->l = $lang;
@@ -195,7 +200,7 @@ class PTABLE {
         // kas on vaja andmed eksportida csv-faili?
 
         if (isset($init["export"]))
-            return $this->export_csv($init["export"]);
+            return $this->write_csv($init["export"]);
 
         // moodusta tabel
 
@@ -1102,12 +1107,54 @@ class PTABLE {
         }
     }
 
+    function download_csv($uid) {
+        // puhasta input
+
+        $uid = preg_replace("/\.+/", ".", preg_replace("/[^\p{L}\p{N}\s\.@_-]/u", "", trim($uid)));
+
+        // hangi target'i id uid'ist (failinime jaoks)
+
+        if (substr_count($uid, "-")) {
+            $pos = strrpos($uid, "-");
+            $title = substr($uid, 0, $pos);
+            $uid = substr($uid, $pos + 1);
+        }
+        else
+            $title = "export";
+
+        $dl_filename = $title. " [". date("d-m-Y H-i-s"). "].csv";
+        $csv_file = P_TMP. "/ptable-export-". $uid. ".csv";
+
+        // kui fail eksisteerib, siis on hea
+
+        if (file_exists($csv_file)) {
+            header("Content-type: text/csv");
+            header("Content-Disposition: attachment; filename='". $dl_filename. "'");
+            header("Pragma: no-cache");
+            header("Expires: 0");
+
+            // lae fail alla
+
+            echo file_get_contents($csv_file);
+
+            // kustuta tmp fail
+
+            unlink($csv_file);
+        }
+        else
+            header("Location: ". P_BASE_PATH);
+
+        // lõpeta töötlemine
+
+        die();
+    }
+
     // ekspordi andmed
 
-    function export_csv($range) {
+    function write_csv($range) {
         $file_id = uniqid();
 
-        if ($fp = fopen(PTABLE_TMP. "/ptable-export-". $file_id. ".csv", "w")) {
+        if ($fp = fopen(P_TMP. "/ptable-export-". $file_id. ".csv", "w")) {
             // prindime tulemused .csv faili
 
             if ($this->records) {
@@ -1543,8 +1590,8 @@ class PTABLE {
 
         $id = P_PREFIX. $this->target;
 
-        $pr = "<button class=\"export\" data-range=\"current_page\">". $this->awesome("{{file-o}}", "#870042"). " ". $this->l->txt_current_page. "</button>&nbsp;";
-        $pr.= "<button class=\"export\" data-range=\"all_pages\">". $this->awesome("{{files-o}}", "#870042"). " ". $this->l->txt_all_pages. "</button>";
+        $pr = "<button class=\"export\" data-range=\"current_page\">". $this->awesome("{{file-o}}", "#870042"). " ". @$this->l->txt_current_page. "</button>&nbsp;";
+        $pr.= "<button class=\"export\" data-range=\"all_pages\">". $this->awesome("{{files-o}}", "#870042"). " ". @$this->l->txt_all_pages. "</button>";
 
         return $pr;
     }
