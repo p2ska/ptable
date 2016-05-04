@@ -31,7 +31,7 @@ require_once("demo/external_data.php");
 if (isset($_POST["subdata"]))
     $_POST["ptable"]["subdata"] = $_POST["subdata"];
 
-// csv download
+// csv-faili allalaadimine
 
 if (isset($_GET["download"]))
     $_POST["ptable"]["download"] = $_GET["download"];
