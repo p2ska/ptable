@@ -75,15 +75,15 @@ class PTABLE {
     // initsialiseeri kõik js poolt määratud muutujad
 
     function ptable($init, $source = false, $lang = false) {
+        // kas on ikka parameetrid olemas, millega edasi toimetada
+
+        if (!$init || (!isset($init["download"]) && !isset($init["target"])))
+            return false;
+
         // kas on vaja teha failieksport?
 
-        if (isset($_GET["export"]))
-            $this->download_csv($_GET["export"]);
-
-        // kas target on ikka olemas
-
-        if (!$init || !isset($init["target"]))
-            return false;
+        if (isset($init["download"]))
+            $this->download_csv($init["download"]);
 
 		// tabeli id
 
@@ -1183,7 +1183,7 @@ class PTABLE {
 
             fclose($fp);
 
-            echo $file_id;
+            die($file_id);
         }
     }
 

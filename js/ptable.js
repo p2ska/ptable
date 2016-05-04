@@ -84,7 +84,11 @@
                     }
                 }).done(function(content) {
                     if (content && content.length == 13) {
-                        document.location.href = ptable_url + "?export=" + settings[ptable].target + "-" + content;
+                        document.location.href = ptable_url + "?download=" + settings[ptable].target + "-" + content;
+
+                        // sulge seadete aken
+
+                        $("#" + settings[ptable].target + " .pref_btn").trigger("click");
                     }
                 });
             });

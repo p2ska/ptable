@@ -31,6 +31,11 @@ require_once("demo/external_data.php");
 if (isset($_POST["subdata"]))
     $_POST["ptable"]["subdata"] = $_POST["subdata"];
 
+// csv download
+
+if (isset($_GET["download"]))
+    $_POST["ptable"]["download"] = $_GET["download"];
+
 // eksportimiseks vajalik muutuja (sisaldab teavet, millist osa tabelist on vaja eksportida)
 
 if (isset($_POST["export"]))
