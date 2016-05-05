@@ -7,9 +7,9 @@ $this->table		= "personal_navi";
 $this->way = "desc";
 
 $this->fields		= [
-		[ "field"	=> "eesnimi",	"title" => "Eesnimi",	"searchable" => true ],
-		[ "field"	=> "perenimi",	"title" => "Perenimi",	"searchable" => true ],
-		[ "field"	=> "struktuur",	"title" => "Struktuur",	"searchable" => true ],
+		[ "field"	=> "eesnimi",	"title" => "Eesnimi",	"searchable" => true, "process" => "mod2" ],
+		[ "field"	=> "perenimi",	"title" => "Perenimi",	"searchable" => true, "extend" => "mod" ],
+		[ "field"	=> "struktuur",	"title" => "Struktuur",	"searchable" => true, "hidden" => true ],
 		[ "field"	=> "amet",		"title" => "Amet" ],
 		[ "field"	=> "aadress",	"title" => "Aadress" ],
 		[ "field"	=> "epost",		"title" => "E-post" ]

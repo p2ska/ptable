@@ -1157,26 +1157,22 @@ class PTABLE {
             // prindime tulemused .csv faili
 
             if ($this->records) {
-                // moodusta massiiv väljadest, mida on üldse vaja printida
-
-                $fields = $titles = [];
+                $titles = [];
 
                 foreach ($this->fields as $field)
-                    if (!isset($field["hidden"])) {
-                        $fields[] = $field["field"];
+                    if (!isset($field["hidden"]))
                         $titles[] = $field["title"];
-                    }
 
                 fputs($fp, implode(";", $titles). "\n");
 
                 if ($this->db) {
                     while ($obj = $this->db->get_obj())
                         if ($obj)
-                            $this->print_csv($fp, $fields, $obj);
+                            $this->print_csv($fp, $obj);
                 }
                 else {
                     foreach ($this->external_data as $obj)
-                        $this->print_csv($fp, $fields, $obj);
+                        $this->print_csv($fp, $obj);
                 }
             }
 
@@ -1188,12 +1184,17 @@ class PTABLE {
 
     // prindi csv rida
 
-    function print_csv($fp, $fields, $obj) {
+    function print_csv($fp, $obj) {
         $line = P_VOID;
 
-        foreach ($fields as $field)
-            if (isset($obj->{ $field }))
-                $line .= $obj->{ $field }. ";";
+        foreach ($this->fields as $field) {
+            if (isset($field["process"]) && method_exists($this, $field["process"]))
+                $this->{ $field["process"] }($obj);
+
+            if (isset($obj->{ $field["field"] }) && (!isset($field["hidden"]) || !$field["hidden"])) {
+                $line .= $this->format_value($field, $obj). ";";
+            }
+        }
 
         fputs($fp, substr($line, 0, -1). "\n");
     }

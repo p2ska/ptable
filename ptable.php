@@ -22,6 +22,10 @@ require_once("classes/_db.php");                                        // andme
 require_once("classes/_translations.php");                              // tõlgete klass
 require_once("classes/_ptable.php");                                    // ptable põhiklass
 
+// laiendused
+
+require_once("extensions/mission.php");                                 // laiendus
+
 // DEMO: välise tabeli massiiv
 
 require_once("demo/external_data.php");
@@ -43,7 +47,7 @@ if (isset($_POST["export"]))
 
 // initsialiseeri ptable
 
-$pt = new PTABLE(@$_POST["ptable"], $data);
+$pt = new PTABLE_EXT(@$_POST["ptable"], $data);
 
 // väljasta tabel
 

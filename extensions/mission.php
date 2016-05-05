@@ -3,6 +3,16 @@
 /* põhiklassi extension, võimaldamaks päringust saadud väärtusi edasi töödelda */
 
 class PTABLE_EXT extends PTABLE {
+    // muuda midagi
+
+    function mod($value) {
+        return "ahaa!";
+    }
+
+    function mod2(&$data) {
+        $data->eesnimi = "Kana";
+    }
+
 	// aruande staatuse kuvamine
 
 	function status(&$data) {
