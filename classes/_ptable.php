@@ -1166,9 +1166,10 @@ class PTABLE {
                 fputs($fp, implode(";", $titles). "\n");
 
                 if ($this->db) {
-                    while ($obj = $this->db->get_obj())
-                        if ($obj)
-                            $this->print_csv($fp, $obj);
+                    $records = $this->db->get_all();
+
+                    foreach ($records as $obj)
+                        $this->print_csv($fp, $obj);
                 }
                 else {
                     foreach ($this->external_data as $obj)
