@@ -242,12 +242,14 @@
             // tee midagi triggeriga rea või välja peal klikkimise peale (mitte lingi puhul siis)
 
             function trigger(target) {
+                /*
                 $("#content-wrapper").load(target.data("href"), function(content, status, xhr) {
                     if (xhr.status != 200) // kui sessioon ei ole enam valiidne, suuna logima
                         location.reload();
 
                     $.getScript("/lemon/plugins/srm/main.js");
                 });
+                */
 
                 load_content(target.data("href"));
             }
