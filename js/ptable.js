@@ -250,7 +250,6 @@
                     $.getScript("/lemon/plugins/srm/main.js");
                 });
 
-                tere
                 */
 
                 load_content(target.data("href"));
